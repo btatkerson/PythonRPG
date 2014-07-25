@@ -24,7 +24,7 @@ class creature():
 		self.inventory = []
 
 	def get_base_attack(self):
-		return level
+		return self.level
 
 	# Sets all the base stats at once, or whichever are provided.
 	# absolute == False : Base stat has parameter added to it (str = 1 ==> self.base_stats['str'] += 1)
@@ -61,64 +61,64 @@ class creature():
 			return -1
 			
 	def get_base_str(self):
-		return get_base_stat['str']
+		return self.get_base_stat('str')
 	
 	def set_base_str(self,add,absolute=False):
 		if absolute:
 			self.base_stats['str'] = add
 		else:
 			self.base_stats['str'] += add
-		return get_base_stat['str']
+		return self.get_base_stat('str')
 
 	def get_base_int(self):
-		return get_base_star['int']
+		return self.get_base_stat('int')
 
 	def set_base_int(self,add,absolute=False):
 		if absolute:
 			self.base_stats['int'] = add
 		else:
 			self.base_stats['int'] += add
-		return get_base_stat['int']
+		return self.get_base_stat('int')
 
 	def get_base_con(self):
-		return get_base_star['con']
+		return self.get_base_stat('con')
 	
 	def set_base_con(self,add,absolute=False):
 		if absolute:
 			self.base_stats['con'] = add
 		else:
 			self.base_stats['con'] += add
-		return get_base_stat['con']
+		return self.get_base_stat('con')
 
 	def get_base_wis(self):
-		return get_base_star['wis']
+		return self.get_base_stat('wis')
 
 	def set_base_wis(self,add,absolute=False):
 		if absolute:
 			self.base_stats['wis'] = add
 		else:
 			self.base_stats['wis'] += add
-		return get_base_stat['wis']
+		return self.get_base_stat('wis')
 
 	def get_base_dex(self):
-		return get_base_star['dex']
+		return self.get_base_stat('dex')
 	
 	def set_base_dex(self,add,absolute=False):
 		if absolute:
 			self.base_stats['dex'] = add
 		else:
 			self.base_stats['dex'] += add
-		return get_base_stat['dex']
+		return self.get_base_stat('dex')
 
 	def get_base_chr(self):
-		return get_base_star['chr']
+		return self.get_base_stat('chr')
 		
 	def set_base_chr(self,add,absolute=False):
 		if absolute:
 			self.base_stats['chr'] = add
 		else:
 			self.base_stats['chr'] += add
-		return get_base_stat['chr']
+		return self.get_base_stat('chr')
 			
 	def experience_by_level(self, level = 1):		# Sets appropriate experience points based on level (By default, identical to DnD's leveling)
 		return sum(range(1,level)*self.leveling_rate)
@@ -153,11 +153,11 @@ class creature():
 		temp = [0,0]
 
 		if self.law_vs_chaos < 33:
-		    temp = [0,"chaotic"]
+			temp = [0,"chaotic"]
 		elif self.law_vs_chaos > 67:
-		    temp = [2,"lawful"]
+			temp = [2,"lawful"]
 		else:
-		    temp = [1,"neutral"]
+			temp = [1,"neutral"]
 		
 		if value_word_combo >= 0 and value_word_combo < 2:
 			return temp[value_word_combo]
@@ -165,7 +165,6 @@ class creature():
 			return self.law_vs_chaos
 		else:
 			return temp
-
 
 
 	def get_good_vs_evil(self,value_word_combo=0): # 0 returns value, 1 returns word, 2 returns both, -1 returns raw variable
@@ -189,18 +188,21 @@ class creature():
 	def get_alignment(self,value_word_combo=0): # 0 returns list of values (Lawful Evil = [2,0]), 1 returns words (Lawful Evil = ["Lawful", "Evil"], 2 returns a list holding two lists of values and words, -1 returns the exact alignment variables
 		temp = [self.get_law_vs_chaos(2),self.get_good_vs_evil(2)]
 		if value_word_combo == 0:
-		    return [temp[0][0],temp[1][0]]
+			return [temp[0][0],temp[1][0]]
 		elif value_word_combo == 1:
-		    if temp[0][0] == 1 and temp[1][0] == 1: #
-		        return ["true", "neutral"]
-		    return [temp[0][1],temp[1][1]]
+			if temp[0][0] == 1 and temp[1][0] == 1: #
+				return ["true", "neutral"]
+			return [temp[0][1],temp[1][1]]
 		elif value_word_combo == -1:
-		    return [self.get_law_vs_chaos(value_word_combo),self.get_good_vs_evil(value_word_combo)]
+			return [self.get_law_vs_chaos(value_word_combo),self.get_good_vs_evil(value_word_combo)]
 		else:
-		    return temp
+			return temp
 	
-	def set_creature_level(self,creature_level=_core(None).get_default_creature_level()):
-		if
+	def set_absolute_creature_level(self,creature_level=_core(None).get_default_creature_level()):
+		if self._core(None).get_min_creature_level() <= creature_level <= self._core(None).get_max_creature_level():
+			self.level = creature_level
+		else:
+			self.level = 1
 
 a = creature(race = 'DOG',name = "Carl",exp=19673,law_vs_chaos=30,good_vs_evil=90,leveling_rate=1000)
 
