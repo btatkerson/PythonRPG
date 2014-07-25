@@ -10,7 +10,7 @@ class core_creature_configuration():
 	def __init__(self):
 		self.__DEFAULT_CREATURE_LEVEL = 0 # This is technically fixed to go to 1 because of |
 		self.__MIN_CREATURE_LEVEL = 1     # THIS <------------------------------------------'
-		self.__MAX_CREATURE_LEVEL = 61    # See the creature.py "set_creature_level" function
+		self.__MAX_CREATURE_LEVEL = 60    # See the creature.py "set_creature_level" function
 		self.__DEFAULT_BASE_STAT_LEVEL = 1
 		self.__MIN_BASE_STAT_LEVEL = 1
 		self.__MAX_BASE_STAT_LEVEL = 255
