@@ -1,0 +1,24 @@
+<items>
+	<Weapon>
+		<Dagger></Dagger>
+		<Short_Sword></Short_Sword>
+		<Long_Sword></Long_Sword>
+		<Great_Sword></Great_Sword>
+		<Mace></Mace>
+		<Club></Club>
+		<Spear></Spear>
+		<Battle_Axe></Battle_Axe>
+		<Great_Axe></Great_Axe>
+	</Weapon>
+
+	<Apparel>
+		<Helmet></Helmet>
+		<Body_Armor></Body_Armor>
+		<Leg_Armor></Leg_Armor>
+		<Grieves></Grieves>
+		<Boots></Boots>
+		<Gauntlets></Gauntlets>
+		<Necklace></Necklace>
+		<Ring></Ring>
+	</Apparel>
+</items>
