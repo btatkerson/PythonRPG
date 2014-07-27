@@ -1,3 +1,10 @@
+'''
+	  Name: __core_item_configuration.py
+	Author: Benjamin A
+   Purpose: This is a core file for the engine that defines the boundaries of the items.
+			Boundaries including item class types, stackability, etc.
+
+'''
 class core_item_configuration():
 	def __init__(self):
 		self.__item_class_dictionary = {0:"unique",1:"weapon",2:"armor",3:"apparel",4:"potion",5:"container",6:"ammo",7:"placeable",8:"magic"}

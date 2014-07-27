@@ -1,3 +1,12 @@
+'''
+	  Name: creature.py
+	Author: Benjamin A
+   Purpose: The creature class creates an object with relevant methods to in-game creatures, npcs, pcs, etc
+            This class can be used to create subclasses that inherit all the common traits of creatures,
+            but extended to define specific and even custom creatures.
+
+'''
+
 from core.__core_creature_configuration import core_creature_configuration
 
 class creature():

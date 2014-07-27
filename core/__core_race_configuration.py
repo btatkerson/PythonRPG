@@ -1,3 +1,11 @@
+'''
+	  Name: __core_race_configuration.py
+	Author: Benjamin A
+   Purpose: This is a core file for the engine that defines the boundaries of the races in the game.
+            It limits race types and offers methods that provides information on the core components of races
+
+'''
+
 class __core_race_configuration():
 	def __init__(self):
 		self.__race_type_dictionary = {0:"unique",1:"human",2:"elf",3:"dwarf",4:"half-orc",5:"half-ling",6:"half-elf",7:"demon",
