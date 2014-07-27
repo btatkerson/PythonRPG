@@ -12,6 +12,7 @@ class creature():
 		self.good_vs_evil = good_vs_evil
 		
 		self.hit_points = hit_points
+
 		
 		self.leveling_rate = leveling_rate # 1000 is the standard growth,  the lower the number,  the faster a character can level
 		self.level = level or self.level_by_experience(exp)      # If level is zero,  sets level by experience
