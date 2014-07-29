@@ -10,7 +10,7 @@
 from core.__core_creature_configuration import core_creature_configuration
 
 class creature():
-	# A short method in most classes that calls the core settings for that particular class
+	# A short method in most classes that calls the core settings for that particular class.
 	def _core(self):
 		return core_creature_configuration()
 
