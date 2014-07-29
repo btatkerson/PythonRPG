@@ -14,32 +14,34 @@ class creature():
 	def _core(self):
 		return core_creature_configuration()
 
-	def __init__(self,  name='NAME',  race='UNKNOWN',  law_vs_chaos=50,  good_vs_evil=50,  hit_points=5,  level=_core(None).get_default_creature_level(),  exp=0,  base_ac=0,  leveling_rate=1000):
+	def __init__(self,  name='NAME',  race='UNKNOWN',  law_vs_chaos=_core(None).get_default_law_vs_chaos(),  good_vs_evil=_core(None).get_default_good_vs_evil(),  base_hit_points=_core(None).get_min_base_hit_points(),  base_level=_core(None).get_default_base_level(),  exp=0,  base_ac=0,  base_level_rate=1000, str=_core(None).get_min_base_stat_level(), inte =_core(None).get_min_base_stat_level(),chr =_core(None).get_min_base_stat_level(),dex =_core(None).get_min_base_stat_level(),con =_core(None).get_min_base_stat_level(),wis=_core(None).get_min_base_stat_level()):
 		self.name=name
 		self.race=race
-		self.law_vs_chaos=law_vs_chaos # Scale 0 - 100. 0-32 = Evil, 33-67 = Neutral, 68-100 = Good
-		self.good_vs_evil=good_vs_evil
-		
-		self.hit_points=hit_points
-		
-		self.leveling_rate=leveling_rate # 1000 is the standard growth,  the lower the number,  the faster a character can level
-		self.level=level or self.level_by_experience(exp)      # If level is zero,  sets level by experience
-		self.experience=exp or self.experience_by_level(level) # If experience is zero,  sets experience based on level. Defaults to 0 experience
-															   # level 1 when no parameters entered.
-		
-		self.base_stats={'str':0, 'int':0, 'con':0, 'wis':0, 'dex':0, 'chr':0} # Dictionary for base stats
+		self.law_vs_chaos=law_vs_chaos # Scale 0 - 100. 0-32 = Chaos, 33-67 = Neutral, 68-100 = Law
+		self.good_vs_evil=good_vs_evil # Scale 0 - 100. 0-32 = Evil, 33-67 = Neutral, 68-100 = Good
+
+		self.base_hit_points=base_hit_points
+		self.current_hit_points = self.base_hit_points
+
+		self.base_level_rate=base_level_rate # 1000 is the standard growth,  the lower the number, the faster a character can base_level
+		self.base_level=base_level or self.set_base_level_by_experience(exp)    # If base_level is zero, sets base_level by experience
+		self.experience=exp or self.set_experience_by_base_level(base_level)    # If experience is zero, sets experience based on base_level. Defaults to 0 experience
+																				# base_level 1 when no parameters entered.
+
+		self.base_stats={'str':str, 'int':inte, 'con':con, 'wis':wis, 'dex':dex, 'chr':chr} # Dictionary for base stats
 		self.base_armor_class=0
-		
+
 		self.skill_set=[] # Holds list of player stats
 		self.inventory=[] # Holds list of items, an inventory system is in the future.
 
-	def get_base_attack(self):
-		return self.level
+	# Returns the base_level of the creature
+	def get_base_level(self):
+		return self.base_level
 
 	# Sets all the base stats at once,  or whichever are provided.
 	# absolute == False : Base stat has parameter added to it (str=1 ==> self.base_stats['str'] += 1)
 	# absolute == True : Base stat is set to parameter (str=1 ==> self.base_stats['str']=1)
-	def set_all_base_stat(self, str=0, inte=0, con=0, wis=0, dex=0, chr=0, absolute=False):
+	def set_all_base_stat_level(self, str=0, inte=0, con=0, wis=0, dex=0, chr=0, absolute=False):
 		# if statements necessary. If absolute=true
 		if str:
 			self.set_base_str(str, absolute)
@@ -54,7 +56,10 @@ class creature():
 		if chr:
 			self.set_base_chr(chr, absolute)
 
-	def set_base_stat(self, stat='', add=0, absolute=False):
+		return self.base_stats
+
+	# Allows one base stat to be modified at a time
+	def set_base_stat_level(self, stat='', add=0, absolute=False):
 		if stat.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
 			if absolute:
 				self.base_stats[stat.lower()]=add
@@ -63,7 +68,16 @@ class creature():
 		else:
 			return -1
 
-	def get_base_stat(self, stat=''):
+		# Makes sure the base stat is valid and keeps the value within range
+		if self.base_stats[stat] > self._core().get_max_base_stat_level():
+			self.base_stats[stat] = self._core().get_max_base_stat_level()
+		elif self.base_stats[stat] < self._core().get_min_base_stat_level():
+			self.base_stats[stat] = self._core().get_min_base_stat_level()
+
+		return self.base_stats[stat]
+
+	# Returns base stat value for any valid stat provided
+	def get_base_stat_level(self, stat=''):
 		if stat.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
 			return self.base_stats[stat.lower()]
 		else:
@@ -71,141 +85,75 @@ class creature():
 
 	# Returns the base value for the Strength stat
 	def get_base_str(self):
-		return self.get_base_stat('str')
+		return self.get_base_stat_level('str')
 
 	# Sets the base value for the Strength stat
 	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
 	# the base stat will be set to the value provided for variable 'add'
 	def set_base_str(self, add, absolute=False):
-		if absolute:
-			self.base_stats['str'] = add
-		else:
-			self.base_stats['str'] += add
-			
-		# Makes sure the base stat is valid and keeps the value within range
-		if self.base_stats['str'] > self._core().get_max_base_stat_level():
-			self.base_stats['str'] = self._core().get_max_base_stat_level()
-		elif self.base_stats['str'] < self._core().get_min_base_stat_level():
-			self.base_stats['str'] = self._core().get_min_base_stat_level()
-		
-		return self.get_base_stat('str')
+		return self.set_base_stat_level('str',add,absolute)
 
 	# Returns the base value for the Intelligence stat
 	def get_base_int(self):
-		return self.get_base_stat('int')
+		return self.get_base_stat_level('int')
 
 	# Sets the base value for the Intelligence stat
 	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
 	# the base stat will be set to the value provided for variable 'add'
 	def set_base_int(self, add, absolute=False):
-		if absolute:
-			self.base_stats['int'] = add
-		else:
-			self.base_stats['int'] += add
-			
-		# Makes sure the base stat is valid and keeps the value within range
-		if self.base_stats['int'] > self._core().get_max_base_stat_level():
-			self.base_stats['int'] = self._core().get_max_base_stat_level()
-		elif self.base_stats['int'] < self._core().get_min_base_stat_level():
-			self.base_stats['int'] = self._core().get_min_base_stat_level()
-			
-		return self.get_base_stat('int')
+		return self.set_base_stat_level('int',add,absolute)
 
 	# Returns the base value for the Constitution stat
 	def get_base_con(self):
-		return self.get_base_stat('con')
+		return self.get_base_stat_level('con')
 
 	# Sets the base value for the Constitution stat
 	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
 	# the base stat will be set to the value provided for variable 'add'
 	def set_base_con(self, add, absolute=False):
-		if absolute:
-			self.base_stats['con'] = add
-		else:
-			self.base_stats['con'] += add
-			
-		# Makes sure the base stat is valid and keeps the value within range
-		if self.base_stats['con'] > self._core().get_max_base_stat_level():
-			self.base_stats['con'] = self._core().get_max_base_stat_level()
-		elif self.base_stats['con'] < self._core().get_min_base_stat_level():
-			self.base_stats['con'] = self._core().get_min_base_stat_level()	
-			
-		return self.get_base_stat('con')
+		return self.set_base_stat_level('con',add,absolute)
 
 	# Returns the base value for the Wisdom stat
 	def get_base_wis(self):
-		return self.get_base_stat('wis')
+		return self.get_base_stat_level('wis')
 
 	# Sets the base value for the Wisdom stat
 	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
 	# the base stat will be set to the value provided for variable 'add'
 	def set_base_wis(self, add, absolute=False):
-		if absolute:
-			self.base_stats['wis'] = add
-		else:
-			self.base_stats['wis'] += add
-			
-		# Makes sure the base stat is valid and keeps the value within range
-		if self.base_stats['wis'] > self._core().get_max_base_stat_level():
-			self.base_stats['wis'] = self._core().get_max_base_stat_level()
-		elif self.base_stats['wis'] < self._core().get_min_base_stat_level():
-			self.base_stats['wis'] = self._core().get_min_base_stat_level()
-			
-		return self.get_base_stat('wis')
+		return self.set_base_stat_level('wis',add,absolute)
 
 	# Returns the base value for the Dexterity stat
 	def get_base_dex(self):
-		return self.get_base_stat('dex')
+		return self.get_base_stat_level('dex')
 
 	# Sets the base value for the Dexterity stat
 	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
 	# the base stat will be set to the value provided for variable 'add'
 	def set_base_dex(self, add, absolute=False):
-		if absolute:
-			self.base_stats['dex'] = add
-		else:
-			self.base_stats['dex'] += add
-		
-		# Makes sure the base stat is valid and keeps the value within range
-		if self.base_stats['dex'] > self._core().get_max_base_stat_level():
-			self.base_stats['dex'] = self._core().get_max_base_stat_level()
-		elif self.base_stats['dex'] < self._core().get_min_base_stat_level():
-			self.base_stats['dex'] = self._core().get_min_base_stat_level()	
-			
-		return self.get_base_stat('dex')
+		return self.set_base_stat_level('dex',add,absolute)
 
 	# Returns the base value for the Charisma stat
 	def get_base_chr(self):
-		return self.get_base_stat('chr')
+		return self.get_base_stat_level('chr')
 
 	# Sets the base value for the Charisma stat
 	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
 	# the base stat will be set to the value provided for variable 'add'
 	def set_base_chr(self, add, absolute=False):
-		if absolute:
-			self.base_stats['chr'] = add
-		else:
-			self.base_stats['chr'] += add
-		
-		# Makes sure the base stat is valid and keeps the value within range
-		if self.base_stats['chr'] > self._core().get_max_base_stat_level():
-			self.base_stats['chr'] = self._core().get_max_base_stat_level()
-		elif self.base_stats['chr'] < self._core().get_min_base_stat_level():
-			self.base_stats['chr'] = self._core().get_min_base_stat_level()
-			
-		return self.get_base_stat('chr')
+		return self.set_base_stat_level('chr',add,absolute)
 
-	# Sets appropriate experience points based on level (By default, identical to DnD's leveling)
-	def experience_by_level(self, level=1):
-		return sum(range(1, level)*self.leveling_rate)
+	# Sets appropriate experience points based on base_level (By default, identical to DnD's base_level)
+	def set_experience_by_base_level(self, base_level=1):
+		return sum(range(1, base_level)*self.base_level_rate)
 
-	# Returns level based on experience, if the experience is greater than what's needed to reach the maximum level,
-	# then the maximum level allowed is returned
-	def level_by_experience(self, exp=0):		# Sets level based on experience points
-		for i in range(1, self._core().get_max_creature_level()+1):
-			if sum(range(1, i)*self.leveling_rate) > exp:
+	# Returns base_level based on experience, if the experience is greater than what's needed to reach the maximum base_level,
+	# then the maximum base_level allowed is returned
+	def set_base_level_by_experience(self, exp=0):		# Sets base_level based on experience points
+		for i in range(1, self._core().get_max_base_level()+1):
+			if sum(range(1, i)*self.base_level_rate) > exp:
 				return i - 1
-		return self._core().get_max_creature_level()
+		return self._core().get_max_base_level()
 	
 	def set_name(self, name):
 		self.name = name
@@ -213,7 +161,8 @@ class creature():
 		
 	def get_name(self):
 		return self.name
-		
+
+	# Sets the law_vs_chaos value keeping it within restricted values
 	def set_law_vs_chaos(self, add, absolute=False):
 		if absolute:
 			self.law_vs_chaos = add
@@ -223,7 +172,10 @@ class creature():
 				self.law_vs_chaos = self._core().get_max_law_vs_chaos()
 		else:
 			self.law_vs_chaos += add
-	
+
+		return self.law_vs_chaos
+
+	# Sets the good_vs_evil value keeping it within restricted values
 	def set_good_vs_evil(self, add, absolute=False):
 		if absolute:
 			self.good_vs_evil = add
@@ -233,8 +185,10 @@ class creature():
 				self.good_vs_evil = self._core().get_max_good_vs_evil()
 		else:
 			self.good_vs_evil += add
-	
-	# Returns law vs chaos values
+
+		return self.good_vs_evil
+
+	# Returns law vs chaos values and or "lawful", "chaotic", and "neutral"
 	def get_law_vs_chaos(self, value_word_combo=0): # 0 returns value,  1 returns word,  2 returns both,  -1 returns raw variable
 		temp=[0, 0]
 
@@ -252,6 +206,7 @@ class creature():
 		else:
 			return temp
 
+	# Returns "evil", "good", or "neutral" based on good_vs_evil value
 	def get_good_vs_evil(self, value_word_combo=0): # 0 returns value,  1 returns word,  2 returns both,  -1 returns raw variable
 		temp=[0, 0]
 
@@ -282,19 +237,21 @@ class creature():
 			return [self.get_law_vs_chaos(value_word_combo), self.get_good_vs_evil(value_word_combo)]
 		else:
 			return temp
-	
-	def set_absolute_creature_level(self, creature_level=_core(None).get_default_creature_level(),set_experience=False):
-		if self._core().get_min_creature_level() <= creature_level <= self._core().get_max_creature_level():
-			self.level = creature_level
+
+	# Sets the creature level exactly as long as it's
+	def set_absolute_base_level(self, base_level=_core(None).get_default_base_level(),set_experience=False):
+		if self._core().get_min_base_level() <= base_level <= self._core().get_max_base_level():
+			self.base_level = base_level
 		else:
-			self.level = 1
+			self.base_level = 1
 
 		if set_experience:
-			self.experience_by_level(self.level)
+			self.set_experience_by_base_level(self.base_level)
+
+		return self.base_level
 
 
 ####################################################### TEST CODE ######################################################
-a = creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, leveling_rate=1000)
+a = creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000)
 
-print a.name,  a.race,  a.level,  a.experience,  a.get_alignment(1), a.set_absolute_creature_level(10), a.level
-
+print a.name,  a.race,  a.base_level,  a.experience,  a.get_alignment(1), a.set_absolute_base_level(90), a.base_level, a.set_base_str(-30)
