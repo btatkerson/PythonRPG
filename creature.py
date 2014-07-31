@@ -10,13 +10,15 @@
 from core.__core_creature_configuration import core_creature_configuration
 
 class creature():
-	# A short method in most classes that calls the core settings for that particular class
+	# A short method in most classes that calls the core settings for that particular class.
 	def _core(self):
 		return core_creature_configuration()
 
-	def __init__(self,  name='NAME',  race='UNKNOWN',  law_vs_chaos=_core(None).get_default_law_vs_chaos(),  good_vs_evil=_core(None).get_default_good_vs_evil(),  base_hit_points=_core(None).get_min_base_hit_points(),  base_level=_core(None).get_default_base_level(),  exp=0,  base_ac=0,  base_level_rate=1000, str=_core(None).get_min_base_stat_level(), inte =_core(None).get_min_base_stat_level(),chr =_core(None).get_min_base_stat_level(),dex =_core(None).get_min_base_stat_level(),con =_core(None).get_min_base_stat_level(),wis=_core(None).get_min_base_stat_level()):
+	def __init__(self, playable_character=False, name='NAME',  race='UNKNOWN', deity=None, law_vs_chaos=_core(None).get_default_law_vs_chaos(),  good_vs_evil=_core(None).get_default_good_vs_evil(),  base_hit_points=_core(None).get_min_base_hit_points(),  base_level=_core(None).get_default_base_level(),  exp=0,  base_ac=0,  base_level_rate=1000, str=_core(None).get_min_base_stat_level(), inte =_core(None).get_min_base_stat_level(),chr =_core(None).get_min_base_stat_level(),dex =_core(None).get_min_base_stat_level(),con =_core(None).get_min_base_stat_level(),wis=_core(None).get_min_base_stat_level()):
+		self.playable_character=playable_character
 		self.name=name
 		self.race=race
+		self.deity=deity
 		self.law_vs_chaos=law_vs_chaos # Scale 0 - 100. 0-32 = Chaos, 33-67 = Neutral, 68-100 = Law
 		self.good_vs_evil=good_vs_evil # Scale 0 - 100. 0-32 = Evil, 33-67 = Neutral, 68-100 = Good
 
@@ -27,6 +29,8 @@ class creature():
 		self.base_level=base_level or self.set_base_level_by_experience(exp)    # If base_level is zero, sets base_level by experience
 		self.experience=exp or self.set_experience_by_base_level(base_level)    # If experience is zero, sets experience based on base_level. Defaults to 0 experience
 																				# base_level 1 when no parameters entered.
+		self.base_attack_bonus=0
+		self.base_saving_throw_bonus={"fortitude":0,"will":0,"reflex":0}
 
 		self.base_stats={'str':str, 'int':inte, 'con':con, 'wis':wis, 'dex':dex, 'chr':chr} # Dictionary for base stats
 		self.base_armor_class=0

@@ -5,9 +5,11 @@
             It limits levels, defines equiptable slots available, etc.
 
 '''
+from __core_race_configuration import core_race_configuration
 
-class core_creature_configuration():
+class core_creature_configuration(core_race_configuration):
 	def __init__(self):
+		core_race_configuration.__init__(self) # Inherits the core race configurations of the game, the creature configuration is highly involved with races
 		self.__DEFAULT_BASE_LEVEL = 0 # This is technically fixed to go to 1 because of |
 		self.__MIN_BASE_LEVEL = 1     # THIS <------------------------------------------'
 		self.__MAX_BASE_LEVEL = 60    # See the creature.py "set_base_level" function
