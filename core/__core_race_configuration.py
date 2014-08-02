@@ -8,12 +8,53 @@
 
 class core_race_configuration():
 	def __init__(self):
+
+		self.__DEFAULT_RACE_TYPE = 0 # Unique race type
+		self.__DEFAULT_SIZE_CLASS_ID = 5 # Medium size class
+		self.__DEFAULT_SIZE_CLASS_NAME = self.get_size_class_list()[self.__DEFAULT_SIZE_CLASS_ID][0]
+
+		# A list all all the possible race types, 0 = unique which will be used for override/custom classes
 		self.__race_type_list = ["unique","human","elf","dwarf","gnome","half-elf","half-ling","half-orc","aberration","animal","beast",
 		                               "construct","dragon","elemental","fey","giant","goblinoid","magical beast","monstrous humanoid","ooze",
 		                               "orc","outsider","reptilian","shapechanger","undead","vermin"]
 
-		self.__core_race_list = [self.__race_settings(name=self.__race_type_list[1],playable_race=True,size_class='Medium'),
-								 self.__race_settings(name=self.__race_type_list[2],playable_race=True,size_class='Medium')]
+
+		# The size classes by name, occupying space in feet, and natural reach in feet. These are standard, but exceptions can be made
+		# to the the default reach distance and occupying space if necessary
+							#  [name, space_in_feet, natural reach distance in feet]
+		self.__size_classes = [['unique',0,0],
+		                       ['fine', .5, 0],
+		                       ['diminutive', 1, 0],
+		                       ['tiny', 2.5, 0],
+		                       ['small', 5, 5],
+		                       ['medium', 5, 5],
+		                       ['large_tall', 10, 10],
+		                       ['large_long', 10, 5],
+		                       ['huge_tall', 15, 15],
+		                       ['huge_long', 15, 10],
+		                       ['gargantuan_tall', 20, 20],
+		                       ['gargantuan_long', 20, 15],
+		                       ['colossal_tall', 30, 30],
+		                       ['colossal_long', 30, 20]]
+
+
+		self.__core_race_list = [self.__race_settings(name=self.__race_type_list[1],playable_race=True,size_class=self.get_size_class_list()[5]),
+								 self.__race_settings(name=self.__race_type_list[2],playable_race=True,size_class=self.get_size_class_list()[5]),
+								 self.__race_settings(name=self.__race_type_list[3],playable_race=True,size_class=self.get_size_class_list()[5]),
+								 self.__race_settings(name=self.__race_type_list[4],playable_race=True,size_class=self.get_size_class_list()[4]),
+								 self.__race_settings(name=self.__race_type_list[5],playable_race=True,size_class=self.get_size_class_list()[5]),
+								 self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[4]),
+								 self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[5])
+								 ]
+
+	def get_default_race_type(self):
+		return self.__DEFAULT_RACE_TYPE
+
+	def get_default_size_class_id(self):
+		return self.__DEFAULT_SIZE_CLASS_ID
+	
+	def get_default_size_class_name(self):
+		return self.__DEFAULT_SIZE_CLASS_NAME
 
 	def is_valid_race_type(self,race_type=0):
 		if (type(race_type)==int and race_type>0 and race_type<max(self.get_race_type_list())):
@@ -36,7 +77,39 @@ class core_race_configuration():
 	def get_race_type_list(self):
 		return self.__race_type_list
 
-	# Subclass of __core_race_configuration that structures race benefits and penalties based on the race
+	def get_size_class_list(self):
+		return self.__size_classes
+
+	# Returns class size attributes by name, return_class_id=True returns the index on the size_class list, which is the ID
+	def get_size_class_by_name(self, name=None, return_class_id=False):
+		if name == None:
+			name = self.get_default_size_class_name()
+
+		for i in range(0,len(self.get_size_class_list())):
+			if name.lower() in self.get_size_class_list()[i]:
+				if return_class_id:
+					return i
+				else:
+					return self.get_size_class_list()[i]
+				
+		# If name wasn't found, the 'unique' size is returned
+		if return_class_id:
+			return 0
+		else:
+			return self.get_size_class_list()[0]
+		
+	# Returns class size by id	
+	def get_size_class_by_id(self,id=None):
+		if id == None:
+			id = self.get_default_size_class_id()
+
+		if 0 <= id <= len(self.get_size_class_list()):
+			return self.get_size_class_list()[id]
+		else:
+			return self.get_size_class_list()[0]
+
+	# Subclass of __core_race_configuration that structures race benefits and penalties and other things associated with
+	# that particular race
 	class __race_settings():
 		def __init__(self,name,playable_race=False,favored_classes=[],favored_deities=[],size_class='',base_land_speed=None):
 			self.race_name=name
@@ -51,7 +124,7 @@ class core_race_configuration():
 		# Set one, set all, set some, this is just to make the penalty/bonus dictionary simple to fill.
 		# Example - A dwarf class gets a racial bonus of +2 constitution, but a penalty of a -2 charisma
 		# This can be set by calling the function as so set_ability_bonus(con=2,chr=-2)
-		def set_ability_bonuses(self,str=0,inte=0,con=0,wis=0,dex=0,chr=0,fortitude=0,reflex=0,will=0,absolute=False):
+		def set_ability_bonuses(self,str=0,inte=0,con=0,wis=0,dex=0,chr=0,fortitude=0,reflex=0,will=0,absolute=True):
 			if str or absolute:
 				self.set_ability_bonus_single('str',str,absolute)
 			if inte or absolute:
@@ -89,9 +162,11 @@ class core_race_configuration():
 		def get_ability_bonus_dictionary(self):
 			return self.ability_bonuses
 
-		def set_ability_bonus_by_dictionary(self,dict=None):
-			if dict:
-				for i in self.ability_bonuses:
-					self.set_ability_bonus_single(self,i,dict[i],absolute)
-			else:
-				return -1
+
+		''' Not sure this will be used either '''
+		# def set_ability_bonus_by_dictionary(self,dict=None):
+		# 	if dict:
+		# 		for i in self.ability_bonuses:
+		# 			self.set_ability_bonus_single(self,i,dict[i],absolute)
+		# 	else:
+		# 		return -1
