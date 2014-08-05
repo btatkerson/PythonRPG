@@ -8,17 +8,6 @@
 
 class core_race_configuration():
 	def __init__(self):
-
-		self.__DEFAULT_RACE_TYPE = 0 # Unique race type
-		self.__DEFAULT_SIZE_CLASS_ID = 5 # Medium size class
-		self.__DEFAULT_SIZE_CLASS_NAME = self.get_size_class_list()[self.__DEFAULT_SIZE_CLASS_ID][0]
-
-		# A list all all the possible race types, 0 = unique which will be used for override/custom classes
-		self.__race_type_list = ["unique","human","elf","dwarf","gnome","half-elf","half-ling","half-orc","aberration","animal","beast",
-		                               "construct","dragon","elemental","fey","giant","goblinoid","magical beast","monstrous humanoid","ooze",
-		                               "orc","outsider","reptilian","shapechanger","undead","vermin"]
-
-
 		# The size classes by name, occupying space in feet, and natural reach in feet. These are standard, but exceptions can be made
 		# to the the default reach distance and occupying space if necessary
 							#  [name, space_in_feet, natural reach distance in feet]
@@ -37,15 +26,48 @@ class core_race_configuration():
 		                       ['colossal_tall', 30, 30],
 		                       ['colossal_long', 30, 20]]
 
+		self.__DEFAULT_RACE_TYPE = 0 # Unique race type
+		self.__DEFAULT_SIZE_CLASS_ID = 5 # Medium size class
 
+		# A list all all the possible race types, 0 = unique which will be used for override/custom classes
+		self.__race_type_list = ["unique",
+		                         "human",
+		                         "elf",
+		                         "dwarf",
+		                         "gnome",
+		                         "half-elf",
+		                         "half-ling",
+		                         "half-orc",
+		                         "aberration",
+		                         "animal",
+		                         "beast",
+		                         "construct",
+		                         "dragon",
+		                         "elemental",
+		                         "fey",
+		                         "giant",
+		                         "goblinoid",
+		                         "magical beast",
+		                         "monstrous humanoid",
+		                         "ooze",
+		                         "orc",
+		                         "outsider",
+		                         "reptilian",
+		                         "shapechanger",
+		                         "undead",
+		                         "vermin"]
+
+
+		self.__DEFAULT_SIZE_CLASS_NAME = self.get_size_class_list()[self.get_default_size_class_id()][0]
+
+		#
 		self.__core_race_list = [self.__race_settings(name=self.__race_type_list[1],playable_race=True,size_class=self.get_size_class_list()[5]),
-								 self.__race_settings(name=self.__race_type_list[2],playable_race=True,size_class=self.get_size_class_list()[5]),
-								 self.__race_settings(name=self.__race_type_list[3],playable_race=True,size_class=self.get_size_class_list()[5]),
-								 self.__race_settings(name=self.__race_type_list[4],playable_race=True,size_class=self.get_size_class_list()[4]),
-								 self.__race_settings(name=self.__race_type_list[5],playable_race=True,size_class=self.get_size_class_list()[5]),
-								 self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[4]),
-								 self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[5])
-								 ]
+								self.__race_settings(name=self.__race_type_list[2],playable_race=True,size_class=self.get_size_class_list()[5]),
+								self.__race_settings(name=self.__race_type_list[3],playable_race=True,size_class=self.get_size_class_list()[5]),
+								self.__race_settings(name=self.__race_type_list[4],playable_race=True,size_class=self.get_size_class_list()[4]),
+								self.__race_settings(name=self.__race_type_list[5],playable_race=True,size_class=self.get_size_class_list()[5]),
+								self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[4]),
+								self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[5])]
 
 	def get_default_race_type(self):
 		return self.__DEFAULT_RACE_TYPE
@@ -85,6 +107,9 @@ class core_race_configuration():
 		if name == None:
 			name = self.get_default_size_class_name()
 
+		# If there are size classes with a "tall" or "long", default will be "tall" if not specified.
+		# For instance, "large_tall" and "large_long" are both valid for variable "name", but if name were to equal 'large',
+		# 'large_tall' will be returned
 		for i in range(0,len(self.get_size_class_list())):
 			if name.lower() in self.get_size_class_list()[i]:
 				if return_class_id:

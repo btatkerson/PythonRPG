@@ -14,7 +14,7 @@ class creature():
 	def _core(self):
 		return core_creature_configuration()
 
-	def __init__(self, playable_character=False, name='NAME',  race='UNKNOWN', deity=None, law_vs_chaos=_core(None).get_default_law_vs_chaos(),  good_vs_evil=_core(None).get_default_good_vs_evil(),  base_hit_points=_core(None).get_min_base_hit_points(),  base_level=_core(None).get_default_base_level(),  exp=0,  base_ac=0,  base_level_rate=1000, str=_core(None).get_min_base_stat_level(), inte =_core(None).get_min_base_stat_level(),chr =_core(None).get_min_base_stat_level(),dex =_core(None).get_min_base_stat_level(),con =_core(None).get_min_base_stat_level(),wis=_core(None).get_min_base_stat_level()):
+	def __init__(self, playable_character=False, name='NAME',  race='UNKNOWN', deity=None, law_vs_chaos=_core(None).get_default_law_vs_chaos(),  good_vs_evil=_core(None).get_default_good_vs_evil(),  base_hit_points=_core(None).get_min_base_hit_points(),  base_level=_core(None).get_default_base_level(),  exp=0,  base_ac=0,  base_level_rate=1000, str=_core(None).get_min_base_ability_score(), inte =_core(None).get_min_base_ability_score(),chr =_core(None).get_min_base_ability_score(),dex =_core(None).get_min_base_ability_score(),con =_core(None).get_min_base_ability_score(),wis=_core(None).get_min_base_ability_score()):
 		self.playable_character=playable_character
 		self.name=name
 		self.race=race
@@ -32,21 +32,21 @@ class creature():
 		self.base_attack_bonus=0
 		self.base_saving_throw_bonus={"fortitude":0,"will":0,"reflex":0}
 
-		self.base_stats={'str':str, 'int':inte, 'con':con, 'wis':wis, 'dex':dex, 'chr':chr} # Dictionary for base stats
+		self.base_abilities={'str':str, 'int':inte, 'con':con, 'wis':wis, 'dex':dex, 'chr':chr} # Dictionary for base abilities
 		self.base_armor_class=0
 
-		self.skill_set=[] # Holds list of player stats
+		self.skill_set=[] # Holds list of player abilities
 		self.inventory=[] # Holds list of items, an inventory system is in the future.
 
 	# Returns the base_level of the creature
 	def get_base_level(self):
 		return self.base_level
 
-	# Sets all the base stats at once,  or whichever are provided.
-	# absolute == False : Base stat has parameter added to it (str=1 ==> self.base_stats['str'] += 1)
-	# absolute == True : Base stat is set to parameter (str=1 ==> self.base_stats['str']=1)
-	def set_all_base_stat_level(self, str=0, inte=0, con=0, wis=0, dex=0, chr=0, absolute=False):
-		# if statements necessary. If absolute=true
+	# Sets all the base abilities at once,  or whichever are provided.
+	# absolute == False : Base ability has parameter added to it (str=1 ==> self.base_abilities['str'] += 1)
+	# absolute == True : Base ability is set to parameter (str=1 ==> self.base_abilities['str']=1)
+	def set_all_base_ability_score(self, str=0, inte=0, con=0, wis=0, dex=0, chr=0, absolute=False):
+		# if abilityements necessary. If absolute=true
 		if str:
 			self.set_base_str(str, absolute)
 		if inte:
@@ -60,92 +60,92 @@ class creature():
 		if chr:
 			self.set_base_chr(chr, absolute)
 
-		return self.base_stats
-
-	# Allows one base stat to be modified at a time
-	def set_base_stat_level(self, stat='', add=0, absolute=False):
-		if stat.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
+		return self.base_abilities
+	
+	# Allows one base ability to be modified at a time
+	def set_base_ability_score(self, ability='', add=0, absolute=False):
+		if ability.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
 			if absolute:
-				self.base_stats[stat.lower()]=add
+				self.base_abilities[ability.lower()]=add
 			else:
-				self.base_stats[stat.lower()] += add
+				self.base_abilities[ability.lower()] += add
 		else:
 			return -1
 
-		# Makes sure the base stat is valid and keeps the value within range
-		if self.base_stats[stat] > self._core().get_max_base_stat_level():
-			self.base_stats[stat] = self._core().get_max_base_stat_level()
-		elif self.base_stats[stat] < self._core().get_min_base_stat_level():
-			self.base_stats[stat] = self._core().get_min_base_stat_level()
+		# Makes sure the base ability is valid and keeps the value within range
+		if self.base_abilities[ability] > self._core().get_max_base_ability_score():
+			self.base_abilities[ability] = self._core().get_max_base_ability_score()
+		elif self.base_abilities[ability] < self._core().get_min_base_ability_score():
+			self.base_abilities[ability] = self._core().get_min_base_ability_score()
 
-		return self.base_stats[stat]
+		return self.base_abilities[ability]
 
-	# Returns base stat value for any valid stat provided
-	def get_base_stat_level(self, stat=''):
-		if stat.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
-			return self.base_stats[stat.lower()]
+	# Returns base ability value for any valid ability provided
+	def get_base_ability_score(self, ability=''):
+		if ability.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
+			return self.base_abilities[ability.lower()]
 		else:
 			return -1
 
-	# Returns the base value for the Strength stat
+	# Returns the base ability score for the Strength ability
 	def get_base_str(self):
-		return self.get_base_stat_level('str')
+		return self.get_base_ability_score('str')
 
-	# Sets the base value for the Strength stat
-	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
-	# the base stat will be set to the value provided for variable 'add'
+	# Sets the base ability score for the Strength ability
+	# Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True,
+	# the base ability will be set to the value provided for variable 'add'
 	def set_base_str(self, add, absolute=False):
-		return self.set_base_stat_level('str',add,absolute)
+		return self.set_base_ability_score('str',add,absolute)
 
-	# Returns the base value for the Intelligence stat
+	# Returns the base ability score for the Intelligence ability
 	def get_base_int(self):
-		return self.get_base_stat_level('int')
+		return self.get_base_ability_score('int')
 
-	# Sets the base value for the Intelligence stat
-	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
-	# the base stat will be set to the value provided for variable 'add'
+	# Sets the base ability score for the Intelligence ability
+	# Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True,
+	# the base ability will be set to the value provided for variable 'add'
 	def set_base_int(self, add, absolute=False):
-		return self.set_base_stat_level('int',add,absolute)
+		return self.set_base_ability_score('int',add,absolute)
 
-	# Returns the base value for the Constitution stat
+	# Returns the base ability score for the Constitution ability
 	def get_base_con(self):
-		return self.get_base_stat_level('con')
+		return self.get_base_ability_score('con')
 
-	# Sets the base value for the Constitution stat
-	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
-	# the base stat will be set to the value provided for variable 'add'
+	# Sets the base ability score for the Constitution ability
+	# Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True,
+	# the base ability will be set to the value provided for variable 'add'
 	def set_base_con(self, add, absolute=False):
-		return self.set_base_stat_level('con',add,absolute)
+		return self.set_base_ability_score('con',add,absolute)
 
-	# Returns the base value for the Wisdom stat
+	# Returns the base ability score for the Wisdom ability
 	def get_base_wis(self):
-		return self.get_base_stat_level('wis')
+		return self.get_base_ability_score('wis')
 
-	# Sets the base value for the Wisdom stat
-	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
-	# the base stat will be set to the value provided for variable 'add'
+	# Sets the base ability score for the Wisdom ability
+	# Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True,
+	# the base ability will be set to the value provided for variable 'add'
 	def set_base_wis(self, add, absolute=False):
-		return self.set_base_stat_level('wis',add,absolute)
+		return self.set_base_ability_score('wis',add,absolute)
 
-	# Returns the base value for the Dexterity stat
+	# Returns the base ability score for the Dexterity ability
 	def get_base_dex(self):
-		return self.get_base_stat_level('dex')
+		return self.get_base_ability_score('dex')
 
-	# Sets the base value for the Dexterity stat
-	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
-	# the base stat will be set to the value provided for variable 'add'
+	# Sets the base ability score for the Dexterity ability
+	# Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True,
+	# the base ability will be set to the value provided for variable 'add'
 	def set_base_dex(self, add, absolute=False):
-		return self.set_base_stat_level('dex',add,absolute)
+		return self.set_base_ability_score('dex',add,absolute)
 
-	# Returns the base value for the Charisma stat
+	# Returns the base ability score for the Charisma ability
 	def get_base_chr(self):
-		return self.get_base_stat_level('chr')
+		return self.get_base_ability_score('chr')
 
-	# Sets the base value for the Charisma stat
-	# Variable 'add' will add any value placed in the parameter to the base stat. If variable 'absolute' is set to True,
-	# the base stat will be set to the value provided for variable 'add'
+	# Sets the base ability score for the Charisma ability
+	# Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True,
+	# the base ability will be set to the value provided for variable 'add'
 	def set_base_chr(self, add, absolute=False):
-		return self.set_base_stat_level('chr',add,absolute)
+		return self.set_base_ability_score('chr',add,absolute)
 
 	# Sets appropriate experience points based on base_level (By default, identical to DnD's base_level)
 	def set_experience_by_base_level(self, base_level=1):
@@ -216,7 +216,7 @@ class creature():
 
 		if self.good_vs_evil < 33:
 			temp = [0, "evil"]
-		elif self._core().get_max_base_stat_level() >= self.good_vs_evil > 67:
+		elif self._core().get_max_base_ability_score() >= self.good_vs_evil > 67:
 			temp = [2, "good"]
 		else:
 			temp = [1, "neutral"]
@@ -253,9 +253,39 @@ class creature():
 			self.set_experience_by_base_level(self.base_level)
 
 		return self.base_level
+	
+	# Gets the ability modifier for whatever ability score is given to it
+	def get_ability_modifier(self,ability=''):
+		if ability.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
+			return self._core().ability_modifier_from_score(self.get_base_ability_score(ability.lower()))
+		else:
+			return -1
 
+	# Returns the strength modifier
+	def mod_str(self):
+		return self.get_ability_modifier('str')
+
+	# Returns the intelligence modifier
+	def mod_int(self):
+		return self.get_ability_modifier('int')
+
+	# Returns the constitution modifier
+	def mod_con(self):
+		return self.get_ability_modifier('con')
+
+	# Returns the wisdom modifier
+	def mod_wis(self):
+		return self.get_ability_modifier('wis')
+
+	# Returns the dexterity modifier
+	def mod_dex(self):
+		return self.get_ability_modifier('dex')
+
+	# Returns the charisma modifier
+	def mod_chr(self):
+		return self.get_ability_modifier('chr')
 
 ####################################################### TEST CODE ######################################################
 a = creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000)
 
-print a.name,  a.race,  a.base_level,  a.experience,  a.get_alignment(1), a.set_absolute_base_level(90), a.base_level, a.set_base_str(-30)
+print a.name,  a.race,  a.base_level,  a.experience,  a.get_alignment(1), a.set_absolute_base_level(90), a.base_level, a.set_base_str(19), a.get_ability_modifier('str')
