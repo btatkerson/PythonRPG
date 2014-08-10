@@ -9,12 +9,12 @@
 
 from core.__core_item_configuration import core_item_configuration
 class item():
-	def __init__(self,name="Unknown",ref_id="0"):
+	def __init__(self,name="Unknown",res_ref_id=None,item_class=None,item_weight=None):
 		self.item_name = name
 
-		self.item_ref_id = ref_id
-
-		# self.item_class
+		self.res_ref_id = res_ref_id
+		self.item_class = item_class or self._core().get_default_item_class()
+		self.item_weight = item_weight or self._core().get_default_item_weight()
 		# self.item_subclass
 		# self.item_base_value
 		# self.item_base_weight

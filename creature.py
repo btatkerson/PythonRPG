@@ -46,7 +46,7 @@ class creature():
 	# absolute == False : Base ability has parameter added to it (str=1 ==> self.base_abilities['str'] += 1)
 	# absolute == True : Base ability is set to parameter (str=1 ==> self.base_abilities['str']=1)
 	def set_all_base_ability_score(self, str=0, inte=0, con=0, wis=0, dex=0, chr=0, absolute=False):
-		# if abilityements necessary. If absolute=true
+		# if statements necessary. If absolute=true
 		if str:
 			self.set_base_str(str, absolute)
 		if inte:

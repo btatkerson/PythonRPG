@@ -10,21 +10,21 @@ class core_race_configuration():
 	def __init__(self):
 		# The size classes by name, occupying space in feet, and natural reach in feet. These are standard, but exceptions can be made
 		# to the the default reach distance and occupying space if necessary
-							#  [name, space_in_feet, natural reach distance in feet]
-		self.__size_classes = [['unique',0,0],
-		                       ['fine', .5, 0],
-		                       ['diminutive', 1, 0],
-		                       ['tiny', 2.5, 0],
-		                       ['small', 5, 5],
-		                       ['medium', 5, 5],
-		                       ['large_tall', 10, 10],
-		                       ['large_long', 10, 5],
-		                       ['huge_tall', 15, 15],
-		                       ['huge_long', 15, 10],
-		                       ['gargantuan_tall', 20, 20],
-		                       ['gargantuan_long', 20, 15],
-		                       ['colossal_tall', 30, 30],
-		                       ['colossal_long', 30, 20]]
+							#  [name, space_in_feet, natural reach distance in feet, size_modifier]
+		self.__size_classes = [['unique', 0, 0, 0],
+		                       ['fine', .5, 0, 8],
+		                       ['diminutive', 1, 0, 4],
+		                       ['tiny', 2.5, 0, 2],
+		                       ['small', 5, 5, 1],
+		                       ['medium', 5, 5, 0],
+		                       ['large_tall', 10, 10, -1],
+		                       ['large_long', 10, 5, -1],
+		                       ['huge_tall', 15, 15, -2],
+		                       ['huge_long', 15, 10, -2],
+		                       ['gargantuan_tall', 20, 20, -4],
+		                       ['gargantuan_long', 20, 15, -4],
+		                       ['colossal_tall', 30, 30, -8],
+		                       ['colossal_long', 30, 20, -8]]
 
 		self.__DEFAULT_RACE_TYPE = 0 # Unique race type
 		self.__DEFAULT_SIZE_CLASS_ID = 5 # Medium size class
@@ -107,6 +107,9 @@ class core_race_configuration():
 		if name == None:
 			name = self.get_default_size_class_name()
 
+		if name in ['large','huge','gargantuan','colossal']:
+			name += '_tall'
+
 		# If there are size classes with a "tall" or "long", default will be "tall" if not specified.
 		# For instance, "large_tall" and "large_long" are both valid for variable "name", but if name were to equal 'large',
 		# 'large_tall' will be returned
@@ -125,13 +128,18 @@ class core_race_configuration():
 		
 	# Returns class size by id	
 	def get_size_class_by_id(self,id=None):
-		if id == None:
+		if id < 0 or id >= len(self.get_size_class_list()) or id == None:
 			id = self.get_default_size_class_id()
 
-		if 0 <= id <= len(self.get_size_class_list()):
-			return self.get_size_class_list()[id]
-		else:
-			return self.get_size_class_list()[0]
+		return self.get_size_class_list()[id]
+
+	# Returns size modifier by name.
+	def get_size_modifier_by_name(self,name=None):
+		return self.get_size_class_by_name(name)[3]
+
+	# Returns the size modifier by the id
+	def get_size_modifier_by_id(self,id=None):
+		return self.get_size_class_by_id(id)[3]
 
 	# Subclass of __core_race_configuration that structures race benefits and penalties and other things associated with
 	# that particular race
@@ -195,3 +203,5 @@ class core_race_configuration():
 		# 			self.set_ability_bonus_single(self,i,dict[i],absolute)
 		# 	else:
 		# 		return -1
+
+a = core_race_configuration()
