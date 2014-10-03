@@ -79,7 +79,7 @@ class core_race_configuration():
 		return self.__DEFAULT_SIZE_CLASS_NAME
 
 	def is_valid_race_type(self,race_type=0):
-		if (type(race_type)==int and race_type>0 and race_type<max(self.get_race_type_list())):
+		if (type(race_type)==int and 0 < race_type < max(self.get_race_type_list())):
 			return bool(self.get_race_type_name_by_value(race_type))
 		elif type(race_type)==str:
 			return bool(self.get_race_type_value_by_name(race_type))

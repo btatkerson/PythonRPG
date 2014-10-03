@@ -12,12 +12,12 @@ class dice():
 		None
 
 	# The main dice-roller, by default, it acts as a single throw of a d20. If you wanted to throw two d6 dice,
-	# you could type d(6,2) which is the sum of two, six-side die rolls.
+	# you could type d(6,2) which returns a list consisting of 2 elements that are random values between 1 and 6.
 
 	def d(self,sides=20, occurances=1):
-		temp = 0
+		temp = []
 		for i in range(0,occurances):
-			temp += random.randint(1,sides)
+			temp.append(random.randint(1,sides))
 		return temp
 
 	def d100(self, occurances=1):
@@ -41,7 +41,6 @@ class dice():
 	def d4(self, occurances=1):
 		return self.d(4, occurances)
 
-a = dice()
-
-for i in range(0,100):
-	print a.d(30,20)
+# a = dice()
+#
+# print a.d(20,10)

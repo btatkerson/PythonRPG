@@ -8,13 +8,23 @@
 '''
 
 from core.__core_creature_configuration import core_creature_configuration
+from core.verbose import verbose
+from dice import dice
 
-class creature():
+class creature(verbose,dice):
 	# A short method in most classes that calls the core settings for that particular class.
 	def _core(self):
 		return core_creature_configuration()
 
-	def __init__(self, playable_character=False, name='NAME',  race='UNKNOWN', deity=None, law_vs_chaos=_core(None).get_default_law_vs_chaos(),  good_vs_evil=_core(None).get_default_good_vs_evil(),  base_hit_points=_core(None).get_min_base_hit_points(),  base_level=_core(None).get_default_base_level(),  exp=0,  base_ac=0,  base_level_rate=1000, str=_core(None).get_min_base_ability_score(), inte =_core(None).get_min_base_ability_score(),chr =_core(None).get_min_base_ability_score(),dex =_core(None).get_min_base_ability_score(),con =_core(None).get_min_base_ability_score(),wis=_core(None).get_min_base_ability_score()):
+	def __init__(self, playable_character=False, name='NAME',  race='UNKNOWN', deity=None,
+	             law_vs_chaos=_core(None).get_default_law_vs_chaos(),good_vs_evil=_core(None).get_default_good_vs_evil(),
+	             base_hit_points=_core(None).get_min_base_hit_points(),  base_level=_core(None).get_default_base_level(),
+	             exp=0,  base_ac=0,  base_level_rate=1000, str=_core(None).get_min_base_ability_score(),
+	             inte =_core(None).get_min_base_ability_score(),chr =_core(None).get_min_base_ability_score(),
+	             dex =_core(None).get_min_base_ability_score(),con =_core(None).get_min_base_ability_score(),
+	             wis=_core(None).get_min_base_ability_score(),verbose=False):
+		verbose.__init__(self)
+		dice.__init__(self)
 		self.playable_character=playable_character
 		self.name=name
 		self.race=race
@@ -29,8 +39,9 @@ class creature():
 		self.base_level=base_level or self.set_base_level_by_experience(exp)    # If base_level is zero, sets base_level by experience
 		self.experience=exp or self.set_experience_by_base_level(base_level)    # If experience is zero, sets experience based on base_level. Defaults to 0 experience
 																				# base_level 1 when no parameters entered.
-		self.base_attack_bonus=0
-		self.base_saving_throw_bonus={"fortitude":0,"will":0,"reflex":0}
+
+
+		self.base_saving_throw_bonus={i:0 for i in self._core().get_saving_throw_list()}
 
 		self.base_abilities={'str':str, 'int':inte, 'con':con, 'wis':wis, 'dex':dex, 'chr':chr} # Dictionary for base abilities
 		self.base_armor_class=0
@@ -41,6 +52,18 @@ class creature():
 	# Returns the base_level of the creature
 	def get_base_level(self):
 		return self.base_level
+
+	def base_attack_bonus(self):
+		return self._core().get_base_attack_bonus(2,self.base_level)
+
+
+	def attack_roll(self):
+		for i in self.base_attack_bonus():
+			roll=sum(self.d20())
+			if roll == 20:
+				self.verbo("Critical Hit!",True)
+				roll=sum(self.d20())
+			print roll+self.mod_str()
 
 	# Sets all the base abilities at once,  or whichever are provided.
 	# absolute == False : Base ability has parameter added to it (str=1 ==> self.base_abilities['str'] += 1)
@@ -64,14 +87,14 @@ class creature():
 	
 	# Allows one base ability to be modified at a time
 	def set_base_ability_score(self, ability='', add=0, absolute=False):
-		if ability.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
+		if self._core().is_ability(ability):
+			ability = self._core().validate_ability(ability)
 			if absolute:
 				self.base_abilities[ability.lower()]=add
 			else:
 				self.base_abilities[ability.lower()] += add
 		else:
 			return -1
-
 		# Makes sure the base ability is valid and keeps the value within range
 		if self.base_abilities[ability] > self._core().get_max_base_ability_score():
 			self.base_abilities[ability] = self._core().get_max_base_ability_score()
@@ -82,8 +105,9 @@ class creature():
 
 	# Returns base ability value for any valid ability provided
 	def get_base_ability_score(self, ability=''):
-		if ability.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
-			return self.base_abilities[ability.lower()]
+		if self._core().is_ability(ability):
+			ability = self._core().validate_ability(ability)
+			return self.base_abilities[ability]
 		else:
 			return -1
 
@@ -210,6 +234,22 @@ class creature():
 		else:
 			return temp
 
+	def isChaotic(self):
+		if self.get_law_vs_chaos() == 0:
+			return True
+		return False
+
+	# Returns true if creature is neutral in respect to "Law Vs Chaos" (as opposed to "Good Vs Evil")
+	def isNeutralLvC(self):
+		if self.get_law_vs_chaos() == 1:
+			return True
+		return False
+
+	def isLawful(self):
+		if self.get_law_vs_chaos() == 2:
+			return True
+		return False
+
 	# Returns "evil", "good", or "neutral" based on good_vs_evil value
 	def get_good_vs_evil(self, value_word_combo=0): # 0 returns value,  1 returns word,  2 returns both,  -1 returns raw variable
 		temp=[0, 0]
@@ -228,6 +268,23 @@ class creature():
 		else:
 			return temp
 
+	# Return quick checks for creature alignments
+	def isGood(self):
+		if self.get_good_vs_evil() == 2:
+			return True
+		return False
+
+	# Returns true if creature is neutral in respect to "Good Vs Evil" (as opposed to "Law Vs Chaos")
+	def isNeutralGvE(self):
+		if self.get_good_vs_evil() == 1:
+			return True
+		return False
+
+	def isEvil(self):
+		if self.get_good_vs_evil() == 0:
+			return True
+		return False
+
 	# Get the alignment in different forms
 	def get_alignment(self, value_word_combo=0): # 0 returns list of values (Lawful Evil=[2, 0]),  1 returns words (Lawful Evil=["Lawful",  "Evil"],  2 returns a list holding two lists of values and words,  -1 returns the exact alignment variables
 		temp=[self.get_law_vs_chaos(2), self.get_good_vs_evil(2)]
@@ -242,12 +299,63 @@ class creature():
 		else:
 			return temp
 
-	# Sets the creature level exactly as long as it's
-	def set_absolute_base_level(self, base_level=_core(None).get_default_base_level(),set_experience=False):
+	def isChaoticEvil(self):
+		if self.isChaotic() and self.isEvil():
+			return True
+		return False
+
+	def isChaoticNeutral(self):
+		if self.isChaotic() and self.isNeutralGvE():
+			return True
+		return False
+
+	def isChaoticGood(self):
+		if self.isChaotic() and self.isGood():
+			return True
+		return False
+
+	def isNeutralEvil(self):
+		if self.isNeutralLvC() and self.isEvil():
+			return True
+		return False
+
+	def isTrueNeutral(self):
+		if self.isNeutralLvC() and self.isNeutralGvE():
+			return True
+		return False
+
+	def isNeutralGood(self):
+		if self.isNeutralLvC() and self.isGood():
+			return True
+		return False
+
+	def isLawfulEvil(self):
+		if self.isLawful() and self.isEvil():
+			return True
+		return False
+
+	def isLawfulNeutral(self):
+		if self.isLawful() and self.isNeutralGvE():
+			return True
+		return False
+
+	def isLawfulGood(self):
+		if self.isLawful() and self.isGood():
+			return True
+		return False
+
+	# Sets the creature level exactly and gives the
+	def set_absolute_base_level(self, base_level=None,set_experience=True):
+		if base_level == None:
+			return _core().get_default_base_level()
 		if self._core().get_min_base_level() <= base_level <= self._core().get_max_base_level():
 			self.base_level = base_level
+		elif base_level < self._core().get_min_base_level():
+			self.base_level = self._core().get_min_base_level()
+		elif base_level > self._core().get_max_base_level():
+			self.base_level = self._core().get_max_base_level()
 		else:
-			self.base_level = 1
+			self.base_level = self._core().get_default_base_level()
 
 		if set_experience:
 			self.set_experience_by_base_level(self.base_level)
@@ -256,7 +364,7 @@ class creature():
 	
 	# Gets the ability modifier for whatever ability score is given to it
 	def get_ability_modifier(self,ability=''):
-		if ability.lower() in ['str', 'int', 'con', 'wis', 'dex', 'chr']:
+		if self._core().is_ability(ability):
 			return self._core().ability_modifier_from_score(self.get_base_ability_score(ability.lower()))
 		else:
 			return -1
@@ -285,7 +393,11 @@ class creature():
 	def mod_chr(self):
 		return self.get_ability_modifier('chr')
 
-####################################################### TEST CODE ######################################################
-a = creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000)
 
-print a.name,  a.race,  a.base_level,  a.experience,  a.get_alignment(1), a.set_absolute_base_level(90), a.base_level, a.set_base_str(19), a.get_ability_modifier('str')
+####################################################### TEST CODE ######################################################
+a = creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000,verbose=True)
+
+print a.name,  a.race,  a.base_level,  a.experience,  a.get_alignment(1), a.set_absolute_base_level(956), \
+	a.set_base_str(19), a.get_ability_modifier('str')
+print a.base_saving_throw_bonus
+print 'Attack!: ', a.attack_roll()

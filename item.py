@@ -9,12 +9,17 @@
 
 from core.__core_item_configuration import core_item_configuration
 class item():
-	def __init__(self,name="Unknown",res_ref_id=None,item_class=None,item_weight=None):
+	def __init__(self,name="Unknown",res_ref_id=None,item_class=None,item_weight=None,stack_size=None,droppable=None,stolen=None,plot=None):
 		self.item_name = name
 
 		self.res_ref_id = res_ref_id
 		self.item_class = item_class or self._core().get_default_item_class()
 		self.item_weight = item_weight or self._core().get_default_item_weight()
+		self.stack_size = stack_size or self._core().get_default_stack_size()
+		self.droppable = droppable or self._core().get_default_droppable()
+		self.stolen = stolen or self._core().get_default_stolen()
+		self.plot = plot or self._core().get_default_plot()
+
 		# self.item_subclass
 		# self.item_base_value
 		# self.item_base_weight
@@ -22,6 +27,7 @@ class item():
 		# self._event_item_on_pickup
 		# self._event_item_on_drop
 		# self._event_item_on_heartbeat
+
 
 	# A short method in most classes that calls the core settings for that particular class
 	def _core(self):
