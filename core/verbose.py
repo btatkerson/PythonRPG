@@ -34,7 +34,7 @@ class verbose():
 	# Prints input 'statement' if input 'override' is True OR attribute 'self.activated' is True.
 	def verbo(self,statement=None,override=False):
 		if override or self.verbo_isActivated():
-			print statement
+			print(statement)
 
 
 

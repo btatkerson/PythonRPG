@@ -12,10 +12,11 @@ from dice import dice
 
 class skill_set():
 	class skill():
-		def __init__(self,skill_name=None,base_skill_points=None,trained_skill=None,armor_penalty=None,key_ability=None,
+		def __init__(self,skill_id=None,base_skill_points=None,trained_skill=None,armor_penalty=None,key_ability=None,
 		             cross_class=None, class_skills=None, synergy_skills=None):
-			self.skill_name = core_skill_set_configuration().get_skill_name_long(skill_name) or \
-			                  core_skill_set_configuration().get_skill_name_long(core_skill_set_configuration().get_default_skill_id())
+			self.skill_id = core_skill_set_configuration().validate_skill(skill_id) or \
+			                core_skill_set_configuration().get_default_skill_id()
+
 
 			self.base_skill_points = core_skill_set_configuration().get_default_skill_points()
 			self.set_base_skill_points(base_skill_points)
@@ -49,8 +50,11 @@ class skill_set():
 				return check
 			return core_setting
 
+		def get_skill_id(self):
+			return self.skill_id
+
 		def get_skill_name(self):
-			return self.skill_name
+			return core_skill_set_configuration().get_skill_name_long(self.skill_id)
 
 		def set_base_skill_points(self,add=None,absolute=False):
 			if add == None:
@@ -135,17 +139,26 @@ class skill_set():
 		return core_skill_set_configuration()
 
 	def __init__(self):
-		self.skill_list = {i:self.skill(skill_name=i,base_skill_points=dice().d()[0]) for i in self._core().get_skill_set_list_short()}
+		# self.skill_list = {i:self.skill(skill_name=i,base_skill_points=dice().d()[0]) for i in self._core().get_skill_set_list_short()}
+
+		# This is really should not be altered with ANYTHING other than a proper custom script.
+		# I will implement the custom script API later.
+		self.skill_list = self.__generate_skill_list()
 
 
-		# This is test code, do not be alarmed.
-		self.get_skill('dtr').set_synergy_skills(['str','lor'])
-		self.get_skill('str').set_synergy_skills('dtr')
-		print self.get_skill('dtr').get_base_skill_points()
-		print self.get_skill('str').get_base_skill_points()
-		print self.get_skill('lor').get_base_skill_points()
-		print self.get_points('dtr'),self.get_points('str')
 
+	# This takes all the initial skill settings that are defined in the core_skill_set_configuration.py class and
+	# interprets them (it's a list of dictionaries)
+	def __generate_skill_list(self):
+		skill_defaults = core_skill_set_configuration().get_default_skill_settings_list()
+
+		temp={self._core().validate_skill(i):self.skill(
+							skill_id=skill_defaults[i]['keyID'], trained_skill=skill_defaults[i]['trained_skill'],
+		                    armor_penalty=skill_defaults[i]['armor_penalty'],key_ability=skill_defaults[i]['key_ability'],
+		                    cross_class=skill_defaults[i]['cross_class'],class_skills=skill_defaults[i]['class_skills'],
+		                    synergy_skills=skill_defaults[i]['synergy_skills'])
+		      for i in range(0,len(self._core().get_skill_set_list_short()))}
+		return temp
 
 	def get_skill_list(self):
 		return self.skill_list
@@ -181,4 +194,4 @@ class skill_set():
 		else:
 			return False
 
-skill_set().get_skill('set_trap').get_base_skill_points()
+#print skill_set().get_skill(16).get_skill_id()

@@ -5,7 +5,7 @@
             It limits levels, defines EQUIPMENT slots available, etc.
 
 '''
-from __core_race_configuration import core_race_configuration
+from core.__core_race_configuration import core_race_configuration
 
 class core_creature_configuration(core_race_configuration):
 
@@ -52,11 +52,12 @@ class core_creature_configuration(core_race_configuration):
 	#10-11:  0,
 	#16-17: +3, so on and so forth
 	# This is a critical calculation to the core gameplay.
+
 	def ability_modifier_from_score(self,score):
 		if score < self.get_min_ability_score():
 			score = self.get_min_ability_score()
 
-		return int(score-10)/2
+		return int((score-10)/2)
 
 	def get_default_base_level(self):
 		return self.__DEFAULT_BASE_LEVEL
@@ -108,7 +109,10 @@ class core_creature_configuration(core_race_configuration):
 	def is_ability(self,ability=None):
 		if ability == None:
 			return False
-		if 0<= ability < len(self.__ABILITY_LIST) or ability.lower() in self.__ABILITY_LIST_SHORT or ability.lower() \
+		if type(ability) == int:
+			if 0<= ability < len(self.__ABILITY_LIST):
+				return True
+		elif ability.lower() in self.__ABILITY_LIST_SHORT or ability.lower() \
 				in self.__ABILITY_LIST:
 			return True
 		return False
@@ -118,8 +122,10 @@ class core_creature_configuration(core_race_configuration):
 	# everything is called properly. Defaults to strength
 	def validate_ability(self,ability=None):
 		if self.is_ability(ability):
-			if 0 <= ability < len(self.__ABILITY_LIST):
-				return self.get_ability_list_short()[ability]
+
+			if type(ability) == int:
+				if 0 <= ability < len(self.__ABILITY_LIST):
+					return self.get_ability_list_short()[ability]
 			elif ability.lower() in self.__ABILITY_LIST_SHORT:
 				return ability.lower()
 			else:
@@ -283,8 +289,11 @@ class core_creature_configuration(core_race_configuration):
 
 		return [0]
 
+	def get_default_skill_set(self):
+		return self.__DEFAULT_SKILL_SET
 
-# a = core_creature_configuration()
-#
-# for i in range(1,61):
-# 	print i,a.get_base_attack_bonus(3,i)#,a.get_base_attack_bonus(1,i),a.get_base_attack_bonus(0,i)
+
+a = core_creature_configuration()
+
+for i in range(1,61):
+	print( i,a.get_base_attack_bonus(0,i))#,a.get_base_attack_bonus(1,i),a.get_base_attack_bonus(0,i)

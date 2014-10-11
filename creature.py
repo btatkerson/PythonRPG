@@ -9,6 +9,7 @@
 
 from core.__core_creature_configuration import core_creature_configuration
 from core.verbose import verbose
+from skill_set import skill_set
 from dice import dice
 
 class creature(verbose,dice):
@@ -39,14 +40,13 @@ class creature(verbose,dice):
 		self.base_level=base_level or self.set_base_level_by_experience(exp)    # If base_level is zero, sets base_level by experience
 		self.experience=exp or self.set_experience_by_base_level(base_level)    # If experience is zero, sets experience based on base_level. Defaults to 0 experience
 																				# base_level 1 when no parameters entered.
-
+		self.skill_set = skill_set()
 
 		self.base_saving_throw_bonus={i:0 for i in self._core().get_saving_throw_list()}
 
 		self.base_abilities={'str':str, 'int':inte, 'con':con, 'wis':wis, 'dex':dex, 'chr':chr} # Dictionary for base abilities
 		self.base_armor_class=0
 
-		self.skill_set=[] # Holds list of player abilities
 		self.inventory=[] # Holds list of items, an inventory system is in the future.
 
 	# Returns the base_level of the creature
@@ -63,7 +63,13 @@ class creature(verbose,dice):
 			if roll == 20:
 				self.verbo("Critical Hit!",True)
 				roll=sum(self.d20())
-			print roll+self.mod_str()
+			print(roll+self.mod_str())
+
+	def get_skill_set(self):
+		return self.skill_set
+
+	def get_skill(self,id=None):
+		return self.skill_set.get_skill(id)
 
 	# Sets all the base abilities at once,  or whichever are provided.
 	# absolute == False : Base ability has parameter added to it (str=1 ==> self.base_abilities['str'] += 1)
@@ -173,13 +179,13 @@ class creature(verbose,dice):
 
 	# Sets appropriate experience points based on base_level (By default, identical to DnD's base_level)
 	def set_experience_by_base_level(self, base_level=1):
-		return sum(range(1, base_level)*self.base_level_rate)
+		return sum([i*self.base_level_rate for i in range(1, base_level)])
 
 	# Returns base_level based on experience, if the experience is greater than what's needed to reach the maximum base_level,
 	# then the maximum base_level allowed is returned
 	def set_base_level_by_experience(self, exp=0):		# Sets base_level based on experience points
 		for i in range(1, self._core().get_max_base_level()+1):
-			if sum(range(1, i)*self.base_level_rate) > exp:
+			if sum([i*self.base_level_rate for i in range(1, i)]) > exp:
 				return i - 1
 		return self._core().get_max_base_level()
 	
@@ -397,7 +403,14 @@ class creature(verbose,dice):
 ####################################################### TEST CODE ######################################################
 a = creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000,verbose=True)
 
-print a.name,  a.race,  a.base_level,  a.experience,  a.get_alignment(1), a.set_absolute_base_level(956), \
-	a.set_base_str(19), a.get_ability_modifier('str')
-print a.base_saving_throw_bonus
-print 'Attack!: ', a.attack_roll()
+print(a.name,  a.race,  a.base_level,  a.experience,  a.get_alignment(1), a.set_absolute_base_level(956), \
+	a.set_base_str(19), a.get_ability_modifier('str'))
+# print a.base_saving_throw_bonus
+# print 'Attack!: ', a.attack_roll()
+# print a.get_skill_set().get_skill(10).get_class_skills()
+# a.get_skill(10).set_base_skill_points(5)
+# print a.get_skill(10).get_base_skill_points()
+# a.get_skill(10).set_base_skill_points(7)
+# print a.get_skill(10).get_base_skill_points()
+# a.get_skill(10).set_base_skill_points(21,True)
+# print a.get_skill(10).get_base_skill_points()

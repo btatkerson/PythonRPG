@@ -9,32 +9,32 @@
 
 class core_creature_class_configuration():
 	def __init__(self):
-		self.class_name_list_long=['unique',
-		                      'barbarian',
-		                      'bard',
-		                      'cleric',
-		                      'druid',
-		                      'fighter',
-		                      'monk',
-		                      'paladin',
-		                      'ranger',
-		                      'rogue',
-		                      'sorcerer',
-		                      'wizard']
+		self.class_name_list_long= ['unique',
+									'barbarian',
+									'bard',
+									'cleric',
+									'druid',
+									'fighter',
+									'monk',
+									'paladin',
+									'ranger',
+									'rogue',
+									'sorcerer',
+									'wizard']
 
 		# Used for short hand convenience purposes
 		self.class_name_list_short=['uni',
-		                       'bbn',
-		                       'brd',
-		                       'clr',
-		                       'drd',
-		                       'ftr',
-		                       'mnk',
-		                       'pld',
-		                       'rgr',
-		                       'rog',
-		                       'sor',
-		                       'wiz']
+									'bbn',
+									'brd',
+									'clr',
+									'drd',
+									'ftr',
+									'mnk',
+									'pld',
+									'rgr',
+									'rog',
+									'sor',
+									'wiz']
 
 		self.__DEFAULT_CLASS_ID = 5 # Fighter
 
@@ -57,7 +57,10 @@ class core_creature_class_configuration():
 		return self.__DEFAULT_CLASS_ID
 
 	def is_class(self,id=None):
-		if 0 <= id < len(self.class_name_list_short) or id.lower() in self.class_name_list_long or id.lower() in \
+		if type(id)==int:
+			if 0 <= id < len(self.class_name_list_short):
+				return True
+		elif id.lower() in self.class_name_list_long or id.lower() in \
 				self.class_name_list_short:
 			return True
 		return False
@@ -65,8 +68,9 @@ class core_creature_class_configuration():
 	# Returns the shorthand form of the class names for standard use across development. Defaults to fighter
 	def validate_class(self,id=None):
 		if self.is_class(id):
-			if 0 <= id < len(self.class_name_list_short):
-				return self.class_name_list_short[id]
+			if type(id)==int:
+				if 0 <= id < len(self.class_name_list_short):
+					return self.class_name_list_short[id]
 			elif id.lower() in self.class_name_list_short:
 				return id.lower()
 			else:
