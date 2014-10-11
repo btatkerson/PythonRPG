@@ -201,9 +201,9 @@ class core_creature_configuration(core_race_configuration):
 			# base level
 
 			if id == 0: # The base save bonus for a 'poor' level bonuses
-				return int(creature_level/3 + epic_bonus)
+				return int(int(creature_level/3) + epic_bonus)
 			else: # The base save bonus for a 'good' level bonus
-				return int(2 + creature_level/2 + epic_bonus)
+				return int(2 + int(creature_level/2) + epic_bonus)
 
 		return 0
 
@@ -247,7 +247,7 @@ class core_creature_configuration(core_race_configuration):
 			#  20.
 
 			if id == 0: # The base attack bonus for a 'poor' level bonuses
-				temp_stack = [i for i in range(1,creature_level/2+1)][::-5] or [0]
+				temp_stack = [i for i in range(1,int(creature_level/2)+1)][::-5] or [0]
 
 
 			elif id == 1: # base attack bonus for 'average' level
@@ -255,11 +255,12 @@ class core_creature_configuration(core_race_configuration):
 				# [i for i in range(0,int(creature_level>1))])))[::-1]
 				# ^ This is too insane be more efficient than:
 				for i in range(0,int((creature_level-1)/7.0+1)):
-					temp_stack.append(creature_level-(creature_level-1)/4-1-i*5)
+					temp_stack.append(creature_level-int((creature_level-1)/4)-1-i*5)
 
 
 			elif id == 3: # base attack bonus for the special case of an unarmed monk
-				temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+(range(0,16)))[0:creature_level]))[::-3])-set(
+				temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+([i for i in range(0,16)]))[0:creature_level]))[
+				::-3])-set(
 					[i for i in range(0,int(creature_level>1))])))[::-1]
 				# ^ This is insane, but it works.
 
@@ -293,7 +294,7 @@ class core_creature_configuration(core_race_configuration):
 		return self.__DEFAULT_SKILL_SET
 
 
-a = core_creature_configuration()
-
-for i in range(1,61):
-	print( i,a.get_base_attack_bonus(0,i))#,a.get_base_attack_bonus(1,i),a.get_base_attack_bonus(0,i)
+# a = core_creature_configuration()
+#
+# for i in range(1,61):
+# 	print( i,a.get_base_save_bonus(1,i))#,a.get_base_attack_bonus(1,i),a.get_base_attack_bonus(0,i)

@@ -87,4 +87,4 @@ class core_item_configuration():
 
 a = core_item_configuration()
 
-print a.get_item_class_name_by_id(3)
+print(a.get_item_class_name_by_id(3))
