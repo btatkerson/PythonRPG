@@ -64,9 +64,6 @@ import sys
 #
 # a().pri()
 
-#
-# I don't like this
-#
 def carry(num):
 	if 0 <= num <=4:
 		return 0
