@@ -68,6 +68,8 @@ def carry(num):
 	if 0 <= num <=4:
 		return 0
 	return 1
+# 
+# This will be a test insert 1
 #
 # for i in range(1,51):
 # 	num = str(2**i)
