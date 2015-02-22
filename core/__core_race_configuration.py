@@ -67,7 +67,7 @@ class core_race_configuration():
 								self.__race_settings(name=self.__race_type_list[4],playable_race=True,size_class=self.get_size_class_list()[4]),
 								self.__race_settings(name=self.__race_type_list[5],playable_race=True,size_class=self.get_size_class_list()[5]),
 								self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[4]),
-								self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[5])]
+								self.__race_settings(name=self.__race_type_list[7],playable_race=True,size_class=self.get_size_class_list()[5])]
 
 	def get_default_race_type(self):
 		return self.__DEFAULT_RACE_TYPE
@@ -150,8 +150,7 @@ class core_race_configuration():
 			self.favored_classes=favored_classes
 			self.favored_deities=favored_deities
 			self.size_class=size_class
-			# self.base_land_speed=base_land_speed # Will not be used until future development, races all have a base land speed which determines how much
-												   # far a creature can move in one round. This is not the only thing that will affect land speed.
+			# self.base_land_speed=base_land_speed # Will not be used until future development, races all have a base land speed which determines how much far a creature can move in one round. This is not the only thing that will affect land speed.
 			self.ability_bonuses = {'str':0, 'int':0, 'con':0, 'wis':0, 'dex':0, 'chr':0,'fortitude':0,'reflex':0,'will':0}
 
 		# Set one, set all, set some, this is just to make the penalty/bonus dictionary simple to fill.

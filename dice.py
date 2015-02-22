@@ -24,7 +24,7 @@ class dice():
 		'''
 			Takes input in the form of a string such as "2d6" or "3 D 5"
 			and parses it to return a list of die rolls
-                        
+
 			Returns a d20 roll instead
 		'''
 		if die_str == None:
