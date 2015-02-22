@@ -64,14 +64,24 @@ class creature(verbose, dice):
 		'''
 		Returns the experience needed in order to level up
 		'''
-		temp = sum([i * self.base_level_rate for i in range(1, self.base_level+2)]) - self.experience
+		temp = sum([i * self.base_level_rate for i in range(1, self.base_level+1)]) - self.experience
 		if temp > 0:
 			return temp
 		return 0
 
+	def get_experience_toward_next_level(self):
+		'''
+		Returns the current experience earned toward the next level
+		
+		This is used for tracking progress.
+		'''
+		return self.experience - sum([i*self.base_level_rate for i in range(1,self.base_level)])
 
 	def base_attack_bonus(self): 
-		return self._core().get_base_attack_bonus(2, self.base_level)
+		'''
+		Returns the attack bonuses based on level and attack-ability
+		'''
+		return self._core().get_base_attack_bonus(2, self.base_level) # <---------------------------------------- Not always two, fix it!
 
 
 	def attack_roll(self): 
@@ -423,7 +433,7 @@ class creature(verbose, dice):
 ####################################################### TEST CODE ######################################################
 a= creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000, verbose=True)
 
-print(a.name, a.race, a.base_level, a.experience, a.get_experience_needed_to_level(),a.get_alignment(1), \
+print(a.name, a.race, a.base_level, a.experience, a.get_experience_needed_to_level(),a.get_experience_toward_next_level(),a.get_alignment(1), \
 	a.set_base_str(24), a.get_ability_modifier('str'))
 print(a.base_saving_throw_bonus)
 print('Attack!: ', a.attack_roll())
