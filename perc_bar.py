@@ -1,5 +1,6 @@
 '''
 Name: perc_bar.py
+Author: Benjamin A.
 
 Creates a text bar of custom width and displays percentage of first number relative to the second.
 '''

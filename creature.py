@@ -431,17 +431,17 @@ class creature(verbose, dice):
 
 
 ####################################################### TEST CODE ######################################################
-a= creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000, verbose=True)
-
-print(a.name, a.race, a.base_level, a.experience, a.get_experience_needed_to_level(),a.get_experience_toward_next_level(),a.get_alignment(1), \
-	a.set_base_str(24), a.get_ability_modifier('str'))
-print(a.base_saving_throw_bonus)
-print('Attack!: ', a.attack_roll())
-print(a.get_skill_set().get_skill(10).get_class_skills())
-a.get_skill(10).set_base_skill_points(5)
-print(a.get_skill(10).get_base_skill_points())
-a.get_skill(10).set_base_skill_points(7)
-print(a.get_skill(10).get_base_skill_points())
-a.get_skill(10).set_base_skill_points(21, True)
-print(a.get_skill(10).get_base_skill_points())
-print(a.get_skill(11).get_skill_name())
+# a= creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000, verbose=True)
+# 
+# print(a.name, a.race, a.base_level, a.experience, a.get_experience_needed_to_level(),a.get_experience_toward_next_level(),a.get_alignment(1), \
+# 	a.set_base_str(24), a.get_ability_modifier('str'))
+# print(a.base_saving_throw_bonus)
+# print('Attack!: ', a.attack_roll())
+# print(a.get_skill_set().get_skill(10).get_class_skills())
+# a.get_skill(10).set_base_skill_points(5)
+# print(a.get_skill(10).get_base_skill_points())
+# a.get_skill(10).set_base_skill_points(7)
+# print(a.get_skill(10).get_base_skill_points())
+# a.get_skill(10).set_base_skill_points(21, True)
+# print(a.get_skill(10).get_base_skill_points())
+# print(a.get_skill(11).get_skill_name())

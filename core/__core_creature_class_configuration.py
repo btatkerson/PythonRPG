@@ -8,7 +8,41 @@
 
 
 class core_creature_class_configuration():
+	class creature_Class():
+		'''
+		Used to provide constants for valid creature classes
+		'''
+		def __init__(self):
+			self.UNIQUE = self.UNI = 'uni'
+			self.BARBARIAN = self.BBN = 'bbn'
+			self.BARD = self.BRD = 'brd'
+			self.CLERIC = self.CLR = 'clr'
+			self.DRUID = self.DRD = 'drd'
+			self.FIGHTER = self.FTR = 'ftr'
+			self.MONK = self.MNK = 'mnk'
+			self.PALADIN = self.PLD = 'pld'
+			self.RANGER = self.RGR = 'rgr'
+			self.ROGUE = self.ROG = 'rog'
+			self.SORCERER = self.SOR = 'sor'
+			self.WIZARD = self.WIZ = 'wiz'
+
 	def __init__(self):
+		self.creatureClass = self.creature_Class()
+
+		# Used for short hand convenience purposes
+		self.class_name_list_short=[self.creatureClass.UNIQUE,
+					    self.creatureClass.BARBARIAN,
+					    self.creatureClass.BARD,
+					    self.creatureClass.CLERIC,
+					    self.creatureClass.DRUID,
+					    self.creatureClass.FIGHTER,
+					    self.creatureClass.MONK,
+					    self.creatureClass.PALADIN,
+					    self.creatureClass.RANGER,
+					    self.creatureClass.ROGUE,
+					    self.creatureClass.SORCERER,
+					    self.creatureClass.WIZARD]
+
 		self.class_name_list_long= ['unique',
 									'barbarian',
 									'bard',
@@ -22,19 +56,6 @@ class core_creature_class_configuration():
 									'sorcerer',
 									'wizard']
 
-		# Used for short hand convenience purposes
-		self.class_name_list_short=['uni',
-									'bbn',
-									'brd',
-									'clr',
-									'drd',
-									'ftr',
-									'mnk',
-									'pld',
-									'rgr',
-									'rog',
-									'sor',
-									'wiz']
 
 		self.__DEFAULT_CLASS_ID = 5 # Fighter
 
