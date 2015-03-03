@@ -94,7 +94,7 @@ class core_creature_configuration(core_race_configuration):
 
 	# Returns the short name of the saving throw. This is based on input. Defaults to fortitude
 	def validate_saving_throw(self,saving_throw=None):
-		if is_saving_throw(saving_throw):
+		if self.is_saving_throw(saving_throw):
 			if 0 <= saving_throw < len(self.__SAVING_THROW_LIST):
 				return self.__SAVING_THROW_LIST_SHORT[saving_throw]
 			elif saving_throw.lower() in self.__SAVING_THROW_LIST_SHORT:
@@ -228,7 +228,7 @@ class core_creature_configuration(core_race_configuration):
 	# 0 : 'poor',
 	# 1 : 'average',
 	# 2 : 'good'
-	def get_base_attack_bonus(self,id=None,creature_level = 1):
+	def get_base_attack_bonus(self,id=None,creature_level=1):
 		if id is None:
 			id = self.__DEFAULT_BASE_ATTACK_BONUS
 

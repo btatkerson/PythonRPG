@@ -4,42 +4,43 @@
    Purpose: This is a core file for the engine that defines the boundaries of the skill set in the game.
 
 '''
+from core.__core_constants import core_constants
 
-class core_skill_set_configuration():
+class core_skill_set_configuration(core_constants):
 	def __init__(self):
+		core_constants.__init__(self)
 		# List of skills, 0 is 'unique' and unused during initialization
 
-		self.skill_set_list_short =['uni',
-		                            'ani',
-		                            'apr',
-		                            'blf',
-		                            'cnc',
-		                            'car',
-		                            'ctr',
-		                            'cwe',
-		                            'dtr',
-		                            'dis',
-		                            'hel',
-		                            'hid',
-		                            'itm',
-		                            'lis',
-		                            'lor',
-		                            'mov',
-		                            'opl',
-		                            'pry',
-		                            'pfm',
-		                            'psd',
-		                            'pic',
-		                            'rid',
-		                            'src',
-		                            'str',
-		                            'spl',
-		                            'spt',
-		                            'tnt',
-		                            'tbl',
-		                            'umd']
+		self.skill_set_list_short =[self.SKILL.UNIQUE,
+                                    self.SKILL.ANIMAL_EMPATHY,
+                                    self.SKILL.APPRAISE,
+                                    self.SKILL.BLUFF,
+                                    self.SKILL.CONCENTRATION,
+                                    self.SKILL.CRAFT_ARMOR,
+                                    self.SKILL.CRAFT_TRAP,
+                                    self.SKILL.CRAFT_WEAPON,
+                                    self.SKILL.DISABLE_TRAP,
+                                    self.SKILL.DISCIPLINE,
+                                    self.SKILL.HEAL,
+                                    self.SKILL.HIDE,
+                                    self.SKILL.INTIMIDATE,
+                                    self.SKILL.LISTEN,
+                                    self.SKILL.LORE,
+                                    self.SKILL.MOVE_SILENTLY,
+                                    self.SKILL.OPEN_LOCK,
+                                    self.SKILL.PARRY,
+                                    self.SKILL.PERFORM,
+                                    self.SKILL.PICK_POCKET,
+                                    self.SKILL.RIDE,
+                                    self.SKILL.SEARCH,
+                                    self.SKILL.SET_TRAP,
+                                    self.SKILL.SPELLCRAFT,
+                                    self.SKILL.SPOT,
+                                    self.SKILL.TAUNT,
+                                    self.SKILL.TUMBLE,
+                                    self.SKILL.USE_MAGIC_DEVICE]
 
-		self.skill_set_list =  ['unique',
+		self.skill_set_list = ['unique',
 		                        'animal_empathy',
 		                        'appraise',
 		                        'bluff',
@@ -95,9 +96,9 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':False,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['drd','rgr'],
+			'class_skills':[self.CREATURECLASS.DRUID,self.CREATURECLASS.RANGER],
 			'synergy_skills':[]
 			},
 			{
@@ -105,9 +106,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['brd','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -115,9 +116,9 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['brd','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -125,9 +126,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'con',
+			'key_ability':self.ABILITY.CON,
 			'skill_points':0,
-			'class_skills':['brd','clr','drd','ftr','mnk','pld','rgr','sor','wiz'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD],
 			'synergy_skills':[]
 			},
 			{
@@ -135,9 +136,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['bbn','brd','clr','drd','ftr','mnk','pld','rgr','rog','sor','wiz'], # All Classes,
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD], # All Classes,
 			'synergy_skills':[]
 			},
 			{
@@ -145,9 +146,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['bbn','brd','clr','drd','ftr','mnk','pld','rgr','rog','sor','wiz'], # All Classes,
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD], # All Classes,
 			'synergy_skills':[]
 			},
 			{
@@ -155,9 +156,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['bbn','brd','clr','drd','ftr','mnk','pld','rgr','rog','sor','wiz'], # All Classes,
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD], # All Classes,
 			'synergy_skills':[]
 			},
 			{
@@ -165,19 +166,19 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['rog'],
-			'synergy_skills':['str'], # Set Trap
+			'class_skills':[self.CREATURECLASS.ROGUE],
+			'synergy_skills':[self.SKILL.SET_TRAP], # Set Trap
 			},
 			{
 			'keyID':9, # Discipline
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'str',
+			'key_ability':self.ABILITY.STR,
 			'skill_points':0,
-			'class_skills':['bbn','brd','ftr','mnk','pld','rgr'],
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER],
 			'synergy_skills':[]
 			},
 			{
@@ -185,9 +186,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':False,
-			'key_ability':'wis',
+			'key_ability':self.ABILITY.WIS,
 			'skill_points':0,
-			'class_skills':['bbn','brd','clr','drd','ftr','mnk','pld','rgr','rog','sor','wiz'], # All Classes
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD], # All Classes
 			'synergy_skills':[]
 			},
 			{
@@ -195,9 +196,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'dex',
+			'key_ability':self.ABILITY.DEX,
 			'skill_points':0,
-			'class_skills':['brd','mnk','rgr','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.MONK,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -205,9 +206,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['bbn','rog'],
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -215,9 +216,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'wis',
+			'key_ability':self.ABILITY.WIS,
 			'skill_points':0,
-			'class_skills':['bbn','brd','mnk','rgr','rog'],
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.MONK,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -225,9 +226,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['bbn','brd','clr','drd','ftr','mnk','pld','rgr','rog','sor','wiz'],
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD],
 			'synergy_skills':[]
 			},
 			{
@@ -235,9 +236,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'dex',
+			'key_ability':self.ABILITY.DEX,
 			'skill_points':0,
-			'class_skills':['brd','mnk','rgr','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.MONK,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -245,9 +246,9 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'dex',
+			'key_ability':self.ABILITY.DEX,
 			'skill_points':0,
-			'class_skills':['rog'],
+			'class_skills':[self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -255,9 +256,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'dex',
+			'key_ability':self.ABILITY.DEX,
 			'skill_points':0,
-			'class_skills':['bbn','brd','clr','drd','ftr','mnk','pld','rgr','rog','sor','wiz'],
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD],
 			'synergy_skills':[]
 			},
 			{
@@ -265,9 +266,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':False,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['brd'],
+			'class_skills':[self.CREATURECLASS.BARD],
 			'synergy_skills':[]
 			},
 			{
@@ -275,9 +276,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['brd','clr','drd','mnk','pld','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.DRUID,self.CREATURECLASS.MONK,self.CREATURECLASS.PALADIN,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -285,9 +286,9 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':True,
 			'cross_class':True,
-			'key_ability':'dex',
+			'key_ability':self.ABILITY.DEX,
 			'skill_points':0,
-			'class_skills':['brd','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -295,9 +296,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['bbn','ftr','pld','rgr'],
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.FIGHTER,self.CREATURECLASS.PALADIN,self.CREATURECLASS.RANGER],
 			'synergy_skills':[]
 			},
 			{
@@ -305,9 +306,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['rgr','rog'],
+			'class_skills':[self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -315,19 +316,19 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'dex',
+			'key_ability':self.ABILITY.DEX,
 			'skill_points':0,
-			'class_skills':['rgr','rog'],
-			'synergy_skills':['dtr'] # Disable Trap
+			'class_skills':[self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE],
+			'synergy_skills':[self.SKILL.DISABLE_TRAP] # Disable Trap
 			},
 			{
 			'keyID':24, # Spellcraft
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'int',
+			'key_ability':self.ABILITY.INT,
 			'skill_points':0,
-			'class_skills':['brd','clr','sor','wiz'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.CLERIC,self.CREATURECLASS.SORCERER,self.CREATURECLASS.WIZARD],
 			'synergy_skills':[]
 			},
 			{
@@ -335,9 +336,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'wis',
+			'key_ability':self.ABILITY.WIS,
 			'skill_points':0,
-			'class_skills':['rgr','rog'],
+			'class_skills':[self.CREATURECLASS.RANGER,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			},
 			{
@@ -345,9 +346,9 @@ class core_skill_set_configuration():
 			'trained_skill':False,
 			'armor_penalty':False,
 			'cross_class':True,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['bbn','brd','pld'],
+			'class_skills':[self.CREATURECLASS.BARBARIAN,self.CREATURECLASS.BARD,self.CREATURECLASS.PALADIN],
 			'synergy_skills':[]
 			},
 			{
@@ -355,9 +356,9 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':False,
-			'key_ability':'dex',
+			'key_ability':self.ABILITY.DEX,
 			'skill_points':0,
-			'class_skills':['brd','mnk','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.MONK,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[],
 			},
 			{
@@ -365,9 +366,9 @@ class core_skill_set_configuration():
 			'trained_skill':True,
 			'armor_penalty':False,
 			'cross_class':False,
-			'key_ability':'chr',
+			'key_ability':self.ABILITY.CHR,
 			'skill_points':0,
-			'class_skills':['brd','rog'],
+			'class_skills':[self.CREATURECLASS.BARD,self.CREATURECLASS.ROGUE],
 			'synergy_skills':[]
 			}
 		]

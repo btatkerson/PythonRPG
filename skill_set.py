@@ -8,7 +8,7 @@
 from core.__core_skill_set_configuration import core_skill_set_configuration
 from core.__core_creature_configuration import core_creature_configuration
 from core.__core_creature_class_configuration import core_creature_class_configuration
-from dice import dice
+'''from dice import dice'''
 
 class skill_set():
 	class skill():
@@ -180,7 +180,7 @@ class skill_set():
 		return skill.get_base_skill_points()+bonus_points
 
 	# Used to... I don't quite remember what I wrote this for...
-	def is_skill_instance(self,skill = skill()):
+	def is_skill_instance(self,skill=skill()):
 		if isinstance(skill,self.skill):
 			return True
 		return -1

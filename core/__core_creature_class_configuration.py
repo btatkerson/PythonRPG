@@ -5,43 +5,25 @@
             THIS... is going to be mad cray.
 
 '''
+from core.__core_constants import core_constants  
 
-
-class core_creature_class_configuration():
-	class creature_Class():
-		'''
-		Used to provide constants for valid creature classes
-		'''
-		def __init__(self):
-			self.UNIQUE = self.UNI = 'uni'
-			self.BARBARIAN = self.BBN = 'bbn'
-			self.BARD = self.BRD = 'brd'
-			self.CLERIC = self.CLR = 'clr'
-			self.DRUID = self.DRD = 'drd'
-			self.FIGHTER = self.FTR = 'ftr'
-			self.MONK = self.MNK = 'mnk'
-			self.PALADIN = self.PLD = 'pld'
-			self.RANGER = self.RGR = 'rgr'
-			self.ROGUE = self.ROG = 'rog'
-			self.SORCERER = self.SOR = 'sor'
-			self.WIZARD = self.WIZ = 'wiz'
-
+class core_creature_class_configuration(core_constants):
 	def __init__(self):
-		self.creatureClass = self.creature_Class()
+		core_constants.__init__(self)		
 
 		# Used for short hand convenience purposes
-		self.class_name_list_short=[self.creatureClass.UNIQUE,
-					    self.creatureClass.BARBARIAN,
-					    self.creatureClass.BARD,
-					    self.creatureClass.CLERIC,
-					    self.creatureClass.DRUID,
-					    self.creatureClass.FIGHTER,
-					    self.creatureClass.MONK,
-					    self.creatureClass.PALADIN,
-					    self.creatureClass.RANGER,
-					    self.creatureClass.ROGUE,
-					    self.creatureClass.SORCERER,
-					    self.creatureClass.WIZARD]
+		self.class_name_list_short=[self.CREATURECLASS.UNIQUE,
+					    self.CREATURECLASS.BARBARIAN,
+					    self.CREATURECLASS.BARD,
+					    self.CREATURECLASS.CLERIC,
+					    self.CREATURECLASS.DRUID,
+					    self.CREATURECLASS.FIGHTER,
+					    self.CREATURECLASS.MONK,
+					    self.CREATURECLASS.PALADIN,
+					    self.CREATURECLASS.RANGER,
+					    self.CREATURECLASS.ROGUE,
+					    self.CREATURECLASS.SORCERER,
+					    self.CREATURECLASS.WIZARD]
 
 		self.class_name_list_long= ['unique',
 									'barbarian',
