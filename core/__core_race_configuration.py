@@ -202,5 +202,3 @@ class core_race_configuration():
 		# 			self.set_ability_bonus_single(self,i,dict[i],absolute)
 		# 	else:
 		# 		return -1
-
-a = core_race_configuration()

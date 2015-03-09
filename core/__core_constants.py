@@ -58,6 +58,7 @@ class core_constants():
                 self.RANGER = self.RGR = 'rgr'
                 self.ROGUE = self.ROG = 'rog'
                 self.SORCERER = self.SOR = 'sor'
+                self.WIZARD = self.WIZ = 'wiz'
     
     class _core_const_creatureRace():
         '''

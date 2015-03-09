@@ -1,5 +1,5 @@
 '''
-	  Name: __core_creature_configuration.py
+	  Name: __core_skill_set_configuration.py
 	Author: Benjamin A
    Purpose: This is a core file for the engine that defines the boundaries of the skill set in the game.
 
