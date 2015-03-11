@@ -213,8 +213,10 @@ class creature(verbose, dice, core_constants):
         return sum([i * self.base_level_rate for i in range(1, base_level)])
 
     def set_base_level_by_experience(self, exp=0):       
-    # Returns base_level based on experience, if the experience is greater than what's needed
-    # to reach the maximum base_level, then the maximum base_level allowed is returned.
+        '''
+        Returns base_level based on experience, if the experience is greater than what's needed
+        to reach the maximum base_level, then the maximum base_level allowed is returned.
+        '''
         if not exp:
             return exp 
 
