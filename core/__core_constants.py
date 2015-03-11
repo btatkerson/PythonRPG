@@ -65,12 +65,30 @@ class core_constants():
         Used for holding the core races of the game
         '''
         def __init__(self):
-                self.HUMAN = 'human'
+                self.UNIQUE = 'unique'
+                self.ABERRATION = 'aberration'
+                self.ANIMAL = 'animal'
+                self.BEAST = 'beast'
+                self.CONSTRUCT = 'construct'
+                self.DRAGON = 'dragon'
                 self.DWARF = 'dwarf'
+                self.ELEMENTAL = 'elemental'
                 self.ELF = 'elf'
+                self.FEY = 'fey'
+                self.GIANT = 'giant'
+                self.GOBLINOID = 'goblinoid'
                 self.HALFELF = 'halfelf'
                 self.HALFORC = 'halforc'
                 self.HALFLING = 'halfling'
+                self.HUMAN = 'human'
+                self.MAGICAL_BEAST = 'magical_beast'
+                self.OOZE = 'ooze'
+                self.ORC = 'orc'
+                self.OUTSIDER = 'outsider'
+                self.REPTILIAN = 'reptilian'
+                self.SHAPECHANGER = 'shapechanger'
+                self.UNDEAD = 'undead'
+                self.VERMIN = 'vermin'
 
                 
     class _core_const_savingThrow():

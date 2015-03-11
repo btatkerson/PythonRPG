@@ -19,29 +19,27 @@ class creature(verbose, dice, core_constants):
     def _core(self): 
         return core_creature_configuration()
 
-    def __init__(self, playable_character=False, name='NAME', race='UNKNOWN', deity=None, 
-     law_vs_chaos=_core(None).get_default_law_vs_chaos(), good_vs_evil=_core(None).get_default_good_vs_evil(), 
-     base_hit_points=_core(None).get_min_base_hit_points(), base_level=_core(None).get_default_base_level(), 
-     exp=0, base_ac=0, base_level_rate=_core(None).get_default_base_level_rate(), str=_core(None).get_min_base_ability_score(), 
-     inte=_core(None).get_min_base_ability_score(), chr=_core(None).get_min_base_ability_score(), 
-     dex=_core(None).get_min_base_ability_score(), con=_core(None).get_min_base_ability_score(), 
-     wis=_core(None).get_min_base_ability_score(), verbose=False): 
-        verbose.__init__(self)
+    def __init__(self, playable_character=None, name=None, race=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, 
+                 exp=None, base_ac=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
+
+        # Initialize inherited classes
+        verbose.__init__(self,verbo)
         dice.__init__(self)
         core_constants.__init__(self)
-        self.playable_character=playable_character
-        self.name=name
-        self.race=race
-        self.deity=deity
-        self.law_vs_chaos=law_vs_chaos # Scale 0 - 100. 0-32= Chaos, 33-67= Neutral, 68-100= Law
-        self.good_vs_evil=good_vs_evil # Scale 0 - 100. 0-32= Evil, 33-67= Neutral, 68-100= Good
 
-        self.base_hit_points=base_hit_points
-        self.current_hit_points= self.base_hit_points
+        self.playable_character=playable_character or self._core().get_default_playable_character()
+        self.name=name or self._core().get_default_name()
+        self.race=race or self._core().get_default_race()
+        self.deity=deity or self._core().get_default_deity()
+        self.law_vs_chaos=law_vs_chaos or self._core().get_default_law_vs_chaos()# Scale 0 - 100. 0-32= Chaos, 33-67= Neutral, 68-100= Law
+        self.good_vs_evil=good_vs_evil or self._core().get_default_good_vs_evil()# Scale 0 - 100. 0-32= Evil, 33-67= Neutral, 68-100= Good
 
-        self.base_level_rate=base_level_rate # 1000 is the standard growth, the lower the number, the faster a character can base_level
-        self.base_level=base_level or self.set_base_level_by_experience(exp) # If base_level is zero, sets base_level by experience
-        self.experience=exp or self.set_experience_by_base_level(base_level) # If experience is zero, sets experience based on base_level. Defaults to 0 experience
+        self.base_hit_points=base_hit_points or self._core().get_default_base_hit_points()
+        self.current_hit_points=self.base_hit_points
+
+        self.base_level_rate=base_level_rate or self._core().get_default_base_level_rate() # 1000 is the standard growth, the lower the number, the faster a character can base_level
+        self.base_level=base_level or self.set_base_level_by_experience(exp) or self._core().get_default_base_level() # If base_level is zero, sets base_level by experience
+        self.experience=exp or self.set_experience_by_base_level(self.base_level)# If experience is zero, sets experience based on base_level. Defaults to 0 experience
     # base_level 1 when no parameters entered.
         self.skill_set= skill_set()
 
@@ -214,9 +212,12 @@ class creature(verbose, dice, core_constants):
     def set_experience_by_base_level(self, base_level=1): 
         return sum([i * self.base_level_rate for i in range(1, base_level)])
 
-    # Returns base_level based on experience, if the experience is greater than what's needed to reach the maximum base_level, 
-    # then the maximum base_level allowed is returned
-    def set_base_level_by_experience(self, exp=0):      # Sets base_level based on experience points
+    def set_base_level_by_experience(self, exp=0):       
+    # Returns base_level based on experience, if the experience is greater than what's needed
+    # to reach the maximum base_level, then the maximum base_level allowed is returned.
+        if not exp:
+            return exp 
+
         for i in range(1, self._core().get_max_base_level() + 1): 
             if sum([i * self.base_level_rate for i in range(1, i)]) > exp: 
                 return i - 1

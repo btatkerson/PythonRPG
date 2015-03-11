@@ -12,34 +12,38 @@ class core_creature_configuration(core_constants, core_race_configuration):
     def __init__(self):
         core_constants.__init__(self)
         core_race_configuration.__init__(self) # Inherits the core race configurations of the game, the creature configuration is highly involved with races
-        self.__DEFAULT_BASE_LEVEL_RATE = 1000 # Each level costs 1000*base_level
-        self.__DEFAULT_BASE_LEVEL = 0 # This is technically fixed to go to 1 because of |
-        self.__MIN_BASE_LEVEL = 1     # THIS <------------------------------------------'
-        self.__MAX_BASE_LEVEL = 40    # See the creature.py "set_base_level" function
-        self.__DEFAULT_BASE_ABILITY_SCORE = 1
-        self.__MIN_BASE_ABILITY_SCORE = 1
-        self.__MAX_BASE_ABILITY_SCORE = 255
         self.__DEFAULT_ABILITY = 0 # strength
         self.__ABILITY_LIST_SHORT = [self.ABILITY.STR, self.ABILITY.INT, self.ABILITY.CON, self.ABILITY.WIS, self.ABILITY.DEX, self.ABILITY.CHR]
         self.__ABILITY_LIST = ['strength', 'intelligence', 'constitution', 'wisdom', 'dexterity', 'charisma']
-        self.__DEFAULT_SAVING_THROW = 0 # fortitude
-        self.__SAVING_THROW_LIST = ['fortitude','reflex','will']
-        self.__SAVING_THROW_LIST_SHORT = [self.SAVINGTHROW.FORTITUDE,self.SAVINGTHROW.REFLEX,self.SAVINGTHROW.WILL]
-        self.__DEFAULT_EXPERIENCE_GROW_RATE = 1000 # Smaller is faster
+        self.__MIN_ABILITY_SCORE = 1
+        self.__DEFAULT_BASE_ABILITY_SCORE = 1
+        self.__MIN_BASE_ABILITY_SCORE = 1
+        self.__MAX_BASE_ABILITY_SCORE = 255
+        self.__DEFAULT_BASE_HIT_POINTS = 5
+        self.__MIN_BASE_HIT_POINTS = 1
+        self.__DEFAULT_CURRENT_HIT_POINTS = self.__DEFAULT_BASE_HIT_POINTS
+        self.__DEFAULT_DEITY = None         # <          TO-DO              >  
+        self.__MIN_CURRENT_HIT_POINTS = -10
+        self.__DEFAULT_BASE_LEVEL = 0 # This is technically fixed to go to 1 because of |
+        self.__MIN_BASE_LEVEL = 1     # THIS <------------------------------------------'
+        self.__MAX_BASE_LEVEL = 40    # See the creature.py "set_base_level" function
+        self.__DEFAULT_BASE_LEVEL_RATE = 1000 # Each level costs 1000*base_level
         self.__DEFAULT_GOOD_VS_EVIL = 50 # Neutral
         self.__MIN_GOOD_VS_EVIL = 0
         self.__MAX_GOOD_VS_EVIL = 100
         self.__DEFAULT_LAW_VS_CHAOS = 50 # Neutral
         self.__MIN_LAW_VS_CHAOS = 0
         self.__MAX_LAW_VS_CHAOS = 100
-        self.__DEFAULT_BASE_HIT_POINTS = 5
-        self.__MIN_BASE_HIT_POINTS = 1
-        self.__MIN_CURRENT_HIT_POINTS = -10
-        self.__MIN_ABILITY_SCORE = 1
-        self.__BASE_SAVE_BONUS = [self.BASESAVEBONUS.POOR,self.BASESAVEBONUS.GOOD]
-        self.__DEFAULT_BASE_SAVE_BONUS = 0
+        self.__DEFAULT_NAME = 'MissingName'
+        self.__DEFAULT_PLAYABLE_CHARACTER = False
+        self.__DEFAULT_RACE = self.CREATURERACE.HUMAN
+        self.__DEFAULT_SAVING_THROW = 0 # fortitude
+        self.__SAVING_THROW_LIST = ['fortitude','reflex','will']
+        self.__SAVING_THROW_LIST_SHORT = [self.SAVINGTHROW.FORTITUDE,self.SAVINGTHROW.REFLEX,self.SAVINGTHROW.WILL]
         self.__BASE_ATTACK_BONUS = [self.BASEATTACKBONUS.POOR,self.BASEATTACKBONUS.AVERAGE,self.BASEATTACKBONUS.GOOD,self.BASEATTACKBONUS.MONK]
+        self.__BASE_SAVE_BONUS = [self.BASESAVEBONUS.POOR,self.BASESAVEBONUS.GOOD]
         self.__DEFAULT_BASE_ATTACK_BONUS = 0
+        self.__DEFAULT_BASE_SAVE_BONUS = 0
 
 
         self.__EQUIPMENT_SLOTS = {"helmet":None,"armor":None,"main_hand":None,"off_hand":None,"amulet":None,
@@ -137,9 +141,6 @@ class core_creature_configuration(core_constants, core_race_configuration):
                 return self.__ABILITY_LIST_SHORT[self.__ABILITY_LIST.index(ability.lower())]
         return self.get_ability_list_short()[self.get_default_ability()]
 
-    def get_default_experience_grow_rate(self):
-        return self.__DEFAULT_EXPERIENCE_GROW_RATE
-
     def get_default_good_vs_evil(self):
         return self.__DEFAULT_GOOD_VS_EVIL
 
@@ -158,14 +159,26 @@ class core_creature_configuration(core_constants, core_race_configuration):
     def get_max_law_vs_chaos(self):
         return self.__MAX_LAW_VS_CHAOS
 
+    def get_default_playable_character(self):
+        return self.__DEFAULT_PLAYABLE_CHARACTER
+
+    def get_default_race(self):
+        return self.__DEFAULT_RACE
+
+    def get_default_name(self):
+        return self.__DEFAULT_NAME
+
     def get_default_base_hit_points(self):
         return self.__DEFAULT_BASE_HIT_POINTS
+
+    def get_min_base_hit_points(self):
+        return self.__MIN_BASE_HIT_POINTS
 
     def get_min_current_hit_points(self):
         return self.__MIN_CURRENT_HIT_POINTS
 
-    def get_min_base_hit_points(self):
-        return self.__MIN_BASE_HIT_POINTS
+    def get_default_deity(self):
+        return self.__DEFAULT_DEITY
 
     def get_min_ability_score(self):
         return self.__MIN_ABILITY_SCORE
