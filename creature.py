@@ -202,14 +202,18 @@ class creature(verbose, dice, core_constants):
     def get_base_chr(self): 
         return self.get_base_ability_score(self.ABILITY.CHR)
 
-    # Sets the base ability score for the Charisma ability
-    # Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
-    # the base ability will be set to the value provided for variable 'add'
     def set_base_chr(self, add, absolute=False): 
+        '''
+        Sets the base ability score for the Charisma ability
+        Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
+        the base ability will be set to the value provided for variable 'add'
+        '''
         return self.set_base_ability_score(self.ABILITY.CHR, add, absolute)
 
-    # Sets appropriate experience points based on base_level (By default, identical to DnD's base_level)
     def set_experience_by_base_level(self, base_level=1): 
+        '''
+        Sets appropriate experience points based on base_level (By default, identical to DnD's base_level)
+        '''
         return sum([i * self.base_level_rate for i in range(1, base_level)])
 
     def set_base_level_by_experience(self, exp=0):       
