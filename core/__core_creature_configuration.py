@@ -16,7 +16,7 @@ class core_creature_configuration(core_constants, core_race_configuration):
         self.__ABILITY_LIST_SHORT = [self.ABILITY.STR, self.ABILITY.INT, self.ABILITY.CON, self.ABILITY.WIS, self.ABILITY.DEX, self.ABILITY.CHR]
         self.__ABILITY_LIST = ['strength', 'intelligence', 'constitution', 'wisdom', 'dexterity', 'charisma']
         self.__MIN_ABILITY_SCORE = 1
-        self.__DEFAULT_BASE_ABILITY_SCORE = 1
+        self.__DEFAULT_BASE_ABILITY_SCORE = 10
         self.__MIN_BASE_ABILITY_SCORE = 1
         self.__MAX_BASE_ABILITY_SCORE = 255
         self.__DEFAULT_BASE_HIT_POINTS = 5
@@ -44,7 +44,7 @@ class core_creature_configuration(core_constants, core_race_configuration):
         self.__BASE_SAVE_BONUS = [self.BASESAVEBONUS.POOR,self.BASESAVEBONUS.GOOD]
         self.__DEFAULT_BASE_ATTACK_BONUS = 0
         self.__DEFAULT_BASE_SAVE_BONUS = 0
-
+        self.__DEFAULT_ABILITY_MODIFIER = 0
 
         self.__EQUIPMENT_SLOTS = {"helmet":None,"armor":None,"main_hand":None,"off_hand":None,"amulet":None,
                                    "ring_1":None,"ring_2":None,"gloves":None,"cloak":None,"boots":None,"belt":None}
@@ -59,12 +59,19 @@ class core_creature_configuration(core_constants, core_race_configuration):
     #16-17: +3, so on and so forth
     # This is a critical calculation to the core gameplay.
 
-    def ability_modifier_from_score(self,score):
-        if score < self.get_min_ability_score():
+    def ability_modifier_from_score(self,score=None):
+        '''
+        Returns the ability modifier for whatever score it's given
+        '''
+        if not score:
+            return self.__DEFAULT_ABILITY_MODIFIER
+        elif score < self.get_min_ability_score():
             score = self.get_min_ability_score()
-
         return int((score-10)/2)
     
+    def get_default_base_ability_score(self):
+        return self.__DEFAULT_BASE_ABILITY_SCORE
+
     def get_default_base_level_rate(self):
         return self.__DEFAULT_BASE_LEVEL_RATE
 

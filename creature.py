@@ -45,7 +45,12 @@ class creature(verbose, dice, core_constants):
 
         self.base_saving_throw_bonus={i: 0 for i in self._core().get_saving_throw_list_short()}
 
-        self.base_abilities={x:y for x,y in zip(self._core().get_ability_list_short(),[str,inte,con,wis,dex,chr])}
+        self.base_abilities={x:y for x,y in zip(self._core().get_ability_list_short(),[str or self._core().get_default_base_ability_score(),
+                                                                                       inte or self._core().get_default_base_ability_score(),
+                                                                                       con or self._core().get_default_base_ability_score(),
+                                                                                       wis or self._core().get_default_base_ability_score(),
+                                                                                       dex or self._core().get_default_base_ability_score(),
+                                                                                       chr or self._core().get_default_base_ability_score()])}
         # self.base_abilities={self.ABILITY.STR: str, self.ABILITY.INT: inte, self.ABILITY.CON: con, self.ABILITY.WIS: wis, self.ABILITY.DEX: dex, self.ABILITY.CHR: chr} # Dictionary for base abilities
         self.base_armor_class=0
 
@@ -92,8 +97,8 @@ class creature(verbose, dice, core_constants):
             if roll== 20: 
                 self.verbo("Critical Hit!", True)
                 roll=sum(self.d20())
-            attack_list.append(roll + self.mod_str())
-            print(roll + self.mod_str())
+            attack_list.append(max(roll + self.mod_str(),0))
+            print(roll + self.mod_str(),roll,self.mod_str())
         return attack_list
 
     def get_skill_set(self): 
@@ -141,7 +146,9 @@ class creature(verbose, dice, core_constants):
         return self.base_abilities[ability]
 
     # Returns base ability value for any valid ability provided
-    def get_base_ability_score(self, ability=''): 
+    def get_base_ability_score(self, ability=None): 
+        if not ability:
+            ability = self._core().get_default_ability()
         if self._core().is_ability(ability): 
             ability= self._core().validate_ability(ability)
             return self.base_abilities[ability]
@@ -455,5 +462,5 @@ class creature(verbose, dice, core_constants):
 # a.get_skill(10).set_base_skill_points(21, True)
 # print(a.get_skill(10).get_base_skill_points())
 # print(a.get_skill(11).get_skill_name())
-a = creature()
-print(a.base_abilities)
+a = creature(base_level=20,str=4)
+print(a.attack_roll())
