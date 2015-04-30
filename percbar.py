@@ -1,5 +1,8 @@
 '''
+Name: percbar.py
+Author: Benjamin A.
 
+Creates a text bar of custom width and displays percentage of first number relative to the second.
 '''
 
 class percbar():
@@ -25,9 +28,5 @@ class percbar():
 		if perc_tag:
 			perc = '{:.2%}'.format(part/total)
 
-		temp = '|'+''.join(['-' for i in range(0,spaces)]+[' ' for i in range(0,width-spaces)])+'| '+perc
+		temp = '|'+''.join(['-' for i in range(0,spaces)]+[' ' for i in range(0,width-spaces+1)])+'| '+perc
 		return temp
-
-a = percbar()	
-print(a.disp(34,100,60,True))
-

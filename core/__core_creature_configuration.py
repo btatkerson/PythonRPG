@@ -16,14 +16,15 @@ class core_creature_configuration(core_constants, core_race_configuration):
         self.__ABILITY_LIST_SHORT = [self.ABILITY.STR, self.ABILITY.INT, self.ABILITY.CON, self.ABILITY.WIS, self.ABILITY.DEX, self.ABILITY.CHR]
         self.__ABILITY_LIST = ['strength', 'intelligence', 'constitution', 'wisdom', 'dexterity', 'charisma']
         self.__MIN_ABILITY_SCORE = 1
-        self.__DEFAULT_BASE_ABILITY_SCORE = 1
+        self.__DEFAULT_BASE_ABILITY_SCORE = 10
         self.__MIN_BASE_ABILITY_SCORE = 1
         self.__MAX_BASE_ABILITY_SCORE = 255
-        self.__DEFAULT_BASE_HIT_POINTS = 5
+        self.__DEFAULT_BASE_HIT_POINTS = 10
         self.__MIN_BASE_HIT_POINTS = 1
         self.__DEFAULT_CURRENT_HIT_POINTS = self.__DEFAULT_BASE_HIT_POINTS
         self.__DEFAULT_DEITY = None         # <          TO-DO              >  
         self.__MIN_CURRENT_HIT_POINTS = -10
+        self.__MAX_CURRENT_HIT_POINTS = 10000
         self.__DEFAULT_BASE_LEVEL = 0 # This is technically fixed to go to 1 because of |
         self.__MIN_BASE_LEVEL = 1     # THIS <------------------------------------------'
         self.__MAX_BASE_LEVEL = 40    # See the creature.py "set_base_level" function
@@ -37,6 +38,7 @@ class core_creature_configuration(core_constants, core_race_configuration):
         self.__DEFAULT_NAME = 'MissingName'
         self.__DEFAULT_PLAYABLE_CHARACTER = False
         self.__DEFAULT_RACE = self.CREATURERACE.HUMAN
+        self.__DEFAULT_CREATURE_CLASS = self.CREATURECLASS.FIGHTER
         self.__DEFAULT_SAVING_THROW = 0 # fortitude
         self.__SAVING_THROW_LIST = ['fortitude','reflex','will']
         self.__SAVING_THROW_LIST_SHORT = [self.SAVINGTHROW.FORTITUDE,self.SAVINGTHROW.REFLEX,self.SAVINGTHROW.WILL]
@@ -165,6 +167,9 @@ class core_creature_configuration(core_constants, core_race_configuration):
     def get_default_playable_character(self):
         return self.__DEFAULT_PLAYABLE_CHARACTER
 
+    def get_default_creature_class(self):
+        return self.__DEFAULT_CREATURE_CLASS
+
     def get_default_race(self):
         return self.__DEFAULT_RACE
 
@@ -179,6 +184,9 @@ class core_creature_configuration(core_constants, core_race_configuration):
 
     def get_min_current_hit_points(self):
         return self.__MIN_CURRENT_HIT_POINTS
+
+    def get_max_current_hit_points(self):
+        return self.__MAX_CURRENT_HIT_POINTS
 
     def get_default_deity(self):
         return self.__DEFAULT_DEITY

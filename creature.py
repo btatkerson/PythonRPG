@@ -8,6 +8,7 @@
 '''
 
 from core.__core_creature_configuration import core_creature_configuration
+# from core.__core_creature_class_configuration import core_creature_class_configuration
 from core.__core_constants import core_constants
 from core.verbose import verbose
 from skill_set import skill_set
@@ -19,7 +20,7 @@ class creature(verbose, dice, core_constants):
     def _core(self): 
         return core_creature_configuration()
 
-    def __init__(self, playable_character=None, name=None, race=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, 
+    def __init__(self, playable_character=None, name=None, creature_class=None, race=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, 
                  exp=None, base_ac=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
 
         # Initialize inherited classes
@@ -29,6 +30,7 @@ class creature(verbose, dice, core_constants):
 
         self.playable_character=playable_character or self._core().get_default_playable_character()
         self.name=name or self._core().get_default_name()
+        self.creature_class = creature_class or self._core().get_default_creature_class()
         self.race=race or self._core().get_default_race()
         self.deity=deity or self._core().get_default_deity()
         self.law_vs_chaos=law_vs_chaos or self._core().get_default_law_vs_chaos()# Scale 0 - 100. 0-32= Chaos, 33-67= Neutral, 68-100= Law
@@ -83,12 +85,41 @@ class creature(verbose, dice, core_constants):
         '''
         return self.experience - sum([i*self.base_level_rate for i in range(1,self.base_level)])
 
+    def get_experience_total_for_current_level(self):
+        '''
+        Returns the total experience needed to level up for that particular level
+
+        Level 3 = 3000 (lvl 3 * 1000 (base level rate))
+        '''
+        return self.base_level_rate*self.base_level
+
     def base_attack_bonus(self): 
         '''
         Returns the attack bonuses based on level and attack-ability
         '''
         return self._core().get_base_attack_bonus(2, self.base_level) # <---------------------------------------- Not always two, fix it!
 
+    def get_base_hit_points(self):
+        return self.base_hit_points
+
+    def set_base_hit_points(self,add=None,absolute=None):
+        if not add:
+            return False
+        elif not absolute:
+            self.base_hit_points = add
+        else:
+            self.base_hit_points = min(max(self.base_hit_points,self._core().get_min_base_hit_points()),self._core().get_max_base_hit_points())
+        
+    def get_current_hit_points(self):
+        return self.current_hit_points
+
+    def set_current_hit_points(self,add=None,absolute=None):
+        if not add:
+            return False
+        elif not absolute:
+            self.current_hit_points = add
+        else:
+            self.current_hit_points = min(max(self.current_hit_points,self._core().get_min_current_hit_points()),self._core().get_max_current_hit_points())
 
     def attack_roll(self): 
         attack_list = []
@@ -339,7 +370,13 @@ class creature(verbose, dice, core_constants):
         return False
 
     # Get the alignment in different forms
-    def get_alignment(self, value_word_combo=0): # 0 returns list of values (Lawful Evil=[2, 0]), 1 returns words (Lawful Evil=["Lawful", "Evil"], 2 returns a list holding two lists of values and words, -1 returns the exact alignment variables
+    def get_alignment(self, value_word_combo=0): 
+        '''
+        0 returns list of values (Lawful Evil=[2, 0]), 
+        1 returns words (Lawful Evil=["Lawful", "Evil"], 
+        2 returns a list holding two lists of values and words, 
+        -1 returns the exact alignment variables
+        '''
         temp=[self.get_law_vs_chaos(2), self.get_good_vs_evil(2)]
         if value_word_combo== 0: 
             return [temp[0][0], temp[1][0]]
@@ -415,12 +452,17 @@ class creature(verbose, dice, core_constants):
 
         return self.base_level
     
+    def get_base_ability(self,ability=None):
+        if self._core().is_ability(ability):
+            return self._core()
+
+    
     # Gets the ability modifier for whatever ability score is given to it
-    def get_ability_modifier(self, ability=''): 
+    def get_ability_modifier(self, ability=None): 
         if self._core().is_ability(ability): 
             return self._core().ability_modifier_from_score(self.get_base_ability_score(ability.lower()))
         else: 
-            return -1
+            return self._core().ability_modifier_from_score(self._core().get_default_base_ability_score())
 
     # Returns the strength modifier
     def mod_str(self): 
@@ -446,6 +488,10 @@ class creature(verbose, dice, core_constants):
     def mod_chr(self): 
         return self.get_ability_modifier(self.ABILITY.CHR)
 
+    def stat_display(self):
+        print("Name:",self.name,"| Level:",self.base_level,"| Alignment:",' '.join(self.get_alignment(1)).title())
+        print("Race:",self.race.title(),"| Class:",self.creature_class.upper())
+
 
 ####################################################### TEST CODE ######################################################
 # a= creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000, verbose=True)
@@ -464,3 +510,4 @@ class creature(verbose, dice, core_constants):
 # print(a.get_skill(11).get_skill_name())
 a = creature(base_level=20,str=4)
 print(a.attack_roll())
+a.stat_display()
