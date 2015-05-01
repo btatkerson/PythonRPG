@@ -13,6 +13,7 @@ from core.__core_constants import core_constants
 from core.verbose import verbose
 from skill_set import skill_set
 from dice import dice
+from percbar import percbar
 
 
 class creature(verbose, dice, core_constants): 
@@ -454,8 +455,7 @@ class creature(verbose, dice, core_constants):
     
     def get_base_ability(self,ability=None):
         if self._core().is_ability(ability):
-            return self._core()
-
+            return self.base_abilities[ability]
     
     # Gets the ability modifier for whatever ability score is given to it
     def get_ability_modifier(self, ability=None): 
@@ -489,8 +489,13 @@ class creature(verbose, dice, core_constants):
         return self.get_ability_modifier(self.ABILITY.CHR)
 
     def stat_display(self):
+        perc = percbar()
         print("Name:",self.name,"| Level:",self.base_level,"| Alignment:",' '.join(self.get_alignment(1)).title())
         print("Race:",self.race.title(),"| Class:",self.creature_class.upper())
+        print("Experience:",perc.disp(self.get_experience_toward_next_level(),self.get_experience_total_for_current_level(),50),str(self.get_experience_toward_next_level())+"/"+str(self.get_experience_total_for_current_level()))
+        print('STR:',self.base_abilities[self.ABILITY.STR],"/",self.mod_str(),"| CON:",self.base_abilities[self.ABILITY.CON],"/",self.mod_con(),"| DEX:",self.base_abilities[self.ABILITY.DEX],"/",self.mod_dex())
+        print('INT:',self.base_abilities[self.ABILITY.INT],"/",self.mod_int(),"| WIS:",self.base_abilities[self.ABILITY.WIS],"/",self.mod_wis(),"| CHR:",self.base_abilities[self.ABILITY.CHR],"/",self.mod_chr())
+        print('HP:',perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),50),str(self.get_current_hit_points())+'/'+str(self.get_base_hit_points()))
 
 
 ####################################################### TEST CODE ######################################################
@@ -508,6 +513,7 @@ class creature(verbose, dice, core_constants):
 # a.get_skill(10).set_base_skill_points(21, True)
 # print(a.get_skill(10).get_base_skill_points())
 # print(a.get_skill(11).get_skill_name())
-a = creature(base_level=20,str=4)
-print(a.attack_roll())
-a.stat_display()
+# a = creature(base_level=20,str=4)
+# print(a.attack_roll())
+# a.stat_display()
+# print(a.get_experience())
