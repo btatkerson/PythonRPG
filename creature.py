@@ -497,6 +497,11 @@ class creature(verbose, dice, core_constants):
         print('INT:',self.base_abilities[self.ABILITY.INT],"/",self.mod_int(),"| WIS:",self.base_abilities[self.ABILITY.WIS],"/",self.mod_wis(),"| CHR:",self.base_abilities[self.ABILITY.CHR],"/",self.mod_chr())
         print('HP:',perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),50),str(self.get_current_hit_points())+'/'+str(self.get_base_hit_points()))
 
+    def stat_display_short(self):
+        perc = percbar(None,None,50)
+        print("Name:",self.name,"| Lvl:",self.base_level,"| Race:", self.race.title(),"| Class:",self.creature_class.upper())
+        print("HP:", perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),None,True,2))
+
 
 ####################################################### TEST CODE ######################################################
 # a= creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000, verbose=True)

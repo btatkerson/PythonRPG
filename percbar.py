@@ -85,5 +85,5 @@ class percbar():
         if perc_tag:
             perc = '{:.2%}'.format(part/total)
 
-        temp = '|'+''.join(['-' for i in range(0,max(0,spaces))]+[' ' for i in range(0,width-max(0,spaces))])+'| '+perc
+        temp = '|'+''.join(['-' for i in range(0,max(0,int(spaces)))]+[' ' for i in range(0,int(width-max(0,int(spaces))))])+'| '+perc
         return temp
