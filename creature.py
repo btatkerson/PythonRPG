@@ -122,15 +122,22 @@ class creature(verbose, dice, core_constants):
         else:
             self.current_hit_points = min(max(self.current_hit_points,self._core().get_min_current_hit_points()),self._core().get_max_current_hit_points())
 
-    def attack_roll(self): 
+    def attack_roll(self,verbo=False): 
         attack_list = []
         for i in self.base_attack_bonus(): 
             roll=sum(self.d20())
             if roll== 20: 
-                self.verbo("Critical Hit!", True)
-                roll=sum(self.d20())
-            attack_list.append(max(roll + self.mod_str(),0))
-            print(roll + self.mod_str(),roll,self.mod_str())
+                self.verbo(self.name+" got a critical hit!", False)
+                roll=sum(self.d(6,3))
+                attack_list.append(max(roll + i + self.mod_str(),0))
+            elif roll == 1:
+                self.verbo(self.name+" got a critical miss!", False)
+                attack_list.append(0)
+            else:
+                self.verbo(self.name+" rolled a "+str(roll),False)
+                roll = sum(self.d(4,2))
+                attack_list.append(max(roll + i + self.mod_str(),0))
+
         return attack_list
 
     def get_skill_set(self): 
