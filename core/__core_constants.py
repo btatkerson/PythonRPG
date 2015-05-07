@@ -163,6 +163,37 @@ class core_constants():
                 self.INDEX = [self.FOR,self.REF,self.WIL]
                 self.INDEX_LONG = ['fortitude','reflex','will']
 
+    class _core_const_equipment_slots(index_reader):
+        '''
+        Used as a class to hold constants for the possible equipment slots on the creature class
+        '''
+        def __init__(self):
+            index_reader.__init__(self)
+            self.MHD = self.MAINHAND = 'mhd'
+            self.OHD = self.OFFHAND = 'ohd'
+            self.ARM = self.ARMOR = 'arm'
+            self.HLM = self.HELMET = 'hlm'
+            self.GLV = self.GLOVES = 'glv'
+            self.CLK = self.CLOAK = 'clk'
+            self.BTS = self.BOOTS = 'bts'
+            self.BLT = self.BELT = 'blt' # Mmm, bacon
+            self.AMU = self.AMULET = 'amu'
+            self.RG1 = self.RING1 = 'rg1'
+            self.RG2 = self.RING2 = 'rg2'
+            self.ARR = self.ARROWS = 'arr'
+            self.BOL = self.BOLTS = 'bol'
+            self.BUL = self.BULLETS = 'bul'
+
+            self.INDEX = [self.MHD,self.OHD,self.ARM,self.HLM,
+                          self.GLV,self.CLK,self.BTS,self.BLT,
+                          self.AMU,self.RG1,self.RG2,self.ARR,
+                          self.BOL,self.BUL]
+
+            self.INDEX_LONG = ['mainhand','offhand','armor','helmet',
+                               'gloves','cloak','boots','belt',
+                               'amulet','first ring','second ring','arrows',
+                               'bolts','bullets']
+
     class _core_const_skill(index_reader):
         '''
         Used as a class to hold possible skills for a creature
@@ -220,5 +251,6 @@ class core_constants():
         self.BASESAVEBONUS = self._core_const_baseSaveBonus()
         self.CREATURECLASS = self._core_const_creatureClass()
         self.CREATURERACE = self._core_const_creatureRace()
+        self.EQUIPMENTSLOT = self._core_const_equipment_slots()
         self.SAVINGTHROW = self._core_const_savingThrow()
         self.SKILL = self._core_const_skill()
