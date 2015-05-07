@@ -6,7 +6,7 @@ import os
 import creature as cre
 
 a = cc()
-pc = cre.creature(True,"Ben",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,None,23,98,20,4,None,15,None,14,10,7,13,11,3,True)
+pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,None,23,98,20,4,None,15,None,14,10,7,13,11,3,True)
 npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,20,40,15,2,None,10,None,12,6,5,10,10,7,True)
 
 print("\n\n---------------------------------------------------------------\n\n")
@@ -24,7 +24,10 @@ def attack(cre_a,cre_b):
         if not cre_b.is_alive():
             break
         hit_or_miss = i[1] >= cre_b.get_armor_class()
-        print(cre_a.get_name(),'rolls:',i[0],"|",i[1],">=" if hit_or_miss else "<",cre_b.get_armor_class(),"| HIT!" if hit_or_miss else "| MISS!")
+        if i[0] != 0:
+            print(cre_a.get_name(),'rolls:',i[0],"|",i[1],">=" if hit_or_miss else "<",cre_b.get_armor_class(),"| HIT!" if hit_or_miss else "| MISS!")
+        else:
+            print(cre_a.get_name(),"got a critical miss! No damage was done to", cre_b.get_name())
         if hit_or_miss or i[0] == 20:
             damage = 0
             if i[0] == 20:
@@ -53,13 +56,13 @@ while pc.is_alive() and npc.is_alive():
         heal(pc) 
     
     if not npc.is_alive():
+        input("\nPress Enter to continue")
         break
 
     print("\n")
 
     attack_or_heal = sum(npc.d100())
 
-    print(npc.get_current_hit_points(),npc.get_base_hit_points(),attack_or_heal,int(npc.get_current_hit_points()*100/npc.get_base_hit_points()))
     if npc.get_current_hit_points() is not npc.get_base_hit_points() and attack_or_heal >= int(npc.get_current_hit_points()*100/npc.get_base_hit_points()):
         heal(npc)
     else:
