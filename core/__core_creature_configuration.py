@@ -15,7 +15,9 @@ class core_creature_configuration(core_constants, core_race_configuration):
         self.__DEFAULT_ABILITY = 0 # strength
         self.__ABILITY_LIST_SHORT = [self.ABILITY.STR, self.ABILITY.INT, self.ABILITY.CON, self.ABILITY.WIS, self.ABILITY.DEX, self.ABILITY.CHR]
         self.__ABILITY_LIST = ['strength', 'intelligence', 'constitution', 'wisdom', 'dexterity', 'charisma']
-        self.__MIN_ABILITY_SCORE = 1
+        self.__DEFAULT_BASE_ARMOR_CLASS = 10
+        self.__MIN_BASE_ARMOR_CLASS = 1
+        self.__MAX_BASE_ARMOR_CLASS = 50
         self.__DEFAULT_BASE_ABILITY_SCORE = 10
         self.__MIN_BASE_ABILITY_SCORE = 1
         self.__MAX_BASE_ABILITY_SCORE = 255
@@ -66,7 +68,16 @@ class core_creature_configuration(core_constants, core_race_configuration):
             score = self.get_min_base_ability_score()
 
         return int((score-10)/2)
+
+    def get_default_base_armor_class(self):
+        return self.__DEFAULT_BASE_ARMOR_CLASS
     
+    def get_min_base_armor_class(self):
+        return self.__MIN_BASE_ARMOR_CLASS
+
+    def get_max_base_armor_class(self):
+        return self.__MAX_BASE_ARMOR_CLASS
+
     def get_default_base_level_rate(self):
         return self.__DEFAULT_BASE_LEVEL_RATE
 

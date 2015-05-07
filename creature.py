@@ -22,7 +22,7 @@ class creature(verbose, dice, core_constants):
         return core_creature_configuration()
 
     def __init__(self, playable_character=None, name=None, creature_class=None, race=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, 
-                 exp=None, base_ac=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
+                 exp=None, base_armor_class=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
 
         # Initialize inherited classes
         verbose.__init__(self,verbo)
@@ -48,6 +48,7 @@ class creature(verbose, dice, core_constants):
 
         self.base_saving_throw_bonus={i: 0 for i in self._core().get_saving_throw_list_short()}
 
+        # Dictionary of base_abilities
         self.base_abilities={x:y for x,y in zip(self._core().get_ability_list_short(),[str or self._core().get_default_base_ability_score(),
                                                                                        inte or self._core().get_default_base_ability_score(),
                                                                                        con or self._core().get_default_base_ability_score(),
@@ -55,7 +56,7 @@ class creature(verbose, dice, core_constants):
                                                                                        dex or self._core().get_default_base_ability_score(),
                                                                                        chr or self._core().get_default_base_ability_score()])}
         # self.base_abilities={self.ABILITY.STR: str, self.ABILITY.INT: inte, self.ABILITY.CON: con, self.ABILITY.WIS: wis, self.ABILITY.DEX: dex, self.ABILITY.CHR: chr} # Dictionary for base abilities
-        self.base_armor_class=0
+        self.base_armor_class=base_armor_class if self._core().get_min_base_armor_class() <= base_armor_class <= self._core().get_max_base_armor_class() else self._core().get_default_base_armor_class()
 
         self.inventory=[] # Holds list of items, an inventory system is in the future.
 
@@ -107,7 +108,7 @@ class creature(verbose, dice, core_constants):
         if not add:
             return False
         elif not absolute:
-            self.base_hit_points = add
+            self.base_hit_points += add
         else:
             self.base_hit_points = min(max(self.base_hit_points,self._core().get_min_base_hit_points()),self._core().get_max_base_hit_points())
         
@@ -118,27 +119,54 @@ class creature(verbose, dice, core_constants):
         if not add:
             return False
         elif not absolute:
-            self.current_hit_points = add
+            self.current_hit_points = max(min(self.current_hit_points + add, self.base_hit_points),self._core().get_min_current_hit_points())
         else:
-            self.current_hit_points = min(max(self.current_hit_points,self._core().get_min_current_hit_points()),self._core().get_max_current_hit_points())
+            self.current_hit_points = min(max(self.current_hit_points,self._core().get_min_current_hit_points()),self.get_base_hit_points())
 
-    def attack_roll(self,verbo=False): 
-        attack_list = []
-        for i in self.base_attack_bonus(): 
-            roll=sum(self.d20())
-            if roll== 20: 
-                self.verbo(self.name+" got a critical hit!", False)
-                roll=sum(self.d(6,3))
-                attack_list.append(max(roll + i + self.mod_str(),0))
-            elif roll == 1:
-                self.verbo(self.name+" got a critical miss!", False)
-                attack_list.append(0)
+    def is_alive(self):
+        if self.current_hit_points > 0:
+            return True
+        else:
+            return False
+
+    def get_base_armor_class(self):
+        return self.base_armor_class
+
+    def get_armor_class(self):
+        return self.base_armor_class + self.get_ability_modifier(self.ABILITY.DEX)
+
+    def attack_roll(self,verbo=False):
+        '''
+        attack_roll() returns a lists of 2-valued lists. The lists contain two numbers [a,b] where
+        a = the number on the dice roll (d20)
+        b = the dice roll + attack bonus + strength modifier
+        
+        Variable "a" allows for the damage roll to account for the threat range for criticals
+        Variable "b" would be used against opponents AC
+        '''
+        roll_list=[]
+        for i,j in zip(self.base_attack_bonus(),self.d20(len(self.base_attack_bonus()))):
+            if 1 < j <= 20:
+                roll_list.append([j,j+i+self.mod_str()])
             else:
-                self.verbo(self.name+" rolled a "+str(roll),False)
-                roll = sum(self.d(4,2))
-                attack_list.append(max(roll + i + self.mod_str(),0))
+                roll_list.append([0,0])
+        return roll_list
+            
+    def damage_roll(self,critical=False,verbo=False): 
+        '''
+        damage_roll() returns a dice roll that will soon be based on the weapon the creature is carrying
 
-        return attack_list
+        argument "critical" returns a critical hit roll that will be based on the weapon the creature is carrying
+        '''
+        damage = 0
+        if critical: 
+            roll=sum(self.d(6,3))
+            damage = max(roll + self.mod_str(),1)
+        else:
+            roll = sum(self.d(4,2))
+            damage = max(roll + self.mod_str(),0)
+
+        return damage
 
     def get_skill_set(self): 
         return self.skill_set
@@ -497,7 +525,7 @@ class creature(verbose, dice, core_constants):
 
     def stat_display(self):
         perc = percbar()
-        print("Name:",self.name,"| Level:",self.base_level,"| Alignment:",' '.join(self.get_alignment(1)).title())
+        print("Name:",self.name,"| Level:",self.base_level, "| Armor Class:",self.get_armor_class(),"| Alignment:",' '.join(self.get_alignment(1)).title())
         print("Race:",self.race.title(),"| Class:",self.creature_class.upper())
         print("Experience:",perc.disp(self.get_experience_toward_next_level(),self.get_experience_total_for_current_level(),50),str(self.get_experience_toward_next_level())+"/"+str(self.get_experience_total_for_current_level()))
         print('STR:',self.base_abilities[self.ABILITY.STR],"/",self.mod_str(),"| CON:",self.base_abilities[self.ABILITY.CON],"/",self.mod_con(),"| DEX:",self.base_abilities[self.ABILITY.DEX],"/",self.mod_dex())
