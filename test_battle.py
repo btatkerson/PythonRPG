@@ -7,7 +7,7 @@ import creature as cre
 
 a = cc()
 pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,None,23,98,20,4,None,15,None,14,10,7,13,11,3,True)
-npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,20,40,15,2,None,10,None,12,6,5,10,10,7,True)
+npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,50,10,15,2,None,10,None,11,10,6,13,12,9,True)
 
 print("\n\n---------------------------------------------------------------\n\n")
 
@@ -47,7 +47,7 @@ while pc.is_alive() and npc.is_alive():
     os.system('clear')
     pc.stat_display()
     print("\n\n---------------------------------------------------------------\n\n")
-    npc.stat_display_short()
+    npc.stat_display()
     print("\n\n---------------------------------------------------------------\n\n")
     x = input("1. Attack\n2. Heal\n> ")
     if x == "1":
