@@ -21,7 +21,7 @@ class creature(verbose, dice, core_constants):
     def _core(self): 
         return core_creature_configuration()
 
-    def __init__(self, playable_character=None, name=None, creature_class=None, race=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, 
+    def __init__(self, playable_character=None, name=None, creature_class=None, race=None, challenge_rating=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, 
                  exp=None, base_armor_class=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
 
         # Initialize inherited classes
@@ -39,11 +39,14 @@ class creature(verbose, dice, core_constants):
 
         self.base_hit_points=base_hit_points or self._core().get_default_base_hit_points()
         self.current_hit_points=self.base_hit_points
+        self.challenge_rating = challenge_rating or self._core().get_default_challenge_rating()
 
         self.base_level_rate=base_level_rate or self._core().get_default_base_level_rate() # 1000 is the standard growth, the lower the number, the faster a character can base_level
         self.base_level=base_level or self.set_base_level_by_experience(exp) or self._core().get_default_base_level() # If base_level is zero, sets base_level by experience
-        self.experience=exp or self.set_experience_by_base_level(self.base_level)# If experience is zero, sets experience based on base_level. Defaults to 0 experience
-    # base_level 1 when no parameters entered.
+        self.experience=exp or self.set_experience_by_base_level(self.base_level)
+        ''' If experience is zero, sets experience based on base_level. Defaults to 0 experience base_level 1 when no parameters entered.'''
+
+        self.__last_experience_earned = 0 # Used for logging
         self.skill_set= skill_set()
 
         self.base_saving_throw_bonus={i: 0 for i in self._core().get_saving_throw_list_short()}
@@ -55,8 +58,8 @@ class creature(verbose, dice, core_constants):
                                                                                        wis or self._core().get_default_base_ability_score(),
                                                                                        dex or self._core().get_default_base_ability_score(),
                                                                                        chr or self._core().get_default_base_ability_score()])}
-        # self.base_abilities={self.ABILITY.STR: str, self.ABILITY.INT: inte, self.ABILITY.CON: con, self.ABILITY.WIS: wis, self.ABILITY.DEX: dex, self.ABILITY.CHR: chr} # Dictionary for base abilities
-        self.base_armor_class=base_armor_class if self._core().get_min_base_armor_class() <= base_armor_class <= self._core().get_max_base_armor_class() else self._core().get_default_base_armor_class()
+        self.base_armor_class = None
+        self.set_base_armor_class(base_armor_class)
 
         self.inventory=[] # Holds list of items, an inventory system is in the future.
 
@@ -66,10 +69,16 @@ class creature(verbose, dice, core_constants):
 
     def get_experience(self):
         '''
-        Returns the creature experience
+        Returns the total creature experience points
         '''
         return self.experience
     
+    def get_last_experience_earned(self):
+        '''
+        Returns the last amount of XP rewarded to the creature class
+        '''
+        return self.__last_experience_earned
+
     def get_experience_needed_to_level(self):
         '''
         Returns the experience needed in order to level up
@@ -123,6 +132,25 @@ class creature(verbose, dice, core_constants):
         else:
             self.current_hit_points = min(max(self.current_hit_points,self._core().get_min_current_hit_points()),self.get_base_hit_points())
 
+    def get_challenge_rating(self):
+        return self.challenge_rating
+
+    def set_challenge_rating(self,val=None):
+        '''
+        Sets the creature challenge rating to a numerical value
+        '''
+        if not val:
+            return 
+
+        if type(val) in [int,float]:
+            if self._core().get_min_challenge_rating() <= val < 1:
+                self.challenge_rating = val
+            else:
+                self.challenge_rating = min(max(val,self._core().get_min_challenge_rating()),self._core().get_max_challenge_rating())
+
+        else:
+            self.challenge_rating = self._core().get_default_challenge_rating()
+
     def is_alive(self):
         if self.current_hit_points > 0:
             return True
@@ -131,6 +159,15 @@ class creature(verbose, dice, core_constants):
 
     def get_base_armor_class(self):
         return self.base_armor_class
+
+    def set_base_armor_class(self,val=None):
+        if not val:
+            self.base_armor_class = self._core().get_default_base_armor_class()
+        else:
+            if self._core().get_min_base_armor_class() <= val <= self._core().get_max_base_armor_class():
+                self.base_armor_class = val
+            else:
+                self.base_armor_class = self._core().get_default_base_armor_class()               
 
     def get_armor_class(self):
         return self.base_armor_class + self.get_ability_modifier(self.ABILITY.DEX)
@@ -283,6 +320,33 @@ class creature(verbose, dice, core_constants):
         the base ability will be set to the value provided for variable 'add'
         '''
         return self.set_base_ability_score(self.ABILITY.CHR, add, absolute)
+
+    def set_experience(self, add=None):
+        '''
+        This method sets the creature experience by adding input value 'add' to self.experience
+        If a creature class is passed to the function (as in, your PC kills a monster 'creature'), the
+        defeated creature's challenge rating is determined and appropriate experience is given to the victoring creature
+        '''
+        if add:
+            if type(add) in [int,float]:
+                if self.experience + int(add) >= self.get_experience_needed_to_level():
+                    prev_experience = self.experience
+                    self.experience = min(int(sum(range(1,self.base_level+2))*self.base_level_rate-1),int(add)+self.experience)
+                    self.__last_experience_earned = self.experience - prev_experience
+                else:
+                    self.__last_experience_earned = int(add)
+                    self.experience += int(add)
+            else:
+                if isinstance(add,creature):
+                    exp = self._core().get_rewarded_experience_by_challenge_rating(add.get_challenge_rating())[self.get_base_level()-1]
+                    if self.experience + exp >= self.get_experience_needed_to_level():
+                        prev_experience = self.experience
+                        self.experience = min(int(sum(range(1,self.base_level+2))*self.base_level_rate-1),exp+self.experience)
+                        self.__last_experience_earned = self.experience - prev_experience
+                    else:
+                        self.__last_experience_earned = exp
+                        self.experience += exp
+
 
     def set_experience_by_base_level(self, base_level=1): 
         '''
@@ -534,7 +598,7 @@ class creature(verbose, dice, core_constants):
 
     def stat_display_short(self):
         perc = percbar(None,None,50)
-        print("Name:",self.name,"| Lvl:",self.base_level,"| Race:", self.race.title(),"| Class:",self.creature_class.upper())
+        print("Name:",self.name,"| Lvl:",self.base_level,"| Race:", self.CREATURERACE.get_long_name(self.race),"| Class:",self.creature_class.upper())
         print("HP:", perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),None,True,2))
 
 

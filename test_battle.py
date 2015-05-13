@@ -6,8 +6,8 @@ import os
 import creature as cre
 
 a = cc()
-pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,None,23,98,20,4,None,15,None,14,10,7,13,11,3,True)
-npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,50,10,15,2,None,10,None,11,10,6,13,12,9,True)
+pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,3,None,23,98,20,1,None,15,None,14,10,7,13,11,3,True)
+npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,.5,None,50,10,15,2,None,10,None,11,10,6,13,12,9,True)
 
 print("\n\n---------------------------------------------------------------\n\n")
 
@@ -44,6 +44,7 @@ def heal(cre_a):
         cre_a.set_current_hit_points(heal)
 
 while pc.is_alive() and npc.is_alive():
+    input()
     os.system('clear')
     pc.stat_display()
     print("\n\n---------------------------------------------------------------\n\n")
@@ -68,12 +69,15 @@ while pc.is_alive() and npc.is_alive():
     else:
         attack(npc,pc)
 
-    input("\nPress Enter to continue")
+input("\nPress Enter to continue")
 
 
 os.system("clear")
 if not npc.is_alive():
     print(pc.get_name(),"has killed",npc.get_name(),"!")
+    pc.set_experience(npc)
+    print('\n\n',pc.get_name(),"gained",pc.get_last_experience_earned(),"XP!\n\n")
+    pc.stat_display()
 else:
     print(npc.get_name(),"killed you!")
     print("\n\nGAME OVER")
