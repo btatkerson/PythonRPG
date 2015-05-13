@@ -21,8 +21,7 @@ class creature(verbose, dice, core_constants):
     def _core(self): 
         return core_creature_configuration()
 
-    def __init__(self, playable_character=None, name=None, creature_class=None, race=None, challenge_rating=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, 
-                 exp=None, base_armor_class=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
+    def __init__(self, playable_character=None, name=None, creature_class=None, race=None, challenge_rating=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, exp=None, base_armor_class=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
 
         # Initialize inherited classes
         verbose.__init__(self,verbo)
@@ -374,8 +373,10 @@ class creature(verbose, dice, core_constants):
     def get_name(self): 
         return self.name
 
-    # Sets the law_vs_chaos value keeping it within restricted values
     def set_law_vs_chaos(self, add, absolute=False): 
+        '''
+        Sets the law_vs_chaos value keeping it within restricted values
+        '''
         if absolute: 
             self.law_vs_chaos= add
             if self.law_vs_chaos < self._core().get_min_law_vs_chaos(): 
@@ -387,8 +388,10 @@ class creature(verbose, dice, core_constants):
 
         return self.law_vs_chaos
 
-    # Sets the good_vs_evil value keeping it within restricted values
     def set_good_vs_evil(self, add, absolute=False): 
+        '''
+        Sets the good_vs_evil value keeping it within restricted values
+        '''
         if absolute: 
             self.good_vs_evil= add
             if self.good_vs_evil < self._core().get_min_good_vs_evil(): 
@@ -400,8 +403,11 @@ class creature(verbose, dice, core_constants):
 
         return self.good_vs_evil
 
-    # Returns law vs chaos values and or "lawful", "chaotic", and "neutral"
-    def get_law_vs_chaos(self, value_word_combo=0): # 0 returns value, 1 returns word, 2 returns both, -1 returns raw variable
+    def get_law_vs_chaos(self, value_word_combo=0): 
+        '''
+        Returns law vs chaos values and or "lawful", "chaotic", and "neutral"
+        0 returns value, 1 returns word, 2 returns both, -1 returns raw variable
+        '''
         temp=[0, 0]
 
         if self.law_vs_chaos < 33: 
