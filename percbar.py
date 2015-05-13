@@ -80,7 +80,7 @@ class percbar():
         perc_precision = perc_precision or self.__DEFAULT_PERC_PRECISION
 
         
-        spaces = round(part*width/total)
+        spaces = min(round(part*width/total),width)
         perc=''
         if perc_tag:
             perc = '{:.2%}'.format(part/total)
