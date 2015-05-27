@@ -15,7 +15,7 @@ class timer():
 
 	def pause(self):
 		if self.active:
-			self.last_time_length=self.last_time_length+(time()-last_mark())
+			self.last_time_length=self.last_time_length+(time()-self.last_mark())
 			self.active=0
 			return 0
 		return 1

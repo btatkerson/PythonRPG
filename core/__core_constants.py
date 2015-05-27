@@ -2,8 +2,9 @@
 Name: _core_constants.py
 
 Description:
-    This class stores the common-core constants that will be used in-game accross various classes
-    For instance, the creature in-game class "BARBARIAN" is used for things like maybe weapon requirements,
+    This class stores the common-core constants that will be used in-game across various classes
+
+    For instance, the creature in-game class "BARBARIAN" is used for things such as weapon requirements,
     custom dialogs, level progression system, etc. Instead of the name "BARBARIAN" applying only to
     core__creature files (which, the creatures would be "barbarians" in-game), the constants for them
     can be used universally.
@@ -36,6 +37,12 @@ class index_reader:
             return False
     
     def get_long_name(self,val=None):
+        '''
+        Returns the long name for the given constant. 
+
+        Ex. ABILITY.STRENGTH = 'str' = 'strength'
+        This would return 'strength'
+        '''
         constant = self.verify(val)
         return dict(zip(self.INDEX,self.INDEX_LONG))[constant]
 
@@ -163,7 +170,36 @@ class core_constants():
                 self.INDEX = [self.FOR,self.REF,self.WIL]
                 self.INDEX_LONG = ['fortitude','reflex','will']
 
-    class _core_const_equipment_slots(index_reader):
+    class _core_const_sizeClass(index_reader):
+        '''
+        Used as a class to hold constants for racial size classes
+        '''
+        def __init__(self):
+                index_reader.__init__(self)
+                self.UNI = self.UNIQUE = 'uni'
+                self.FIN = self.FINE = 'fin'
+                self.DIM = self.DIMINUTIVE = 'dim'
+                self.TNY = self.TINY = 'tny'
+                self.SML = self.SMALL = 'sml'
+                self.MED = self.MEDIUM = 'med'
+                self.LGT = self.LARGE_TALL = 'lgt'
+                self.LGL = self.LARGE_LONG = 'lgl'
+                self.HGT = self.HUGE_TALL = 'hgt'
+                self.HGL = self.HUGE_LONG = 'hgl'
+                self.GRT = self.GARGANTUAN_TALL = 'grt'
+                self.GRL = self.GARGANTUAN_LONG = 'grl'
+                self.COT = self.COLOSSAL_TALL = 'cot'
+                self.COL = self.COLOSSAL_LONG = 'col'
+                                        
+                self.INDEX = [self.UNI,self.FIN,self.DIM,self.TNY,self.SML,
+                              self.MED,self.LGT,self.LGL,self.HGT,self.HGL,
+                              self.GRT,self.GRL,self.COT,self.COL]
+
+                self.INDEX_LONG = ['unique','fine','diminutive','tiny','small',
+                                   'medium','large, tall','large, long','huge, tall','huge, long',
+                                   'gargantuan, tall', 'gargantuan, long', 'colossal, tall', 'colossal, long']
+
+    class _core_const_equipmentSlots(index_reader):
         '''
         Used as a class to hold constants for the possible equipment slots on the creature class
         '''
@@ -251,6 +287,7 @@ class core_constants():
         self.BASESAVEBONUS = self._core_const_baseSaveBonus()
         self.CREATURECLASS = self._core_const_creatureClass()
         self.CREATURERACE = self._core_const_creatureRace()
-        self.EQUIPMENTSLOT = self._core_const_equipment_slots()
+        self.EQUIPMENTSLOT = self._core_const_equipmentSlots()
         self.SAVINGTHROW = self._core_const_savingThrow()
+        self.SIZECLASS = self._core_const_sizeClass()
         self.SKILL = self._core_const_skill()
