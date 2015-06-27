@@ -18,7 +18,7 @@ class index_reader:
     def __init__(self):
         None
 
-    def is_real(self,val=None):
+    def __is_real(self,val=None):
         if not val:
             return False,False
         else:
@@ -30,11 +30,31 @@ class index_reader:
             return False,False
     
     def verify(self,val=None):
-        real,value = self.is_real(val)
+        '''
+        This takes either the constant or an ID number and returns the shorthand constant.
+
+        This is used to make a check on custom scripts that may get used or verifying a range
+        of constants via ID numbers.
+        
+        Also intended for use with default settings of in-game classes. If something is supposed to
+        be altered, but can't be "verified", a default can be set in place upon this returning False.
+        '''
+        real,value = self.__is_real(val)
         if real:
             return value
         else:
             return False
+    
+    def get_index_length(self):
+        '''
+        Returns the length of the index. This gives the total amount of of items per constant
+        class
+
+        Ex. self.ABILITY() has six different constants: str, dex, con, wis, int, and chr
+        This function outputs an integer with the count
+        '''
+
+        return len(self.INDEX) 
     
     def get_long_name(self,val=None):
         '''
@@ -182,13 +202,13 @@ class core_constants():
                 self.TNY = self.TINY = 'tny'
                 self.SML = self.SMALL = 'sml'
                 self.MED = self.MEDIUM = 'med'
-                self.LGT = self.LARGE_TALL = 'lgt'
+                self.LGT = self.LARGE_TALL = self.LARGE = 'lgt'
                 self.LGL = self.LARGE_LONG = 'lgl'
-                self.HGT = self.HUGE_TALL = 'hgt'
+                self.HGT = self.HUGE_TALL = self.HUGE = 'hgt'
                 self.HGL = self.HUGE_LONG = 'hgl'
-                self.GRT = self.GARGANTUAN_TALL = 'grt'
+                self.GRT = self.GARGANTUAN_TALL = self.GARGANTUAN = 'grt'
                 self.GRL = self.GARGANTUAN_LONG = 'grl'
-                self.COT = self.COLOSSAL_TALL = 'cot'
+                self.COT = self.COLOSSAL_TALL = self.COLOSSAL = 'cot'
                 self.COL = self.COLOSSAL_LONG = 'col'
                                         
                 self.INDEX = [self.UNI,self.FIN,self.DIM,self.TNY,self.SML,

@@ -323,7 +323,7 @@ class creature(verbose, dice, core_constants):
     def set_experience(self, add=None):
         '''
         This method sets the creature experience by adding input value 'add' to self.experience
-        If a creature class is passed to the function (as in, your PC kills a monster 'creature'), the
+        If a creature class is passed to the function as parameter 'add' (as in, your PC kills a monster 'creature'), the
         defeated creature's challenge rating is determined and appropriate experience is given to the victoring creature
         '''
         if add:
@@ -562,35 +562,35 @@ class creature(verbose, dice, core_constants):
         if self._core().is_ability(ability):
             return self.base_abilities[ability]
     
-    # Gets the ability modifier for whatever ability score is given to it
     def get_ability_modifier(self, ability=None): 
+        ''' Gets the ability modifier for whatever ability score is given to it '''
         if self._core().is_ability(ability): 
             return self._core().ability_modifier_from_score(self.get_base_ability_score(ability.lower()))
         else: 
             return self._core().ability_modifier_from_score(self._core().get_default_base_ability_score())
 
-    # Returns the strength modifier
     def mod_str(self): 
+        '''Returns the strength modifier'''
         return self.get_ability_modifier(self.ABILITY.STR)
 
-    # Returns the intelligence modifier
     def mod_int(self): 
+        '''Returns the intelligence modifier'''
         return self.get_ability_modifier(self.ABILITY.INT)
 
-    # Returns the constitution modifier
     def mod_con(self): 
+        '''Returns the constitution modifier'''
         return self.get_ability_modifier(self.ABILITY.CON)
 
-    # Returns the wisdom modifier
     def mod_wis(self): 
+        '''Returns the wisdom modifier'''
         return self.get_ability_modifier(self.ABILITY.WIS)
 
-    # Returns the dexterity modifier
     def mod_dex(self): 
+        '''Returns the dexterity modifier'''
         return self.get_ability_modifier(self.ABILITY.DEX)
 
-    # Returns the charisma modifier
     def mod_chr(self): 
+        '''Returns the charisma modifier'''
         return self.get_ability_modifier(self.ABILITY.CHR)
 
     def stat_display(self):
