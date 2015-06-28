@@ -14,7 +14,7 @@ class dice():
                 self.setDefaultSides(default_sides) # This affects only self.d()
                 self.setDefaultOccurances(default_occurances) # This affects all class roll methods
 
-        def __call__(self):
+        def __call__(self,sides=None,occurances=None,return_average=False):
             '''
             This will return a dice roll of default sides and default amount of rolls
             simply by calling the instance as a functor.
@@ -25,7 +25,7 @@ class dice():
             a.d() returns the default roll (1d20)
             a() would give the same result
             '''
-            return self.d()
+            return self.d(sides,occurances,return_average)
 
         def setDefaultSides(self,num=None):
                 '''
@@ -119,7 +119,3 @@ class dice():
 	
         def d4(self, occurances=None, return_average=False):
                 return self.d(4, occurances, return_average)
-
-
-a = dice(6,2)
-print(a.d(),a.d20(5),a.d10(1))
