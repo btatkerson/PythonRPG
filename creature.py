@@ -240,6 +240,7 @@ class creature(verbose, dice, core_constants):
                 self.base_abilities[ability.lower()] += add
         else: 
             return -1
+
         # Makes sure the base ability is valid and keeps the value within range
         if self.base_abilities[ability] > self._core().get_max_base_ability_score(): 
             self.base_abilities[ability]= self._core().get_max_base_ability_score()
@@ -337,7 +338,7 @@ class creature(verbose, dice, core_constants):
                     self.experience += int(add)
             else:
                 if isinstance(add,creature):
-                    exp = self._core().get_rewarded_experience_by_challenge_rating(add.get_challenge_rating())[self.get_base_level()-1]
+                    exp = self._core().get_rewarded_experience_by_challenge_rating_and_level(add.get_challenge_rating(),self.get_base_level())
                     if self.experience + exp >= self.get_experience_needed_to_level():
                         prev_experience = self.experience
                         self.experience = min(int(sum(range(1,self.base_level+2))*self.base_level_rate-1),exp+self.experience)

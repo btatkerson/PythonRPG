@@ -14,8 +14,6 @@ class core_race_configuration(core_constants):
     def __init__(self):
         core_constants.__init__(self)
 
-
-
         '''
 
          The size classes by name, occupying space in feet, and natural reach in feet. These are standard, but exceptions can be made
@@ -75,7 +73,7 @@ class core_race_configuration(core_constants):
             return self.get_race_type_list().index(race_type)
 
     def get_race_type_list(self):
-        return self.__race_type_list
+        return self.CREATURERACE.get_index()
 
     def get_size_class_list(self):
         return self.__size_classes
@@ -123,36 +121,45 @@ class core_race_configuration(core_constants):
     # that particular race
     class __race_settings():
         def __init__(self,name,playable_race=False,favored_classes=[],favored_deities=[],size_class='',base_land_speed=None):
+            self.CORECON = core_constants()
             self.race_name=name
             self.playable_race=playable_race
             self.favored_classes=favored_classes
             self.favored_deities=favored_deities
             self.size_class=size_class
             # self.base_land_speed=base_land_speed # Will not be used until future development, races all have a base land speed which determines how much far a creature can move in one round. This is not the only thing that will affect land speed.
-            self.ability_bonuses = {'str':0, 'int':0, 'con':0, 'wis':0, 'dex':0, 'chr':0,'fortitude':0,'reflex':0,'will':0}
+            self.ability_bonuses = {self.CORECON.ABILITY.STR:0, 
+                                    self.CORECON.ABILITY.INT:0, 
+                                    self.CORECON.ABILITY.CON:0, 
+                                    self.CORECON.ABILITY.WIS:0, 
+                                    self.CORECON.ABILITY.DEX:0, 
+                                    self.CORECON.ABILITY.CHR:0,
+                                    self.CORECON.SAVINGTHROW.FOR:0,
+                                    self.CORECON.SAVINGTHROW.REF:0,
+                                    self.CORECON.SAVINGTHROW.WIL:0}
 
         # Set one, set all, set some, this is just to make the penalty/bonus dictionary simple to fill.
         # Example - A dwarf class gets a racial bonus of +2 constitution, but a penalty of a -2 charisma
         # This can be set by calling the function as so set_ability_bonus(con=2,chr=-2)
         def set_ability_bonuses(self,str=0,inte=0,con=0,wis=0,dex=0,chr=0,fortitude=0,reflex=0,will=0,absolute=True):
             if str or absolute:
-                self.set_ability_bonus_single('str',str,absolute)
+                self.set_ability_bonus_single(self.CORECON.ABILITY.STR,str,absolute)
             if inte or absolute:
-                self.set_ability_bonus_single('int',inte,absolute)
+                self.set_ability_bonus_single(self.CORECON.ABILITY.INT,inte,absolute)
             if con or absolute:
-                self.set_ability_bonus_single('con',con,absolute)
+                self.set_ability_bonus_single(self.CORECON.ABILITY.CON,con,absolute)
             if wis or absolute:
-                self.set_ability_bonus_single('wis',wis,absolute)
+                self.set_ability_bonus_single(self.CORECON.ABILITY.WIS,wis,absolute)
             if dex or absolute:
-                self.set_ability_bonus_single('dex',dex,absolute)
+                self.set_ability_bonus_single(self.CORECON.ABILITY.DEX,dex,absolute)
             if chr or absolute:
-                self.set_ability_bonus_single('chr',chr,absolute)
+                self.set_ability_bonus_single(self.CORECON.ABILITY.CHR,chr,absolute)
             if fortitude or absolute:
-                self.set_ability_bonus_single('fortitude',fortitude,absolute)
+                self.set_ability_bonus_single(self.CORECON.SAVINGTHROW.FOR,fortitude,absolute)
             if reflex or absolute:
-                self.set_ability_bonus_single('reflex',reflex,absolute)
+                self.set_ability_bonus_single(self.CORECON.SAVINGTHROW.REF,reflex,absolute)
             if will or absolute:
-                self.set_ability_bonus_single('will',will,absolute)
+                self.set_ability_bonus_single(self.CORECON.SAVINGTHROW.WIL,will,absolute)
 
         # Sets an individual ability at a time, can be used by itself or with "set_ability_bonuses"
         # 'absolute' == False adds variable 'add' to the ability given in the 'ability' parameter
@@ -171,3 +178,6 @@ class core_race_configuration(core_constants):
         # I... I don't think this is needed, but I should have thought about that before writing it. It wasn't a waste of YOUR time.
         def get_ability_bonus_dictionary(self):
             return self.ability_bonuses
+
+
+

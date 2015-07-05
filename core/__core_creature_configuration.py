@@ -7,11 +7,11 @@
 from core.__core_race_configuration import core_race_configuration
 from core.__core_constants import core_constants
 
-class core_creature_configuration(core_constants, core_race_configuration):
+class core_creature_configuration(core_constants):# , core_race_configuration):
 
     def __init__(self):
         core_constants.__init__(self)
-        core_race_configuration.__init__(self) # Inherits the core race configurations of the game, the creature configuration is highly involved with races
+        #core_race_configuration.__init__(self) # Inherits the core race configurations of the game, the creature configuration is highly involved with races
         self.__DEFAULT_ABILITY = 0 # strength
         self.__ABILITY_LIST_SHORT = [self.ABILITY.STR, self.ABILITY.INT, self.ABILITY.CON, self.ABILITY.WIS, self.ABILITY.DEX, self.ABILITY.CHR]
         self.__ABILITY_LIST = ['strength', 'intelligence', 'constitution', 'wisdom', 'dexterity', 'charisma']
@@ -59,47 +59,18 @@ class core_creature_configuration(core_constants, core_race_configuration):
                                    "ring_1":None,"ring_2":None,"gloves":None,"cloak":None,"boots":None,"belt":None}
 
         
-        self.__CHALLENGE_RATING_LIST = [self.__class_table_row_gen(1,[200,180,170,70,70,70,70,70]),
-                                        self.__class_table_row_gen(1,[500,480,420,260,230,190,170,140,52]),
-                                        self.__class_table_row_gen(1,[960,900,750,420,330,280,230,190,112,52]),
-                                        self.__class_table_row_gen(1,[1440,1370,1200,630,530,420,330,280,230,190,112,52]),
-                                        self.__class_table_row_gen(1,[2520,1920,1770,1050,770,630,530,400,330,260,165,127,48]),
-                                        self.__class_table_row_gen(1,[3000,3150,2400,1520,1260,910,740,540,330,247,192,123,48]),
-                                        self.__class_table_row_gen(1,[3000,4000,3780,2020,1810,1470,1050,840,450,367,254,185,137,48]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3090,2350,2090,1680,1190,712,502,371,247,206,144,42]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,3530,2690,2370,1890,1005,787,509,378,268,220,138,42]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,3970,3020,2660,1575,1110,798,509,413,296,210,150,42,42]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,4410,3360,2205,1732,1115,771,550,443,276,228,156,84,42,42]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,4850,2775,2415,1735,1087,846,585,408,300,234,162,84,84]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,3967,3022,2416,1686,1204,915,552,438,318,252,174,126]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,4297,3008,2361,1831,1253,864,588,462,336,264,186,40]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,5250,4096,2939,2554,1955,1176,906,630,492,354,288,200,40]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,5250,4819,4268,3084,2650,1806,1260,948,672,504,378,300,250,40]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,5250,4819,4819,4337,3325,2520,1932,1326,1050,714,558,450,350,300,40]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,5250,4819,4819,4819,4378,3066,2646,2058,1428,1050,738,500,450,400,300,40]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,5250,4819,4819,4819,4819,3990,3276,2838,2184,1470,1134,1000,800,600,400,200,40]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,5250,4819,4819,4819,4819,4200,4200,3402,2982,2268,1596,1250,1000,800,600,400,200,40]),
-                                        self.__class_table_row_gen(1,[3000,4000,5000,3850,4200,4900,5600,5950,4725,5250,4819,4819,4819,4819,4200,4200,4032,3468,2646,2352,1750,1500,1250,1000,500,400,200,40]),
-                                        self.__class_table_row_gen(17,[6000,5000,4000,3000,2250,2000,1750,1500,1250,1000,750,50,40]),
-                                        self.__class_table_row_gen(17,[6000,5000,4000,3000,2750,2500,2250,2000,1750,1500,1250,1000,750,40]),
-                                        self.__class_table_row_gen(17,[6000,5000,5000,4000,3250,3000,2750,2500,2250,2000,1750,1500,1250,1000,40]),
-                                        self.__class_table_row_gen(17,[6000,5000,5000,4000,3750,3500,3250,3000,2750,2500,2250,2000,1750,1500,1000,40]),
-                                        self.__class_table_row_gen(18,[6000,5000,5000,4250,4000,3750,3500,3250,3000,2750,2500,2250,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(19,[6000,5000,4750,4500,4250,4000,3750,3500,3250,3000,2750,2500,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(20,[6000,5250,5000,4750,4500,4250,4000,3750,3500,3250,3000,2500,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(20,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(21,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(22,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(23,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(24,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000,1500,1000,40]),
-                                        self.__class_table_row_gen(25,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000,1500,1000]),
-                                        self.__class_table_row_gen(26,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000,1500]),
-                                        self.__class_table_row_gen(27,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500,2000]),
-                                        self.__class_table_row_gen(28,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000,2500]),
-                                        self.__class_table_row_gen(29,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500,3000]),
-                                        self.__class_table_row_gen(30,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750,3500]),
-                                        self.__class_table_row_gen(31,[6000,5750,5500,5250,5000,4750,4500,4250,4000,3750]),
-                                        self.__class_table_row_gen(32,[6000,5750,5500,5250,5000,4750,4500,4250,4000])]
+        '''
+        This generates a table of xp values based on creature level and enemy challenge ratings
+
+        Each line is a level from 1-40
+        Each separated value per line is based on the opponent's challenge rating
+
+        '''
+        self.__CHALLENGE_RATING_LIST = []
+        with open("./data/xptable.csv") as f:
+            for i in f:
+                self.__CHALLENGE_RATING_LIST.append([int(j) for j in i.split()])
+        f.close()
 
 
     def ability_modifier_from_score(self,score):
@@ -134,16 +105,19 @@ class core_creature_configuration(core_constants, core_race_configuration):
         return self.__CHALLENGE_RATING_LIST
 
 
-    def get_rewarded_experience_by_challenge_rating(self,challenge_rating=None):
+    def get_rewarded_experience_by_challenge_rating_and_level(self,challenge_rating=None,level=None):
         if challenge_rating == None:
             challenge_rating = self.__DEFAULT_CHALLENGE_RATING
 
+        if level == None:
+            level = self.__DEFAULT_BASE_LEVEL
+
         if 0 < challenge_rating < 1:
-            return [int(i*challenge_rating) for i in self.__CHALLENGE_RATING_LIST[0]]
+            return int(self.__CHALLENGE_RATING_LIST[level-1][0]*challenge_rating)
 
         challenge_rating = min(max(int(challenge_rating),self.__MIN_CHALLENGE_RATING),self.__MAX_CHALLENGE_RATING)
 
-        return self.__CHALLENGE_RATING_LIST[challenge_rating]
+        return int(self.__CHALLENGE_RATING_LIST[level-1][challenge_rating])
 
     def get_default_base_armor_class(self):
         return self.__DEFAULT_BASE_ARMOR_CLASS
@@ -189,17 +163,6 @@ class core_creature_configuration(core_constants, core_race_configuration):
                 saving_throw in self.__SAVING_THROW_LIST_SHORT:
             return True
         return False
-
-    # Returns the short name of the saving throw. This is based on input. Defaults to fortitude
-    def validate_saving_throw(self,saving_throw=None):
-        if self.is_saving_throw(saving_throw):
-            if 0 <= saving_throw < len(self.__SAVING_THROW_LIST):
-                return self.__SAVING_THROW_LIST_SHORT[saving_throw]
-            elif saving_throw.lower() in self.__SAVING_THROW_LIST_SHORT:
-                return saving_throw.lower()
-            else:
-                return self.__SAVING_THROW_LIST_SHORT[self.__SAVING_THROW_LIST.index(saving_throw.lower())]
-        return self.__SAVING_THROW_LIST_SHORT[self.__DEFAULT_SAVING_THROW]
 
     def get_default_base_ability_score(self):
         return self.__DEFAULT_BASE_ABILITY_SCORE

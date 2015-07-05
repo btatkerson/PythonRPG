@@ -45,6 +45,12 @@ class index_reader:
         else:
             return False
     
+    def get_index(self):
+        '''
+        Returns the index of the particular subclass which includes all of the constants that can normally be called upon
+        '''
+        return self.INDEX
+
     def get_index_length(self):
         '''
         Returns the length of the index. This gives the total amount of of items per constant
