@@ -6,17 +6,19 @@ Creates a text bar of custom width and displays percentage of first number relat
 '''
 
 class percbar():
-    def __init__(self,def_part=None,def_total=None,def_width=None,def_perc_tag=None,def_perc_precision=None):
+    def __init__(self,def_part=None,def_total=None,def_width=None,def_perc_tag=None, def_part_per_total_tag=None, def_perc_precision=None):
         self.__DEFAULT_PART = None
         self.__DEFAULT_TOTAL = None
         self.__DEFAULT_BAR_WIDTH = None
         self.__DEFAULT_PERC_TAG = None
+        self.__DEFAULT_PART_PER_TOTAL_TAG = None
         self.__DEFAULT_PERC_PRECISION = None
         
         self.set_default_part(def_part) # Any number less than or equal to 0 given will automatically default to 0
         self.set_default_total(def_total) # Any number less than or equal to 0 given will automatically default to 1
         self.set_default_bar_width(def_width) # Any number less than or equal to 0 given will automatically default to 100
         self.set_default_perc_tag(def_perc_tag)
+        self.set_default_part_per_total_tag(def_part_per_total_tag)
         self.set_default_perc_precision(def_perc_precision) # Any number less than or equal to 0 given will automatically default to 2
     
     def set_default_part(self,part):
@@ -51,6 +53,14 @@ class percbar():
     def get_default_perc_tag(self):
         return self.__DEFAULT_PERC_TAG
 
+    def set_default_part_per_total_tag(self,activated):
+        if not activated:
+            activated = 0
+        self.__DEFAULT_PART_PER_TOTAL_TAG = bool(activated) or False
+
+    def get_default_part_per_total_tag(self):
+        return self.__DEFAULT_PART_PER_TOTAL_TAG
+
     def set_default_perc_precision(self,perc_precision):
         if not perc_precision:
             perc_precision = 0
@@ -59,7 +69,7 @@ class percbar():
     def get_default_perc_precision(self):
         return self.__DEFAULT_PERC_PRECISION
 
-    def disp(self,part=None,total=None,width=None,perc_tag=None,perc_precision=None):
+    def disp(self,part=None,total=None,width=None,perc_tag=None,part_per_total_tag=None,perc_precision=None):
         '''
         Displays a text bar to demonstrate percentage
 
@@ -67,9 +77,16 @@ class percbar():
         part = 3
         total = 4
 
-        width -- the amount of spaces used in the bar
+                     width -- the amount of spaces used in the bar
 
-        perc_tag -- Set to False by default, when True, a numerical percentage is displayed next to the bar
+                  perc_tag -- Set to False by default, when True, a numerical percentage is displayed next to the bar
+
+                              Ex: |------------   | 80.00%
+
+        part_per_total_tag -- Set to False by default, when True, the part over the total is given in fractional
+                              form next to the bar. This is overridden if perc_tag is active at the same time  
+                              
+                              Ex: |------------   | 48/60
 
         perc_precision -- The amount of decimal places after the percentage label
         '''
@@ -77,6 +94,7 @@ class percbar():
         total = total or self.__DEFAULT_TOTAL
         width = width or self.__DEFAULT_BAR_WIDTH
         perc_tag = perc_tag or self.__DEFAULT_PERC_TAG
+        part_per_total_tag = part_per_total_tag or self.__DEFAULT_PART_PER_TOTAL_TAG
         perc_precision = perc_precision or self.__DEFAULT_PERC_PRECISION
 
         
@@ -84,6 +102,8 @@ class percbar():
         perc=''
         if perc_tag:
             perc = '{:.2%}'.format(part/total)
+        elif part_per_total_tag:
+            perc = str(part) + "/" + str(total)
 
         temp = '|'+''.join(['-' for i in range(0,max(0,int(spaces)))]+[' ' for i in range(0,int(width-max(0,int(spaces))))])+'| '+perc
         return temp

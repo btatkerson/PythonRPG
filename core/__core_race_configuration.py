@@ -45,13 +45,13 @@ class core_race_configuration(core_constants):
         self.__DEFAULT_SIZE_CLASS_NAME = self.get_size_class_list()[self.get_default_size_class_id()][0]
 
         #
-        self.__core_race_list = [self.__race_settings(name=self.__race_type_list[1],playable_race=True,size_class=self.get_size_class_list()[5]),
-                                self.__race_settings(name=self.__race_type_list[2],playable_race=True,size_class=self.get_size_class_list()[5]),
-                                self.__race_settings(name=self.__race_type_list[3],playable_race=True,size_class=self.get_size_class_list()[5]),
-                                self.__race_settings(name=self.__race_type_list[4],playable_race=True,size_class=self.get_size_class_list()[4]),
-                                self.__race_settings(name=self.__race_type_list[5],playable_race=True,size_class=self.get_size_class_list()[5]),
-                                self.__race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[4]),
-                                self.__race_settings(name=self.__race_type_list[7],playable_race=True,size_class=self.get_size_class_list()[5])]
+        self.__core_race_list = [self.race_settings(name=self.__race_type_list[1],playable_race=True,size_class=self.get_size_class_list()[5]),
+                                self.race_settings(name=self.__race_type_list[2],playable_race=True,size_class=self.get_size_class_list()[5]),
+                                self.race_settings(name=self.__race_type_list[3],playable_race=True,size_class=self.get_size_class_list()[5]),
+                                self.race_settings(name=self.__race_type_list[4],playable_race=True,size_class=self.get_size_class_list()[4]),
+                                self.race_settings(name=self.__race_type_list[5],playable_race=True,size_class=self.get_size_class_list()[5]),
+                                self.race_settings(name=self.__race_type_list[6],playable_race=True,size_class=self.get_size_class_list()[4]),
+                                self.race_settings(name=self.__race_type_list[7],playable_race=True,size_class=self.get_size_class_list()[5])]
 
     def get_default_race_type(self):
         return self.__DEFAULT_RACE_TYPE
@@ -119,8 +119,8 @@ class core_race_configuration(core_constants):
 
     # Subclass of __core_race_configuration that structures race benefits and penalties and other things associated with
     # that particular race
-    class __race_settings():
-        def __init__(self,name,playable_race=False,favored_classes=[],favored_deities=[],size_class='',base_land_speed=None):
+    class race_settings():
+        def __init__(self,name,playable_race=False,favored_classes=None,favored_deities=None,size_class=None,base_land_speed=None):
             self.CORECON = core_constants()
             self.race_name=name
             self.playable_race=playable_race
@@ -178,6 +178,3 @@ class core_race_configuration(core_constants):
         # I... I don't think this is needed, but I should have thought about that before writing it. It wasn't a waste of YOUR time.
         def get_ability_bonus_dictionary(self):
             return self.ability_bonuses
-
-
-
