@@ -141,8 +141,13 @@ class core_constants():
                 self.SORCERER = self.SOR = 'sor'
                 self.WIZARD = self.WIZ = 'wiz'
 
-                self.INDEX = [self.UNI,self.BBN,self.BRD,self.CLR,self.DRD,self.FTR,self.MNK,self.PLD,self.RGR,self.ROG,self.SOR,self.WIZ]
-                self.INDEX_LONG = ["unique","barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","wizard"]
+                self.INDEX = [self.UNI,self.BBN,self.BRD,self.CLR,self.DRD,
+                              self.FTR,self.MNK,self.PLD,self.RGR,self.ROG,
+                              self.SOR,self.WIZ]
+
+                self.INDEX_LONG = ["unique","barbarian","bard","cleric","druid",
+                                   "fighter","monk","paladin","ranger","rogue",
+                                   "sorcerer","wizard"]
     
     class _core_const_creatureRace(index_reader):
         '''
