@@ -161,6 +161,7 @@ class core_constants():
                 self.ELF = 'elf'
                 self.FEY = 'fey'
                 self.GNT = self.GIANT = 'gnt'
+                self.GNO = self.GNOME = 'gno'
                 self.GOB = self.GOBLINOID = 'gob'
                 self.HFE = self.HALFELF = 'hfe'
                 self.HFO = self.HALFORC = 'hfo'
@@ -177,15 +178,15 @@ class core_constants():
 
                 self.INDEX = [self.UNI,self.ABR,self.ANI,self.BST,self.CON,
                               self.DRG,self.DWF,self.ELM,self.ELF,self.FEY,
-                              self.GNT,self.GOB,self.HFE,self.HFO,self.HFL,
-                              self.HUM,self.MAG,self.OOZ,self.ORC,self.OUT,
-                              self.REP,self.SHP,self.UND,self.VRM]
+                              self.GNT,self.GNO,self.GOB,self.HFE,self.HFO,
+                              self.HFL,self.HUM,self.MAG,self.OOZ,self.ORC,
+                              self.OUT,self.REP,self.SHP,self.UND,self.VRM]
 
                 self.INDEX_LONG = ['unique','aberration','animal','beast','construct',
                                    'dragon','dwarf','elemental','elf','fey',
-                                   'giant','goblin','half-elf','half-orc','half-ling',
-                                   'human','magical beast','ooze','orc','outsider',
-                                   'reptilian','shapechanger','undead','vermin']
+                                   'giant','gnome','goblin','half-elf','half-orc',
+                                   'half-ling','human','magical beast','ooze','orc',
+                                   'outsider','reptilian','shapechanger','undead','vermin']
                 
     class _core_const_savingThrow(index_reader):
         '''
