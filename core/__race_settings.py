@@ -1,0 +1,157 @@
+
+'''
+      Name: __race_settings.py
+    Author: Benjamin A
+      Date: Jul 7, 2015
+    
+   Purpose: This holds basic settings that only technically affect the playable classes. When choosing
+            which race to play as, certain races will affect how a character will play and progress.
+            
+            Two prime examples of racial effects that occur in common gameplay would be favored classes
+            and ability bonuses. 
+
+            Favored classes are used when determining XP penalties for multiclassing. If a class is favored,
+            then a secondary class will not add a multiclass penalty. For humans and half-elves, the highest
+            level class does not count against multiclassing since all classes are technically "favored"
+
+            Ability bonuses are available for all player races (with the exception of humans and half-elves)
+            A halfling gets a Str -2 and Dex +2 added to any checks
+
+'''
+
+from core.__core_constants import core_constants
+
+
+class race_settings():
+    def __init__(self,playable_race=False,favored_classes=None,favored_deities=None,size_class=None,ability_bonuses=None,base_land_speed=None):
+
+        self.playable_race=None
+        self.set_playable_race(playable_race)
+        
+        self.favored_classes=None
+        self.set_favored_classes(favored_classes)
+
+        # self.favored_deities=favored_deities
+
+
+        self.size_class=None
+        self.set_size_class(size_class)
+        
+        # self.base_land_speed=base_land_speed # Will not be used until future development, races all have a base land speed which determines how much far a creature can move in one round. This is not the only thing that will affect land speed.
+        self.ability_bonuses = {core_constants().ABILITY.STR:0, 
+                                core_constants().ABILITY.INT:0, 
+                                core_constants().ABILITY.CON:0, 
+                                core_constants().ABILITY.WIS:0, 
+                                core_constants().ABILITY.DEX:0, 
+                                core_constants().ABILITY.CHR:0}
+
+        self.set_ability_bonus_by_dictionary(ability_bonuses)
+
+
+
+    def set_playable_race(self,playable_race):
+        if playable_race:
+            self.playable_race = True
+        self.playable_race = False
+
+    def get_playable_race(self):
+        return self.playable_race
+
+    def set_favored_classes(self,favored_classes):
+        if type(favored_classes) == list:
+            hold = []
+            for i in favored_classes:
+                temp = core_constants().CREATURECLASS.verify(i)
+                if temp:
+                    hold.append(temp)
+            self.favored_classes = hold
+            if hold != []:
+                return True
+           
+            
+        else:
+            if core_constants().CREATURECLASS.verify(favored_classes):
+                self.favored_classes = [core_constants().CREATURECLASS.verify(favored_classes)]
+                return True
+
+        self.favored_classes = []
+        return False
+                
+    def get_favored_classes(self):
+        return self.favored_classes
+
+
+    def get_size_class(self):
+        return self.size_class
+
+    def set_size_class(self,size_class=None):
+        if core_constants().SIZECLASS.verify(size_class):
+            self.size_class = core_constants().SIZECLASS.verify(size_class)
+        self.size_class = False
+
+               
+        
+
+    def set_ability_bonuses(self,str=0,inte=0,con=0,wis=0,dex=0,chr=0,absolute=True):
+        '''
+        Set one, set all, set some, this is just to make the penalty/bonus dictionary simple to fill.
+        Example - A dwarf class gets a racial bonus of +2 constitution, but a penalty of a -2 charisma
+        This can be set by calling the function as so set_ability_bonus(con=2,chr=-2)
+        '''
+        if str or absolute:
+            self.set_ability_bonus_single(core_constants().ABILITY.STR,str,absolute)
+        if inte or absolute:
+            self.set_ability_bonus_single(core_constants().ABILITY.INT,inte,absolute)
+        if con or absolute:
+            self.set_ability_bonus_single(core_constants().ABILITY.CON,con,absolute)
+        if wis or absolute:
+            self.set_ability_bonus_single(core_constants().ABILITY.WIS,wis,absolute)
+        if dex or absolute:
+            self.set_ability_bonus_single(core_constants().ABILITY.DEX,dex,absolute)
+        if chr or absolute:
+            self.set_ability_bonus_single(core_constants().ABILITY.CHR,chr,absolute)
+
+    def set_ability_bonus_single(self,ability,add=0,absolute=False):
+        '''
+        Sets an individual ability at a time, can be used by itself or with "set_ability_bonuses"
+        'absolute' == False adds variable 'add' to the ability given in the 'ability' parameter
+        'absolute' == True sets the ability given in the 'ability' parameter to the value given in 'add', does not add to previous ability
+        '''
+        ability = core_constants().ABILITY.verify(ability)
+        if ability:
+            if absolute:
+                self.ability_bonuses[ability] = add
+            else:
+                self.ability_bonuses[ability] += add
+            return self.ability_bonuses[ability]
+        else:
+            return -1
+    
+    def set_ability_bonus_by_dictionary(self,ability_bonuses):
+        if type(ability_bonuses) == dict:
+            added = False # Tells if anything was affected by the input ability_bonuses
+            for i in ability_bonuses:
+                temp = core_constants().ABILITY.verify(i)
+                if temp:
+                    added = True
+                    self.set_ability_bonus_single(temp,ability_bonuses[temp],True)
+            if added:
+                return True
+
+        return False
+
+
+
+    def get_ability_bonus(self,ability=None):
+        '''
+        Returns ability bonus (ex. +2) for whichever ability given
+        '''
+        if core_constants().ABILITY.verify(ability):
+            return self.ability_bonuses[core_constants().ABILITY.verify(ability)]
+        return False
+    
+    def get_ability_bonus_dictionary(self):
+        '''
+        Returns the ability bonus dictionary
+        '''
+        return self.ability_bonuses
