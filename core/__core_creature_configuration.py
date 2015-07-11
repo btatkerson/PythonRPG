@@ -4,7 +4,7 @@
             It limits levels, defines EQUIPMENT slots available, etc.
 
 '''
-from core.__core_race_configuration import core_race_configuration
+# from core.__core_race_configuration import core_race_configuration
 from core.__core_constants import core_constants
 
 class core_creature_configuration(core_constants):# , core_race_configuration):
@@ -12,9 +12,7 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
     def __init__(self):
         core_constants.__init__(self)
         #core_race_configuration.__init__(self) # Inherits the core race configurations of the game, the creature configuration is highly involved with races
-        self.__DEFAULT_ABILITY = 0 # strength
-        self.__ABILITY_LIST_SHORT = [self.ABILITY.STR, self.ABILITY.INT, self.ABILITY.CON, self.ABILITY.WIS, self.ABILITY.DEX, self.ABILITY.CHR]
-        self.__ABILITY_LIST = ['strength', 'intelligence', 'constitution', 'wisdom', 'dexterity', 'charisma']
+        self.__DEFAULT_ABILITY = core_constants().ABILITY.STR # strength
         self.__DEFAULT_BASE_ARMOR_CLASS = 10
         self.__MIN_BASE_ARMOR_CLASS = 1
         self.__MAX_BASE_ARMOR_CLASS = 50
@@ -47,18 +45,18 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
         self.__DEFAULT_PLAYABLE_CHARACTER = False
         self.__DEFAULT_RACE = self.CREATURERACE.HUMAN
         self.__DEFAULT_CREATURE_CLASS = self.CREATURECLASS.FIGHTER
-        self.__DEFAULT_SAVING_THROW = 0 # fortitude
-        self.__SAVING_THROW_LIST = ['fortitude','reflex','will']
-        self.__SAVING_THROW_LIST_SHORT = [self.SAVINGTHROW.FORTITUDE,self.SAVINGTHROW.REFLEX,self.SAVINGTHROW.WILL]
-        self.__BASE_ATTACK_BONUS = [self.BASEATTACKBONUS.POOR,self.BASEATTACKBONUS.AVERAGE,self.BASEATTACKBONUS.GOOD,self.BASEATTACKBONUS.MONK]
-        self.__BASE_SAVE_BONUS = [self.BASESAVEBONUS.POOR,self.BASESAVEBONUS.GOOD]
-        self.__DEFAULT_BASE_ATTACK_BONUS = 0
-        self.__DEFAULT_BASE_SAVE_BONUS = 0
+        self.__DEFAULT_SAVING_THROW = core_constants().SAVINGTHROW.FORTITUDE # fortitude
+        self.__DEFAULT_BASE_ATTACK_BONUS = core_constants().BASEATTACKBONUS.AVERAGE
+        self.__DEFAULT_BASE_SAVE_BONUS = core_constants().BASESAVEBONUS.GOOD
 
         self.__EQUIPMENT_SLOTS = {"helmet":None,"armor":None,"main_hand":None,"off_hand":None,"amulet":None,
                                    "ring_1":None,"ring_2":None,"gloves":None,"cloak":None,"boots":None,"belt":None}
 
         
+        self.__CHALLENGE_RATING_LIST = []
+        self.generate_challenge_rating_list()
+        
+    def generate_challenge_rating_list(self):
         '''
         This generates a table of xp values based on creature level and enemy challenge ratings
 
@@ -90,16 +88,6 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
             score = self.get_min_base_ability_score()
 
         return int((score-10)/2)
-
-    def __class_table_row_gen(self,init_level=None, init_list=None):
-        '''
-        Generates a list for challenge ratings where init level is the first level the 'init_list' 
-        begins on and fills in zeroes after level exceeds challenge rating max.
-
-        '''
-        if not init_level or not init_list:
-            return []
-        return [init_list[0] for i in range(0,init_level-1)]+init_list+[0 for i in range(0,40-(init_level+len(init_list)-1))]
 
     def get_challenge_rating_table(self):
         return self.__CHALLENGE_RATING_LIST
@@ -146,55 +134,17 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
     def get_max_base_ability_score(self):
         return self.__MAX_BASE_ABILITY_SCORE
 
-    def get_ability_list(self):
-        return self.__ABILITY_LIST
-
-    def get_ability_list_short(self):
-        return self.__ABILITY_LIST_SHORT
-
     def get_saving_throw_list(self):
         return self.__SAVING_THROW_LIST
 
     def get_saving_throw_list_short(self):
         return self.__SAVING_THROW_LIST_SHORT
 
-    def is_saving_throw(self,saving_throw=None):
-        if 0 <= saving_throw < len(self.__SAVING_THROW_LIST) or saving_throw in self.__SAVING_THROW_LIST or \
-                saving_throw in self.__SAVING_THROW_LIST_SHORT:
-            return True
-        return False
-
     def get_default_base_ability_score(self):
         return self.__DEFAULT_BASE_ABILITY_SCORE
 
     def get_default_ability(self):
         return self.__DEFAULT_ABILITY
-
-    def is_ability(self,ability=None):
-        if ability == None:
-            return False
-        if type(ability) == int:
-            if 0<= ability < len(self.__ABILITY_LIST):
-                return True
-        elif ability.lower() in self.__ABILITY_LIST_SHORT or ability.lower() \
-                in self.__ABILITY_LIST:
-            return True
-        return False
-
-    # Returns the short name for the input 'ability'. Used for consistency purposes. This way, typing 'strength'
-    # where the creature ability keys are shorthand ('strength' == self.ABILITY.STR), validate_ability is placed to assure
-    # everything is called properly. Defaults to strength
-    def validate_ability(self,ability=None):
-        if self.is_ability(ability):
-
-            if type(ability) == int:
-                if 0 <= ability < len(self.__ABILITY_LIST):
-                    return self.get_ability_list_short()[ability]
-            elif ability.lower() in self.__ABILITY_LIST_SHORT:
-                return ability.lower()
-            else:
-                return self.__ABILITY_LIST_SHORT[self.__ABILITY_LIST.index(ability.lower())]
-        return self.get_ability_list_short()[self.get_default_ability()]
 
     def get_default_experience(self):
         return self.__DEFAULT_EXPERIENCE(self)
@@ -259,100 +209,72 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
     def get_default_deity(self):
         return self.__DEFAULT_DEITY
 
-    def get_base_save_bonus_name_by_id(self,id=None):
-        if id is None:
-            id = self.__BASE_SAVE_BONUS
-
-        if 0 <= id < len(self.__BASE_SAVE_BONUS):
-            return self.__BASE_SAVE_BONUS[id]
-        return self.__BASE_SAVE_BONUS[self.__DEFAULT_BASE_SAVE_BONUS]
-
-    def get_base_save_bonus_id_by_name(self,name=None):
-        if name is None:
-            name = self.get_base_save_bonus_name_by_id(self.__DEFAULT_BASE_SAVE_BONUS)
-
-        if name.lower() in self.__BASE_SAVE_BONUS:
-            return list.index(self.__BASE_SAVE_BONUS,name.lower())
+    def get_default_base_save_bonus(self):
         return self.__DEFAULT_BASE_SAVE_BONUS
 
-    # Returns a list of save bonuses for the 'poor', and 'good', id can be given as a value or the name value,
-    # creature_level is fairly self-explanatory
-    # 0 : 'poor',
-    # 1 : 'good'
     def get_base_save_bonus(self,id=None,creature_level=1):
-        if id is None:
-            id = self.__DEFAULT_BASE_SAVE_BONUS
+        '''
+        Returns a list of save bonuses for the 'poor', and 'good', id can be given as a value or the name value,
+        creature_level is fairly self-explanatory
+        0 : 'poor',
+        1 : 'good'
+        '''
+        id = core_constants().BASESAVEBONUS.verify(id)
 
-        if type(id) == str: # Turns a string-type 'id' into its numeric index
-            if id.lower() in self.__BASE_SAVE_BONUS:
-                id = list.index(self.__BASE_SAVE_BONUS,id.lower())
-
-        if 0 <= id < len(self.__BASE_SAVE_BONUS):
+        if id:
             epic_bonus = max(0,round((creature_level-21)/2.0)) # All negative bonuses become zero.
 
             creature_level = max(min(20,creature_level),self.__MIN_BASE_LEVEL) # 20 is the maximum level of bonus
             # growth excluding epic bonuses. This also keeps the level from being no lower than whatever the minimum
             # base level
 
-            if id == 0: # The base save bonus for a 'poor' level bonuses
+            if id is core_constants().BASESAVEBONUS.POOR: # The base save bonus for a 'poor' level bonuses
                 return int(int(creature_level/3) + epic_bonus)
+
             else: # The base save bonus for a 'good' level bonus
                 return int(2 + int(creature_level/2) + epic_bonus)
 
-        return 0
-
-    def get_base_attack_bonus_name_by_id(self,id=None):
-        if id is None:
-            id = self.__BASE_ATTACK_BONUS
-
-        if 0 <= id < len(self.__BASE_ATTACK_BONUS):
-            return self.__BASE_ATTACK_BONUS[id]
-        return self.__BASE_ATTACK_BONUS[self.__DEFAULT_BASE_ATTACK_BONUS]
-
-    def get_base_attack_bonus_id_by_name(self,name=None):
-        if name is None:
-            name = self.get_base_attack_bonus_name_by_id(self.__DEFAULT_BASE_ATTACK_BONUS)
-
-        if name in self.__BASE_ATTACK_BONUS:
-            return list.index(self.__BASE_ATTACK_BONUS,name)
-        return self.__DEFAULT_BASE_ATTACK_BONUS
+        return self.get_base_save_bonus(self.get_default_base_save_bonus(),creature_level)
 
     # Returns a list of attack bonuses for the 'poor', 'average', and 'good', if there are multiple attacks,
     # the sequential bonuses are provided. id can be given as a value or the name value
     # 0 : 'poor',
     # 1 : 'average',
     # 2 : 'good'
+
+    def get_default_base_attack_bonus(self):
+        return self.__DEFAULT_BASE_ATTACK_BONUS
+
     def get_base_attack_bonus(self,id=None,creature_level=1):
-        if id is None:
-            id = self.__DEFAULT_BASE_ATTACK_BONUS
+        id = core_constants().BASEATTACKBONUS.verify(id)
+        
 
-        if type(id) == str:
-            if id.lower() in self.__BASE_ATTACK_BONUS:
-                id = list.index(self.__BASE_ATTACK_BONUS,id.lower())
-
-        if 0 <= id < len(self.__BASE_ATTACK_BONUS):
+        if id:
             temp_stack = []
 
             epic_bonus = max(0,round((creature_level-20)/2.0)) # All negative bonuses become zero.
+                                                               # useful because it's always in the sum of the return,
+                                                               # whether epic or not
 
             # This keeps the creature level between the minimum base level stat and no greater than 20,
             # for calculation purposes to add the epic bonuses in appropriately.
             creature_level = max(min(20,int(creature_level)),self.__MIN_BASE_LEVEL) # Attack bonuses do not grow after
             #  20.
 
-            if id == 0: # The base attack bonus for a 'poor' level bonuses
+            if id is core_constants().BASEATTACKBONUS.POOR: # The base attack bonus for a 'poor' level bonuses
                 temp_stack = [i for i in range(1,int(creature_level/2)+1)][::-5] or [0]
 
-
-            elif id == 1: # base attack bonus for 'average' level
-                #temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+(range(0,16)))[0:creature_level]))[::-5])-set(
-                # [i for i in range(0,int(creature_level>1))])))[::-1]
-                # ^ This is too insane be more efficient than:
+            elif id is core_constants().BASEATTACKBONUS.AVERAGE: 
+                '''
+                 base attack bonus for 'average' level
+                temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+(range(0,16)))[0:creature_level]))[::-5])-set(
+                 [i for i in range(0,int(creature_level>1))])))[::-1]
+                 ^ This is too insane be more efficient than:
+                '''
                 for i in range(0,int((creature_level-1)/7.0+1)):
                     temp_stack.append(creature_level-int((creature_level-1)/4)-1-i*5)
 
-
-            elif id == 3: # base attack bonus for the special case of an unarmed monk
+            elif id is core_constants().BASEATTACKBONUS.MONK: # base attack bonus for the special case of an unarmed monk
                 temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+([i for i in range(0,16)]))[0:creature_level]))[
                 ::-3])-set(
                     [i for i in range(0,int(creature_level>1))])))[::-1]
@@ -360,8 +282,6 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
 
                 # for i in range(0,max(1,int((creature_level+4)/4))):
                 #   temp_stack.append(creature_level-(creature_level-1)/4-1-i*3)
-
-
 
             else: # The base save bonus for a 'good' level bonus
                 temp_stack = range(1,creature_level+1)[::-5]
@@ -380,9 +300,12 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
                 
                 # for i in range(0,int((creature_level-1)/5.0+1)):
                 #   temp_stack.append(creature_level-i*5)
+
             return [int(i+epic_bonus) for i in temp_stack] # Returns the attacks with appropriate epic bonuses added in.
 
-        return [0]
+        return self.get_base_attack_bonus(self.get_default_base_attack_bonus(),creature_level)
+
+
 
     def get_default_skill_set(self):
         return self.__DEFAULT_SKILL_SET

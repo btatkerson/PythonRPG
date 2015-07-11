@@ -1,6 +1,8 @@
 '''
       Name: __core_race_configuration.py
     Author: Benjamin A
+      Date: Jul 7, 2015
+
    Purpose: This is a core file for the engine that defines the boundaries of the races in the game.
             It limits race types and offers methods that provides information on the core components of races
 
