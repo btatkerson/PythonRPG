@@ -4,15 +4,16 @@
             It limits levels, defines EQUIPMENT slots available, etc.
 
 '''
-# from core.__core_race_configuration import core_race_configuration
+from core.__core_race_configuration import core_race_configuration
 from core.__core_constants import core_constants
 
-class core_creature_configuration(core_constants):# , core_race_configuration):
+class core_creature_configuration(core_race_configuration):
 
     def __init__(self):
-        core_constants.__init__(self)
-        #core_race_configuration.__init__(self) # Inherits the core race configurations of the game, the creature configuration is highly involved with races
-        self.__DEFAULT_ABILITY = core_constants().ABILITY.STR # strength
+        core_race_configuration.__init__(self) # Inherits the core race configurations of the game, the creature configuration is highly involved with races
+
+        self.ccs = core_constants()
+        self.__DEFAULT_ABILITY = self.ccs.ABILITY.STR # strength
         self.__DEFAULT_BASE_ARMOR_CLASS = 10
         self.__MIN_BASE_ARMOR_CLASS = 1
         self.__MAX_BASE_ARMOR_CLASS = 50
@@ -43,11 +44,11 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
         self.__MAX_LAW_VS_CHAOS = 100
         self.__DEFAULT_NAME = 'MissingName'
         self.__DEFAULT_PLAYABLE_CHARACTER = False
-        self.__DEFAULT_RACE = self.CREATURERACE.HUMAN
-        self.__DEFAULT_CREATURE_CLASS = self.CREATURECLASS.FIGHTER
-        self.__DEFAULT_SAVING_THROW = core_constants().SAVINGTHROW.FORTITUDE # fortitude
-        self.__DEFAULT_BASE_ATTACK_BONUS = core_constants().BASEATTACKBONUS.AVERAGE
-        self.__DEFAULT_BASE_SAVE_BONUS = core_constants().BASESAVEBONUS.GOOD
+        self.__DEFAULT_RACE = self.ccs.CREATURERACE.HUMAN
+        self.__DEFAULT_CREATURE_CLASS = self.ccs.CREATURECLASS.FIGHTER
+        self.__DEFAULT_SAVING_THROW = self.ccs.SAVINGTHROW.FORTITUDE # fortitude
+        self.__DEFAULT_BASE_ATTACK_BONUS = self.ccs.BASEATTACKBONUS.AVERAGE
+        self.__DEFAULT_BASE_SAVE_BONUS = self.ccs.BASESAVEBONUS.GOOD
 
         self.__EQUIPMENT_SLOTS = {"helmet":None,"armor":None,"main_hand":None,"off_hand":None,"amulet":None,
                                    "ring_1":None,"ring_2":None,"gloves":None,"cloak":None,"boots":None,"belt":None}
@@ -219,7 +220,7 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
         0 : 'poor',
         1 : 'good'
         '''
-        id = core_constants().BASESAVEBONUS.verify(id)
+        id = self.ccs.BASESAVEBONUS.verify(id)
 
         if id:
             epic_bonus = max(0,round((creature_level-21)/2.0)) # All negative bonuses become zero.
@@ -228,7 +229,7 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
             # growth excluding epic bonuses. This also keeps the level from being no lower than whatever the minimum
             # base level
 
-            if id is core_constants().BASESAVEBONUS.POOR: # The base save bonus for a 'poor' level bonuses
+            if id is self.ccs.BASESAVEBONUS.POOR: # The base save bonus for a 'poor' level bonuses
                 return int(int(creature_level/3) + epic_bonus)
 
             else: # The base save bonus for a 'good' level bonus
@@ -246,7 +247,7 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
         return self.__DEFAULT_BASE_ATTACK_BONUS
 
     def get_base_attack_bonus(self,id=None,creature_level=1):
-        id = core_constants().BASEATTACKBONUS.verify(id)
+        id = self.ccs.BASEATTACKBONUS.verify(id)
         
 
         if id:
@@ -261,10 +262,10 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
             creature_level = max(min(20,int(creature_level)),self.__MIN_BASE_LEVEL) # Attack bonuses do not grow after
             #  20.
 
-            if id is core_constants().BASEATTACKBONUS.POOR: # The base attack bonus for a 'poor' level bonuses
+            if id is self.ccs.BASEATTACKBONUS.POOR: # The base attack bonus for a 'poor' level bonuses
                 temp_stack = [i for i in range(1,int(creature_level/2)+1)][::-5] or [0]
 
-            elif id is core_constants().BASEATTACKBONUS.AVERAGE: 
+            elif id is self.ccs.BASEATTACKBONUS.AVERAGE: 
                 '''
                  base attack bonus for 'average' level
                 temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+(range(0,16)))[0:creature_level]))[::-5])-set(
@@ -274,7 +275,7 @@ class core_creature_configuration(core_constants):# , core_race_configuration):
                 for i in range(0,int((creature_level-1)/7.0+1)):
                     temp_stack.append(creature_level-int((creature_level-1)/4)-1-i*5)
 
-            elif id is core_constants().BASEATTACKBONUS.MONK: # base attack bonus for the special case of an unarmed monk
+            elif id is self.ccs.BASEATTACKBONUS.MONK: # base attack bonus for the special case of an unarmed monk
                 temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+([i for i in range(0,16)]))[0:creature_level]))[
                 ::-3])-set(
                     [i for i in range(0,int(creature_level>1))])))[::-1]

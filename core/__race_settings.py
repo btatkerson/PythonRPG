@@ -52,7 +52,8 @@ class race_settings():
     def set_playable_race(self,playable_race):
         if playable_race:
             self.playable_race = True
-        self.playable_race = False
+        else:
+            self.playable_race = False
 
     def get_playable_race(self):
         return self.playable_race
@@ -87,7 +88,8 @@ class race_settings():
     def set_size_class(self,size_class=None):
         if core_constants().SIZECLASS.verify(size_class):
             self.size_class = core_constants().SIZECLASS.verify(size_class)
-        self.size_class = False
+        else:
+            self.size_class = False
 
                
         

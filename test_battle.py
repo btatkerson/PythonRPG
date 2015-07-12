@@ -6,8 +6,8 @@ import os
 import creature as cre
 
 a = cc()
-pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,3,None,23,98,20,3,None,15,None,14,10,7,13,11,3,True)
-npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,.5,None,50,10,15,2,None,10,None,11,10,6,13,12,9,True)
+pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HALFORC,None,3,None,23,98,20,4,None,15,None,14,10,7,13,11,3,True)
+npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,.5,None,50,10,15,2,None,10,None,11,10,6,13,12,9,True)
 
 print("\n\n---------------------------------------------------------------\n\n")
 
