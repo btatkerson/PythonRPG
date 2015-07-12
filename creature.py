@@ -429,15 +429,15 @@ class creature(verbose, dice):
     def get_size_class(self):
         return self.size_class
 
-    def set_size_class(self, size_class=None):
+    def set_size_class(self, size_class=None, override=False):
         '''
         This sets the size class of creatures. If a creature belongs in the playable races
         category, the size class is automatically pulled from the core settings which
-        grant perks and penalties depending on which race the creature belongs to
+        grant perks and penalties depending on which race the creature belongs to, unless 
+        override is True.
         '''
-        if self._core().is_playable_race(self.race):
+        if self._core().is_playable_race(self.race) and not override:
             self.size_class = self._core().get_size_class_information_by_race(self.race)
-            print(self.size_class.get_size_class())
         else:
             size_class = self.ccs.SIZECLASS.verify(size_class)
 
@@ -451,6 +451,7 @@ class creature(verbose, dice):
 
     def get_racial_ability_bonus(self,ability):
         ability = self.ccs.ABILITY.verify(ability)
+
         if ability:
             return self.get_racial_ability_bonus_dict()[ability]
         return self._core().get_default_ability_bonus()
