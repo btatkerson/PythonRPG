@@ -11,7 +11,7 @@ from core.__core_creature_configuration import core_creature_configuration
 # from core.__core_creature_class_configuration import core_creature_class_configuration
 from core.__core_constants import core_constants
 from core.verbose import verbose
-#from skill_set import skill_set
+from skill_set import skill_set
 from dice import dice
 from percbar import percbar
 
@@ -55,7 +55,7 @@ class creature(verbose, dice):
         ''' If experience is zero, sets experience based on base_level. Defaults to 0 experience base_level 1 when no parameters entered.'''
 
         self.__last_experience_earned = 0 # Used for logging
-        self.skill_set=0 #skill_set()
+        self.skill_set= skill_set()
 
         self.base_saving_throw_bonus={i: 0 for i in self.ccs.SAVINGTHROW.get_index()}
 
@@ -213,7 +213,6 @@ class creature(verbose, dice):
         roll_list=[]
         for i,j in zip(self.base_attack_bonus(),self.d20(len(self.base_attack_bonus()))):
             if 1 < j <= 20:
-                print(self.get_size_class().get_size_modifier())
                 roll_list.append([j,j+i+self.get_size_class().get_size_modifier(), self.mod_str()])
             else:
                 roll_list.append([0,0])

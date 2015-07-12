@@ -4,11 +4,12 @@
    Purpose: This is a core file for the engine that defines the boundaries of the skill set in the game.
 
 '''
-from core.__core_constants import core_constants as core_constants
+from core.__core_constants import core_constants 
 
 class core_skill_set_configuration():
     def __init__(self):
         # List of skills, 0 is 'unique' and unused during initialization
+        self.ccs = core_constants()
 
         self.__DEFAULT_TRAINED_SKILL = False
         self.__DEFAULT_ARMOR_PENALTY = False
@@ -17,12 +18,12 @@ class core_skill_set_configuration():
         self.__DEFAULT_SKILL_POINTS = 0
         self.__MIN_SKILL_POINTS = 0
         self.__MAX_SKILL_POINTS = 255
-        self.__DEFAULT_SKILL_ID = core_constants().SKILL.UNI
+        self.__DEFAULT_SKILL_ID = self.ccs.SKILL.UNI
         self.__DEFAULT_CLASS_SKILLS = []
         self.__DEFAULT_SYNERGY_SKILLS = []
         self.__DEFAULT_SKILL_SETTINGS_DICT = {
         
-            core_constants().SKILL.UNI:{
+            self.ccs.SKILL.UNI:{
             'keyID':0, # Unique
             'trained_skill':self.__DEFAULT_TRAINED_SKILL,
             'armor_penalty':self.__DEFAULT_ARMOR_PENALTY,
@@ -32,299 +33,299 @@ class core_skill_set_configuration():
             'class_skills':self.__DEFAULT_CLASS_SKILLS,
             'synergy_skills':self.__DEFAULT_SYNERGY_SKILLS
             },
-            core_constants().SKILL.ANI:{
+            self.ccs.SKILL.ANI:{
             'keyID':1, # Animal Empathy
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':False,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.DRUID, core_constants().CREATURECLASS.RANGER],
+            'class_skills':[self.ccs.CREATURECLASS.DRUID, self.ccs.CREATURECLASS.RANGER],
             'synergy_skills':[]
             },
-            core_constants().SKILL.APR:{
+            self.ccs.SKILL.APR:{
             'keyID':2, # Appraise
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.ROGUE],
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.ROGUE],
             'synergy_skills':[]
             },
-            core_constants().SKILL.BLF:{
+            self.ccs.SKILL.BLF:{
             'keyID':3, # Bluff
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.ROGUE],
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.ROGUE],
             'synergy_skills':[]
             },
-            core_constants().SKILL.CNC:{
+            self.ccs.SKILL.CNC:{
             'keyID':4, # Concentration
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.CON,
+            'key_ability':self.ccs.ABILITY.CON,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.CLERIC, core_constants().CREATURECLASS.DRUID,
-                            core_constants().CREATURECLASS.FIGHTER, core_constants().CREATURECLASS.MONK, core_constants().CREATURECLASS.PALADIN,
-                            core_constants().CREATURECLASS.RANGER, core_constants().CREATURECLASS.SORCERER, core_constants().CREATURECLASS.WIZARD], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.CLERIC, self.ccs.CREATURECLASS.DRUID,
+                            self.ccs.CREATURECLASS.FIGHTER, self.ccs.CREATURECLASS.MONK, self.ccs.CREATURECLASS.PALADIN,
+                            self.ccs.CREATURECLASS.RANGER, self.ccs.CREATURECLASS.SORCERER, self.ccs.CREATURECLASS.WIZARD], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.CAR:{
+            self.ccs.SKILL.CAR:{
             'keyID':5, # Craft Armor
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':core_constants().CREATURECLASS.get_index(), # All Classes, 
+            'class_skills':self.ccs.CREATURECLASS.get_index(), # All Classes, 
             'synergy_skills':[]
             },
-            core_constants().SKILL.CTR:{
+            self.ccs.SKILL.CTR:{
             'keyID':6, # Craft Trap
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':core_constants().CREATURECLASS.get_index(), # All Classes, 
+            'class_skills':self.ccs.CREATURECLASS.get_index(), # All Classes, 
             'synergy_skills':[]
             },
-            core_constants().SKILL.CWE:{
+            self.ccs.SKILL.CWE:{
             'keyID':7, # Craft weapon
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':core_constants().CREATURECLASS.get_index(), # All Classes, 
+            'class_skills':self.ccs.CREATURECLASS.get_index(), # All Classes, 
             'synergy_skills':[]
             },
-            core_constants().SKILL.DTR:{
+            self.ccs.SKILL.DTR:{
             'keyID':8, # Disable Trap
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.ROGUE],
-            'synergy_skills':[core_constants().SKILL.SET_TRAP], # Set Trap
+            'class_skills':[self.ccs.CREATURECLASS.ROGUE],
+            'synergy_skills':[self.ccs.SKILL.SET_TRAP], # Set Trap
             },
-            core_constants().SKILL.DIS:{
+            self.ccs.SKILL.DIS:{
             'keyID':9, # Discipline
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.STR,
+            'key_ability':self.ccs.ABILITY.STR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARBARIAN, core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.FIGHTER,
-                            core_constants().CREATURECLASS.MONK, core_constants().CREATURECLASS.PALADIN, core_constants().CREATURECLASS.RANGER], 
+            'class_skills':[self.ccs.CREATURECLASS.BARBARIAN, self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.FIGHTER,
+                            self.ccs.CREATURECLASS.MONK, self.ccs.CREATURECLASS.PALADIN, self.ccs.CREATURECLASS.RANGER], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.HEL:{
+            self.ccs.SKILL.HEL:{
             'keyID':10, # Heal
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':False,
-            'key_ability':core_constants().ABILITY.WIS,
+            'key_ability':self.ccs.ABILITY.WIS,
             'skill_points':0,
-            'class_skills':core_constants().CREATURECLASS.get_index(), # All Classes
+            'class_skills':self.ccs.CREATURECLASS.get_index(), # All Classes
             'synergy_skills':[]
             },
-            core_constants().SKILL.HID:{
+            self.ccs.SKILL.HID:{
             'keyID':11, # Hide
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.DEX,
+            'key_ability':self.ccs.ABILITY.DEX,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.MONK, core_constants().CREATURECLASS.RANGER, 
-                            core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.MONK, self.ccs.CREATURECLASS.RANGER, 
+                            self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.ITM:{
+            self.ccs.SKILL.ITM:{
             'keyID':12, # Intimidate
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARBARIAN, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARBARIAN, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.LIS:{
+            self.ccs.SKILL.LIS:{
             'keyID':13, # Listen
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.WIS,
+            'key_ability':self.ccs.ABILITY.WIS,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARBARIAN, core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.MONK, 
-                            core_constants().CREATURECLASS.RANGER, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARBARIAN, self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.MONK, 
+                            self.ccs.CREATURECLASS.RANGER, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.LOR:{
+            self.ccs.SKILL.LOR:{
             'keyID':14, # Lore
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARBARIAN, core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.CLERIC, 
-                            core_constants().CREATURECLASS.DRUID, core_constants().CREATURECLASS.FIGHTER, core_constants().CREATURECLASS.MONK, 
-                            core_constants().CREATURECLASS.PALADIN, core_constants().CREATURECLASS.RANGER, core_constants().CREATURECLASS.ROGUE, 
-                            core_constants().CREATURECLASS.SORCERER, core_constants().CREATURECLASS.WIZARD], 
+            'class_skills':[self.ccs.CREATURECLASS.BARBARIAN, self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.CLERIC, 
+                            self.ccs.CREATURECLASS.DRUID, self.ccs.CREATURECLASS.FIGHTER, self.ccs.CREATURECLASS.MONK, 
+                            self.ccs.CREATURECLASS.PALADIN, self.ccs.CREATURECLASS.RANGER, self.ccs.CREATURECLASS.ROGUE, 
+                            self.ccs.CREATURECLASS.SORCERER, self.ccs.CREATURECLASS.WIZARD], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.MOV:{
+            self.ccs.SKILL.MOV:{
             'keyID':15, # Move Silently
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.DEX,
+            'key_ability':self.ccs.ABILITY.DEX,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.MONK, core_constants().CREATURECLASS.RANGER, 
-                            core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.MONK, self.ccs.CREATURECLASS.RANGER, 
+                            self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.OPL:{
+            self.ccs.SKILL.OPL:{
             'keyID':16, # Open Lock
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.DEX,
+            'key_ability':self.ccs.ABILITY.DEX,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.PRY:{
+            self.ccs.SKILL.PRY:{
             'keyID':17, # Parry
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.DEX,
+            'key_ability':self.ccs.ABILITY.DEX,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARBARIAN, core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.CLERIC, 
-                            core_constants().CREATURECLASS.DRUID, core_constants().CREATURECLASS.FIGHTER, core_constants().CREATURECLASS.MONK, 
-                            core_constants().CREATURECLASS.PALADIN, core_constants().CREATURECLASS.RANGER, core_constants().CREATURECLASS.ROGUE, 
-                            core_constants().CREATURECLASS.SORCERER, core_constants().CREATURECLASS.WIZARD], 
+            'class_skills':[self.ccs.CREATURECLASS.BARBARIAN, self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.CLERIC, 
+                            self.ccs.CREATURECLASS.DRUID, self.ccs.CREATURECLASS.FIGHTER, self.ccs.CREATURECLASS.MONK, 
+                            self.ccs.CREATURECLASS.PALADIN, self.ccs.CREATURECLASS.RANGER, self.ccs.CREATURECLASS.ROGUE, 
+                            self.ccs.CREATURECLASS.SORCERER, self.ccs.CREATURECLASS.WIZARD], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.PFM:{
+            self.ccs.SKILL.PFM:{
             'keyID':18, # Perform
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':False,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD],
+            'class_skills':[self.ccs.CREATURECLASS.BARD],
             'synergy_skills':[]
             },
-            core_constants().SKILL.PSD:{
+            self.ccs.SKILL.PSD:{
             'keyID':19, # Persuade
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.CLERIC, core_constants().CREATURECLASS.DRUID, 
-                            core_constants().CREATURECLASS.MONK, core_constants().CREATURECLASS.PALADIN, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.CLERIC, self.ccs.CREATURECLASS.DRUID, 
+                            self.ccs.CREATURECLASS.MONK, self.ccs.CREATURECLASS.PALADIN, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.PIC:{
+            self.ccs.SKILL.PIC:{
             'keyID':20, # Pick Pocket
             'trained_skill':True,
             'armor_penalty':True,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.DEX,
+            'key_ability':self.ccs.ABILITY.DEX,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.RID:{
+            self.ccs.SKILL.RID:{
             'keyID':21, # Ride
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARBARIAN, core_constants().CREATURECLASS.FIGHTER, core_constants().CREATURECLASS.PALADIN, 
-                            core_constants().CREATURECLASS.RANGER], 
+            'class_skills':[self.ccs.CREATURECLASS.BARBARIAN, self.ccs.CREATURECLASS.FIGHTER, self.ccs.CREATURECLASS.PALADIN, 
+                            self.ccs.CREATURECLASS.RANGER], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.SRC:{
+            self.ccs.SKILL.SRC:{
             'keyID':22, # Search
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.RANGER, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.RANGER, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.STR:{
+            self.ccs.SKILL.STR:{
             'keyID':23, # Set Trap
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.DEX,
+            'key_ability':self.ccs.ABILITY.DEX,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.RANGER, core_constants().CREATURECLASS.ROGUE], 
-            'synergy_skills':[core_constants().SKILL.DISABLE_TRAP] # Disable Trap
+            'class_skills':[self.ccs.CREATURECLASS.RANGER, self.ccs.CREATURECLASS.ROGUE], 
+            'synergy_skills':[self.ccs.SKILL.DISABLE_TRAP] # Disable Trap
             },
-            core_constants().SKILL.SPL:{
+            self.ccs.SKILL.SPL:{
             'keyID':24, # Spellcraft
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.INT,
+            'key_ability':self.ccs.ABILITY.INT,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.CLERIC, core_constants().CREATURECLASS.SORCERER, 
-                            core_constants().CREATURECLASS.WIZARD], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.CLERIC, self.ccs.CREATURECLASS.SORCERER, 
+                            self.ccs.CREATURECLASS.WIZARD], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.SPT:{
+            self.ccs.SKILL.SPT:{
             'keyID':25, # Spot
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.WIS,
+            'key_ability':self.ccs.ABILITY.WIS,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.RANGER, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.RANGER, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.TNT:{
+            self.ccs.SKILL.TNT:{
             'keyID':26, # Taunt
             'trained_skill':False,
             'armor_penalty':False,
             'cross_class':True,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARBARIAN, core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.PALADIN], 
+            'class_skills':[self.ccs.CREATURECLASS.BARBARIAN, self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.PALADIN], 
             'synergy_skills':[]
             },
-            core_constants().SKILL.TBL:{
+            self.ccs.SKILL.TBL:{
             'keyID':27, # Tumble
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':False,
-            'key_ability':core_constants().ABILITY.DEX,
+            'key_ability':self.ccs.ABILITY.DEX,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.MONK, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.MONK, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[],
             },
-            core_constants().SKILL.UMD:{
+            self.ccs.SKILL.UMD:{
             'keyID':28, # Use Magic Device
             'trained_skill':True,
             'armor_penalty':False,
             'cross_class':False,
-            'key_ability':core_constants().ABILITY.CHR,
+            'key_ability':self.ccs.ABILITY.CHR,
             'skill_points':0,
-            'class_skills':[core_constants().CREATURECLASS.BARD, core_constants().CREATURECLASS.ROGUE], 
+            'class_skills':[self.ccs.CREATURECLASS.BARD, self.ccs.CREATURECLASS.ROGUE], 
             'synergy_skills':[]
             }
         }
