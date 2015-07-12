@@ -196,7 +196,7 @@ class creature(verbose, dice):
         '''
         Returns the armor class with modifiers
         '''
-        return self.base_armor_class + self.get_ability_modifier(self.ccs.ABILITY.DEX)
+        return self.base_armor_class + self.get_ability_modifier(self.ccs.ABILITY.DEX) + self.get_size_class().get_size_modifier()
 
     def get_AC(self):
         return self.get_armor_class()
@@ -679,12 +679,12 @@ class creature(verbose, dice):
         print("Experience:",perc.disp(self.get_experience_toward_next_level(),self.get_experience_total_for_current_level(),50),str(self.get_experience_toward_next_level())+"/"+str(self.get_experience_total_for_current_level()))
         print('STR:',self.get_ability_score(self.ccs.ABILITY.STR),"/",self.mod_str(),"| CON:",self.get_ability_score(self.ccs.ABILITY.CON),"/",self.mod_con(),"| DEX:",self.get_ability_score(self.ccs.ABILITY.DEX),"/",self.mod_dex())
         print('INT:',self.get_ability_score(self.ccs.ABILITY.INT),"/",self.mod_int(),"| WIS:",self.get_ability_score(self.ccs.ABILITY.WIS),"/",self.mod_wis(),"| CHR:",self.get_ability_score(self.ccs.ABILITY.CHR),"/",self.mod_chr())
-        print('HP:',perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),50),str(self.get_current_hit_points())+'/'+str(self.get_base_hit_points()))
+        print('        HP:',perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),50),str(self.get_current_hit_points())+'/'+str(self.get_base_hit_points()))
 
     def stat_display_short(self):
         perc = percbar(None,None,50)
         print("Name:",self.name,"| Lvl:",self.base_level,"| Race:", self.ccs.CREATURERACE.get_long_name(self.race),"| Class:",self.creature_class.upper())
-        print("HP:", perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),None,True,2))
+        print("        HP:", perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),None,True,2))
 
 
 ####################################################### TEST CODE ######################################################
