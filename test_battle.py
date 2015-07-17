@@ -20,14 +20,17 @@ print("\n\n---------------------------------------------------------------\n\n")
 
 
 def attack(cre_a,cre_b):
-    for i in cre_a.attack_roll():
+    att_roll = cre_a.attack_roll()
+    print(att_roll)
+    for i in att_roll:
         if not cre_b.is_alive():
             break
-        hit_or_miss = i[1] >= cre_b.get_armor_class()
+        hit_or_miss = sum(i) >= cre_b.get_armor_class()
         if i[0] != 0:
-            print(cre_a.get_name(),'rolls:',i[0],"|",i[1],">=" if hit_or_miss else "<",cre_b.get_armor_class(),"| HIT!" if hit_or_miss else "| MISS!")
+            print(cre_a.get_name(),'rolls:',i[0],"|",sum(i),">=" if hit_or_miss else "<",cre_b.get_armor_class(),"| HIT!" if hit_or_miss else "| MISS!")
         else:
             print(cre_a.get_name(),"got a critical miss! No damage was done to", cre_b.get_name())
+            break
         if hit_or_miss or i[0] == 20:
             damage = 0
             if i[0] == 20:
@@ -57,7 +60,6 @@ while pc.is_alive() and npc.is_alive():
         heal(pc) 
     
     if not npc.is_alive():
-        input("\nPress Enter to continue")
         break
 
     print("\n")

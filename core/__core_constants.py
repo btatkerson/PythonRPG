@@ -23,15 +23,15 @@ class index_reader:
             return False,False
         else:
             if type(val) == int and 0 <= val < len(self.INDEX):
-            return True, dict(zip(range(0,len(self.INDEX)),self.INDEX))[val]
+                return True, dict(zip(range(0,len(self.INDEX)),self.INDEX))[val]
             elif type(val) == str:
-            if val.lower() in self.INDEX:
-                return True, val.lower()
+                if val.lower() in self.INDEX:
+                    return True, val.lower()
             
-            elif val.replace(" ","").lower() in [i.replace(" ","").lower() for i in self.INDEX_LONG]:
-                return True, dict(zip([i.replace(" ","").lower() for i in self.INDEX_LONG],self.INDEX))[val.replace(" ","").lower()]
+                elif val.replace(" ","").lower() in [i.replace(" ","").lower() for i in self.INDEX_LONG]:
+                    return True, dict(zip([i.replace(" ","").lower() for i in self.INDEX_LONG],self.INDEX))[val.replace(" ","").lower()]
 
-            return False,False
+        return False,False
     
     def verify(self,val=None):
         '''
@@ -109,7 +109,7 @@ class core_constants():
             self.TNL = self.TRUENEUTRAL = 'tnl'
             self.EVL = self.EVIL = 'evl'
 
-            self.INDEX = [self.LAW, self.NTL self.CHA, self.GOD, self.TNL, self.EVL]
+            self.INDEX = [self.LAW, self.NTL, self.CHA, self.GOD, self.TNL, self.EVL]
             self.INDEX_LONG = ['lawful', 'neutral', 'chaotic', "good", "true neutral", "evil"]
 
 

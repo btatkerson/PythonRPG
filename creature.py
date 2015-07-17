@@ -42,7 +42,7 @@ class creature(verbose, dice):
 
 
         self.deity=deity or self._core().get_default_deity()
-        self.law_vs_chaos=law_vs_chaos or self._core().get_default_law_vs_chaos()# Scale 0 - 100. 0-32= Chaos, 33-67= Neutral, 68-100= Law
+        self.law_vs_chaos=law_vs_chaos or self._core().get_default_law_vs_chaos()# Scale 0 - 100. 0-32= Chaotic, 33-67= Neutral, 68-100= Law
         self.good_vs_evil=good_vs_evil or self._core().get_default_good_vs_evil()# Scale 0 - 100. 0-32= Evil, 33-67= Neutral, 68-100= Good
 
         self.base_hit_points=base_hit_points or self._core().get_default_base_hit_points()
@@ -72,8 +72,10 @@ class creature(verbose, dice):
 
         self.inventory=[] # Holds list of items, an inventory system is in the future.
 
-    # Returns the base_level of the creature
     def get_base_level(self): 
+        '''
+        Returns the base_level of the creature
+        '''
         return self.base_level
 
     def get_experience(self):
@@ -203,17 +205,25 @@ class creature(verbose, dice):
 
     def attack_roll(self,verbo=False):
         '''
-        attack_roll() returns a lists of 2-valued lists. The lists contain two numbers [a,b] where
-        a = the number on the dice roll (d20)
-        b = the dice roll + attack bonus + strength modifier
+        attack_roll() returns a lists of lists. The sum of the elements in each list will return
+        the total for the attack roll
         
-        Variable "a" allows for the damage roll to account for the threat range for criticals
-        Variable "b" would be used against opponents AC
+        The lists currently contain two numbers [a, b, c, d] where
+
+        a = the number on the dice roll (d20)
+            - This is used for determining criticals (hits/misses)
+            
+        b = attack bonus
+            - Pulled from the base_attack_ bonus determined by the creature's class
+        
+        c = size class modifier
+
+        d = strength modifier
         '''
         roll_list=[]
         for i,j in zip(self.base_attack_bonus(),self.d20(len(self.base_attack_bonus()))):
             if 1 < j <= 20:
-                roll_list.append([j,j+i+self.get_size_class().get_size_modifier(), self.mod_str()])
+                roll_list.append([j, i, self.get_size_class().get_size_modifier(), self.mod_str()])
             else:
                 roll_list.append([0,0])
         return roll_list
@@ -238,14 +248,16 @@ class creature(verbose, dice):
     def get_skill_set(self): 
         return self.skill_set
 
-    def get_skill(self, id=None): 
-        return self.skill_set.get_skill(id)
+    def get_skill(self, skill=None): 
+        return self.skill_set.get_skill(skill)
 
-    # Sets all the base abilities at once, or whichever are provided.
-    # absolute== False : Base ability has parameter added to it (str=1==> self.base_abilities[self.ccs.ABILITY.STR] += 1)
-    # absolute== True : Base ability is set to parameter (str=1==> self.base_abilities[self.ccs.ABILITY.STR]=1)
     def set_all_base_ability_score(self, str=0, inte=0, con=0, wis=0, dex=0, chr=0, absolute=False): 
-        # if statements necessary. If absolute=true
+        '''
+        Sets all the base abilities at once, or whichever are provided.
+        absolute== False : Base ability has parameter added to it (str=1==> self.base_abilities[self.ccs.ABILITY.STR] += 1)
+        absolute== True : Base ability is set to parameter (str=1==> self.base_abilities[self.ccs.ABILITY.STR]=1)
+        ''''
+
         if str: 
             self.set_base_str(str, absolute)
         if inte: 
@@ -282,8 +294,8 @@ class creature(verbose, dice):
 
         return self.base_abilities[ability]
 
-    # Returns base ability value for any valid ability provided
     def get_base_ability_score(self, ability=None): 
+        ''' Returns base ability value for any valid ability provided '''
         ability = self.ccs.ABILITY.verify(ability)
 
         if ability:
@@ -300,58 +312,83 @@ class creature(verbose, dice):
             return self.get_base_ability_score(ability) + self.get_racial_ability_bonus(ability)
         return self._core().get_default_base_ability_score()
 
-    # Returns the base ability score for the Strength ability
-    def get_base_str(self): 
         return self.get_base_ability_score(self.ccs.ABILITY.STR)
 
-    # Sets the base ability score for the Strength ability
-    # Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
-    # the base ability will be set to the value provided for variable 'add'
+    def get_base_str(self): 
+        '''
+        Returns the base ability score for the Strength ability
+        '''
+        return self.get_base_ability_score(self.ccs.ABILITY.STR)
+
+
     def set_base_str(self, add, absolute=False): 
+        '''
+        Sets the base ability score for the Strength ability
+        Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
+        the base ability will be set to the value provided for variable 'add'
+        '''
         return self.set_base_ability_score(self.ccs.ABILITY.STR, add, absolute)
 
-    # Returns the base ability score for the Intelligence ability
     def get_base_int(self): 
+        '''
+        Returns the base ability score for the Intelligence ability
+        '''
         return self.get_base_ability_score(self.ccs.ABILITY.INT)
 
-    # Sets the base ability score for the Intelligence ability
-    # Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
-    # the base ability will be set to the value provided for variable 'add'
     def set_base_int(self, add, absolute=False): 
+        '''
+        Sets the base ability score for the Intelligence ability
+        Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
+        the base ability will be set to the value provided for variable 'add'
+        '''
         return self.set_base_ability_score(self.ccs.ABILITY.INT, add, absolute)
 
-    # Returns the base ability score for the Constitution ability
     def get_base_con(self): 
+        '''
+        Returns the base ability score for the Constitution ability
+        '''
         return self.get_base_ability_score(self.ccs.ABILITY.CON)
 
-    # Sets the base ability score for the Constitution ability
-    # Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
-    # the base ability will be set to the value provided for variable 'add'
     def set_base_con(self, add, absolute=False): 
+        '''
+        Sets the base ability score for the Constitution ability
+        Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
+        the base ability will be set to the value provided for variable 'add'
+        '''
         return self.set_base_ability_score(self.ccs.ABILITY.CON, add, absolute)
 
-    # Returns the base ability score for the Wisdom ability
     def get_base_wis(self): 
+        '''
+        Returns the base ability score for the Wisdom ability
+        '''
         return self.get_base_ability_score(self.ccs.ABILITY.WIS)
 
-    # Sets the base ability score for the Wisdom ability
-    # Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
-    # the base ability will be set to the value provided for variable 'add'
     def set_base_wis(self, add, absolute=False): 
+        '''
+        Sets the base ability score for the Wisdom ability
+        Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
+        the base ability will be set to the value provided for variable 'add'
+        '''
         return self.set_base_ability_score(self.ccs.ABILITY.WIS, add, absolute)
 
-    # Returns the base ability score for the Dexterity ability
     def get_base_dex(self): 
+        '''
+        Returns the base ability score for the Dexterity ability
+        '''
         return self.get_base_ability_score(self.ccs.ABILITY.DEX)
 
-    # Sets the base ability score for the Dexterity ability
-    # Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
-    # the base ability will be set to the value provided for variable 'add'
     def set_base_dex(self, add, absolute=False): 
+        '''
+        Sets the base ability score for the Dexterity ability
+        Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
+        the base ability will be set to the value provided for variable 'add'
+        '''
         return self.set_base_ability_score(self.ccs.ABILITY.DEX, add, absolute)
 
-    # Returns the base ability score for the Charisma ability
     def get_base_chr(self): 
+        '''
+        Returns the base ability score for the Charisma ability
+        '''
         return self.get_base_ability_score(self.ccs.ABILITY.CHR)
 
     def set_base_chr(self, add, absolute=False): 
@@ -419,6 +456,10 @@ class creature(verbose, dice):
         return self.race
 
     def set_race(self,race=None):
+        '''
+        Sets the race of the class or returns a default if an improper race is provided.
+        This also sets any racial ability bonuses for the playable races (Human, Halfling, etc.)
+        '''
         race = self.ccs.CREATURERACE.verify(race)
         if race:
             self.__racial_ability_bonuses = self._core().get_race_information(race).get_ability_bonus_dictionary()
