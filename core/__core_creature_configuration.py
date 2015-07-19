@@ -213,23 +213,23 @@ class core_creature_configuration(core_race_configuration):
     def get_default_base_save_bonus(self):
         return self.__DEFAULT_BASE_SAVE_BONUS
 
-    def get_base_save_bonus(self,id=None,creature_level=1):
+    def get_base_save_bonus(self,base_save_bonus=None,creature_level=1):
         '''
-        Returns a list of save bonuses for the 'poor', and 'good', id can be given as a value or the name value,
+        Returns a list of save bonuses for the 'poor', and 'good', base_save_bonus can be given as a value or the name value,
         creature_level is fairly self-explanatory
         0 : 'poor',
         1 : 'good'
         '''
-        id = self.ccs.BASESAVEBONUS.verify(id)
+        base_save_bonus = self.ccs.BASESAVEBONUS.verify(base_save_bonus)
 
-        if id:
+        if base_save_bonus:
             epic_bonus = max(0,round((creature_level-21)/2.0)) # All negative bonuses become zero.
 
             creature_level = max(min(20,creature_level),self.__MIN_BASE_LEVEL) # 20 is the maximum level of bonus
             # growth excluding epic bonuses. This also keeps the level from being no lower than whatever the minimum
             # base level
 
-            if id is self.ccs.BASESAVEBONUS.POOR: # The base save bonus for a 'poor' level bonuses
+            if base_save_bonus == self.ccs.BASESAVEBONUS.POOR: # The base save bonus for a 'poor' level bonuses
                 return int(int(creature_level/3) + epic_bonus)
 
             else: # The base save bonus for a 'good' level bonus
@@ -238,7 +238,7 @@ class core_creature_configuration(core_race_configuration):
         return self.get_base_save_bonus(self.get_default_base_save_bonus(),creature_level)
 
     # Returns a list of attack bonuses for the 'poor', 'average', and 'good', if there are multiple attacks,
-    # the sequential bonuses are provided. id can be given as a value or the name value
+    # the sequential bonuses are provbase_save_bonused. base_save_bonus can be given as a value or the name value
     # 0 : 'poor',
     # 1 : 'average',
     # 2 : 'good'
@@ -246,26 +246,30 @@ class core_creature_configuration(core_race_configuration):
     def get_default_base_attack_bonus(self):
         return self.__DEFAULT_BASE_ATTACK_BONUS
 
-    def get_base_attack_bonus(self,id=None,creature_level=1):
-        id = self.ccs.BASEATTACKBONUS.verify(id)
+    def get_base_attack_bonus(self,base_attack_bonus=None,creature_level=1):
+        base_attack_bonus = self.ccs.BASEATTACKBONUS.verify(base_attack_bonus)
         
 
-        if id:
+        if base_attack_bonus:
+            print(base_attack_bonus)
             temp_stack = []
 
-            epic_bonus = max(0,round((creature_level-20)/2.0)) # All negative bonuses become zero.
-                                                               # useful because it's always in the sum of the return,
-                                                               # whether epic or not
+            '''
+            All negative bonuses become zero.
+            Useful because it's always in the sum of the return,
+            whether epic or not
+            '''
+            epic_bonus = max(0,round((creature_level-20)/2.0)) 
 
             # This keeps the creature level between the minimum base level stat and no greater than 20,
             # for calculation purposes to add the epic bonuses in appropriately.
             creature_level = max(min(20,int(creature_level)),self.__MIN_BASE_LEVEL) # Attack bonuses do not grow after
             #  20.
 
-            if id is self.ccs.BASEATTACKBONUS.POOR: # The base attack bonus for a 'poor' level bonuses
+            if base_attack_bonus == self.ccs.BASEATTACKBONUS.POOR: # The base attack bonus for a 'poor' level bonuses
                 temp_stack = [i for i in range(1,int(creature_level/2)+1)][::-5] or [0]
 
-            elif id is self.ccs.BASEATTACKBONUS.AVERAGE: 
+            elif base_attack_bonus == self.ccs.BASEATTACKBONUS.AVERAGE: 
                 '''
                  base attack bonus for 'average' level
                 temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+(range(0,16)))[0:creature_level]))[::-5])-set(
@@ -275,7 +279,7 @@ class core_creature_configuration(core_race_configuration):
                 for i in range(0,int((creature_level-1)/7.0+1)):
                     temp_stack.append(creature_level-int((creature_level-1)/4)-1-i*5)
 
-            elif id is self.ccs.BASEATTACKBONUS.MONK: # base attack bonus for the special case of an unarmed monk
+            elif base_attack_bonus == self.ccs.BASEATTACKBONUS.MONK: # base attack bonus for the special case of an unarmed monk
                 temp_stack=sorted(list(set(list(set(sorted([3,6,9,12]+([i for i in range(0,16)]))[0:creature_level]))[
                 ::-3])-set(
                     [i for i in range(0,int(creature_level>1))])))[::-1]
@@ -284,7 +288,7 @@ class core_creature_configuration(core_race_configuration):
                 # for i in range(0,max(1,int((creature_level+4)/4))):
                 #   temp_stack.append(creature_level-(creature_level-1)/4-1-i*3)
 
-            else: # The base save bonus for a 'good' level bonus
+            else: # The base attack bonus for a 'good' level bonus
                 temp_stack = range(1,creature_level+1)[::-5]
                 # range(1,creature_level+1) is a list of all numbers 1 to creature_level, [::-5] starts at the
                 # end of the list (creature_level) and returns a number every five it can move backward in the list.

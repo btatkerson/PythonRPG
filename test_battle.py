@@ -6,8 +6,8 @@ import os
 import creature as cre
 
 a = cc()
-pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HALFLING,None,3,None,23,98,20,1,None,11,None,14,10,7,13,11,3,True)
-npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,.5,None,50,10,15,2,None,10,None,11,10,6,13,12,9,True)
+pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,None,3,None,23,98,20,3,'monk',None,15,None,14,10,7,13,11,3,True)
+npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,.5,None,50,10,15,2,'avrg',None,10,None,11,10,6,13,12,9,True)
 
 print("\n\n---------------------------------------------------------------\n\n")
 
@@ -20,17 +20,16 @@ print("\n\n---------------------------------------------------------------\n\n")
 
 
 def attack(cre_a,cre_b):
-    att_roll = cre_a.attack_roll()
-    print(att_roll)
-    for i in att_roll:
+    for i in cre_a.attack_roll():
         if not cre_b.is_alive():
             break
         hit_or_miss = sum(i) >= cre_b.get_armor_class()
+
         if i[0] != 0:
             print(cre_a.get_name(),'rolls:',i[0],"|",sum(i),">=" if hit_or_miss else "<",cre_b.get_armor_class(),"| HIT!" if hit_or_miss else "| MISS!")
         else:
             print(cre_a.get_name(),"got a critical miss! No damage was done to", cre_b.get_name())
-            break
+
         if hit_or_miss or i[0] == 20:
             damage = 0
             if i[0] == 20:
@@ -60,6 +59,7 @@ while pc.is_alive() and npc.is_alive():
         heal(pc) 
     
     if not npc.is_alive():
+        input("\nPress Enter to continue")
         break
 
     print("\n")

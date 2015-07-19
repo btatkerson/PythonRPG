@@ -105,7 +105,7 @@ class core_constants():
             self.LAW = self.LAWFUL = 'law'
             self.NTL = self.NEUTRAL = 'ntl'
             self.CHA = self.CHAOTIC = 'cha'
-            self.GOD = self.GOOD =  'good'
+            self.GOD = self.GOOD = 'good'
             self.TNL = self.TRUENEUTRAL = 'tnl'
             self.EVL = self.EVIL = 'evl'
 

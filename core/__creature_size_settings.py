@@ -13,7 +13,7 @@
 
 
 from core.__core_constants import core_constants
-from core.__core_size_configuration import core_creature_size_configuration as size_config
+from core.__core_creature_size_class_configuration import core_creature_size_configuration as size_config
 
 class creature_size_settings():
     def __init__(self,size_class=None,space_in_feet=None,reach_distance=None,size_modifier=None):

@@ -21,7 +21,7 @@ class creature(verbose, dice):
     def _core(self): 
         return core_creature_configuration()
 
-    def __init__(self, playable_character=None, name=None, creature_class=None, race=None, size_class=None, challenge_rating=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, exp=None, base_armor_class=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
+    def __init__(self, playable_character=None, name=None, creature_class=None, race=None, size_class=None, challenge_rating=None, deity=None, law_vs_chaos=None, good_vs_evil=None, base_hit_points=None, base_level=None, base_attack_bonus=None, exp=None, base_armor_class=None, base_level_rate=None, str=None, inte=None, chr=None, dex=None, con=None, wis=None, verbo=False): 
 
         # Initialize inherited classes
         verbose.__init__(self,verbo)
@@ -50,9 +50,20 @@ class creature(verbose, dice):
         self.challenge_rating = challenge_rating or self._core().get_default_challenge_rating()
 
         self.base_level_rate=base_level_rate or self._core().get_default_base_level_rate() # 1000 is the standard growth, the lower the number, the faster a character can base_level
-        self.base_level=base_level or self.set_base_level_by_experience(exp) or self._core().get_default_base_level() # If base_level is zero, sets base_level by experience
-        self.experience=exp or self.set_experience_by_base_level(self.base_level)
-        ''' If experience is zero, sets experience based on base_level. Defaults to 0 experience base_level 1 when no parameters entered.'''
+
+        self.base_level=None
+        self.experience=None
+
+        if base_level:
+            self.set_experience_by_base_level(base_level)
+        elif exp:
+            self.set_base_level_by_experience(exp)
+        else:
+            self.set_experience_by_base_level(1)
+
+        self.base_attack_bonus = None
+        self.set_base_attack_bonus(base_attack_bonus)
+        
 
         self.__last_experience_earned = 0 # Used for logging
         self.skill_set= skill_set()
@@ -115,11 +126,27 @@ class creature(verbose, dice):
         '''
         return self.base_level_rate*self.base_level
 
-    def base_attack_bonus(self): 
+    def get_base_attack_bonus(self): 
         '''
         Returns the attack bonuses based on level and attack-ability
         '''
-        return self._core().get_base_attack_bonus(2, self.base_level) # <---------------------------------------- Not always two, fix it!
+        return self._core().get_base_attack_bonus(self.base_attack_bonus, self.base_level) # <---------------------------------------- Not always two, fix it!
+
+    def set_base_attack_bonus(self, base_attack_bonus=None):
+        '''
+        Sets the base attack bonus for creature combat.
+
+        GOOD, AVERAGE, and POOR are acceptable inputs
+        '''
+
+        base_attack_bonus = self.ccs.BASEATTACKBONUS.verify(base_attack_bonus)
+
+        if base_attack_bonus:
+            self.base_attack_bonus = base_attack_bonus
+            return 1
+
+        self.base_attack_bonus = self._core().get_default_base_attack_bonus()
+            
 
     def get_base_hit_points(self):
         '''
@@ -221,9 +248,11 @@ class creature(verbose, dice):
         d = strength modifier
         '''
         roll_list=[]
-        for i,j in zip(self.base_attack_bonus(),self.d20(len(self.base_attack_bonus()))):
-            if 1 < j <= 20:
-                roll_list.append([j, i, self.get_size_class().get_size_modifier(), self.mod_str()])
+        for i in self.get_base_attack_bonus():
+            temp = sum(self.d20())
+            print(temp,i)
+            if 1 < temp <= 20:
+                roll_list.append([temp, i, self.get_size_class().get_size_modifier(), self.mod_str()])
             else:
                 roll_list.append([0,0])
         return roll_list
@@ -256,7 +285,7 @@ class creature(verbose, dice):
         Sets all the base abilities at once, or whichever are provided.
         absolute== False : Base ability has parameter added to it (str=1==> self.base_abilities[self.ccs.ABILITY.STR] += 1)
         absolute== True : Base ability is set to parameter (str=1==> self.base_abilities[self.ccs.ABILITY.STR]=1)
-        ''''
+        '''
 
         if str: 
             self.set_base_str(str, absolute)
@@ -299,7 +328,7 @@ class creature(verbose, dice):
         ability = self.ccs.ABILITY.verify(ability)
 
         if ability:
-           return self.base_abilities[ability]
+            return self.base_abilities[ability]
         return self._core().get_default_base_ability_score()
 
     def get_ability_score(self, ability=None):
@@ -426,24 +455,47 @@ class creature(verbose, dice):
                         self.experience += exp
 
 
-    def set_experience_by_base_level(self, base_level=1): 
+    def set_experience_by_base_level(self, base_level=None): 
         '''
         Sets appropriate experience points based on base_level (By default, identical to DnD's base_level)
         '''
-        return sum([i * self.base_level_rate for i in range(1, base_level)])
+        if not base_level:
+            base_level = self._core().get_default_base_level()
 
-    def set_base_level_by_experience(self, exp=0):       
+        if self._core().get_min_base_level() <= base_level <= self._core().get_max_base_level():
+            self.base_level = base_level
+            self.experience = sum([i * self.base_level_rate for i in range(1, base_level)])
+            return 1
+        else:
+            self.base_level = self._core().get_default_base_level()
+            self.set_experience_by_base_level(self.base_level)
+        return 0
+
+    def set_base_level_by_experience(self, exp=None):       
         '''
         Returns base_level based on experience, if the experience is greater than what's needed
         to reach the maximum base_level, then the maximum base_level allowed is returned.
         '''
         if not exp:
-            return exp 
+            self.base_level = self._core().get_default_base_level()
+            self.set_experience_by_base_level(self.base_level)
+            return 0
 
         for i in range(1, self._core().get_max_base_level() + 1): 
             if sum([i * self.base_level_rate for i in range(1, i)]) > exp: 
-                return i - 1
-        return self._core().get_max_base_level()
+                self.base_level = i-1
+                self.set_experience_by_base_level(self.base_level)
+                return 1
+
+        self.base_level = self._core().get_max_base_level()
+        self.set_experience_by_base_level(self.base_level)
+        return 1
+
+
+    
+
+
+
     
     def set_name(self, name): 
         self.name= name

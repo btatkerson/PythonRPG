@@ -1,6 +1,17 @@
+'''
+      Name: __core_creature_size_configuration.py
+    Author: Benjamin A
+      Date: Jul 7, 2015
+    
+   Purpose: This holds the core data of size classes. This may not be necessary since
+            size classes may not need to be extendable
+       
+'''
+
+
 from core.__core_constants import core_constants
 
-class core_size_configuration():
+class core_creature_size_configuration():
     def __init__(self):
         self.__DEFAULT_SIZE_CLASS = core_constants().SIZECLASS.MEDIUM
 
