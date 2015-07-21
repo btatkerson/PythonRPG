@@ -20,7 +20,7 @@ print("\n\n---------------------------------------------------------------\n\n")
 
 
 def attack(cre_a,cre_b):
-    for i in cre_a.attack_roll():
+    for i in cre_a.get_attack_roll():
         if not cre_b.is_alive():
             break
         hit_or_miss = sum(i) >= cre_b.get_armor_class()
@@ -34,9 +34,9 @@ def attack(cre_a,cre_b):
             damage = 0
             if i[0] == 20:
                 print(cre_a.get_name(),"got a critical hit!")
-                damage = cre_a.damage_roll(True)
+                damage = cre_a.get_damage_roll(True)
             else:
-                damage = cre_a.damage_roll()
+                damage = cre_a.get_damage_roll()
             cre_b.set_current_hit_points(-1*damage)
             print(cre_a.get_name(),"did",damage,"damage to",cre_b.get_name())
 

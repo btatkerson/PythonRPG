@@ -42,8 +42,13 @@ class creature(verbose, dice):
 
 
         self.deity=deity or self._core().get_default_deity()
-        self.law_vs_chaos=law_vs_chaos or self._core().get_default_law_vs_chaos()# Scale 0 - 100. 0-32= Chaotic, 33-67= Neutral, 68-100= Law
-        self.good_vs_evil=good_vs_evil or self._core().get_default_good_vs_evil()# Scale 0 - 100. 0-32= Evil, 33-67= Neutral, 68-100= Good
+
+
+        self.alignment_law_vs_chaos = None
+        self.alignment_good_vs_evil = None
+
+        self.alignment_law_vs_chaos=law_vs_chaos or self._core().get_default_law_vs_chaos()# Scale 0 - 100. 0-32= Chaotic, 33-67= Neutral, 68-100= Law
+        self.alignment_good_vs_evil=good_vs_evil or self._core().get_default_good_vs_evil()# Scale 0 - 100. 0-32= Evil, 33-67= Neutral, 68-100= Good
 
         self.base_hit_points=base_hit_points or self._core().get_default_base_hit_points()
         self.current_hit_points=self.base_hit_points
@@ -126,11 +131,17 @@ class creature(verbose, dice):
         '''
         return self.base_level_rate*self.base_level
 
-    def get_base_attack_bonus(self): 
+    def get_base_attack_bonus(self):
+        '''
+        Returns the type of base_attack_bonus a creature has
+        '''
+        return self.base_attack_bonus
+
+    def get_base_attack_bonus_list(self): 
         '''
         Returns the attack bonuses based on level and attack-ability
         '''
-        return self._core().get_base_attack_bonus(self.base_attack_bonus, self.base_level) # <---------------------------------------- Not always two, fix it!
+        return self._core().get_base_attack_bonus(self.base_attack_bonus, self.base_level) 
 
     def set_base_attack_bonus(self, base_attack_bonus=None):
         '''
@@ -230,7 +241,7 @@ class creature(verbose, dice):
     def get_AC(self):
         return self.get_armor_class()
 
-    def attack_roll(self,verbo=False):
+    def get_attack_roll(self,verbo=False):
         '''
         attack_roll() returns a lists of lists. The sum of the elements in each list will return
         the total for the attack roll
@@ -248,7 +259,7 @@ class creature(verbose, dice):
         d = strength modifier
         '''
         roll_list=[]
-        for i in self.get_base_attack_bonus():
+        for i in self.get_base_attack_bonus_list():
             temp = sum(self.d20())
             print(temp,i)
             if 1 < temp <= 20:
@@ -258,7 +269,7 @@ class creature(verbose, dice):
         return roll_list
 
             
-    def damage_roll(self,critical=False,verbo=False): 
+    def get_damage_roll(self,critical=False,verbo=False): 
         '''
         damage_roll() returns a dice roll that will soon be based on the weapon the creature is carrying
 
@@ -490,12 +501,6 @@ class creature(verbose, dice):
         self.base_level = self._core().get_max_base_level()
         self.set_experience_by_base_level(self.base_level)
         return 1
-
-
-    
-
-
-
     
     def set_name(self, name): 
         self.name= name
@@ -554,122 +559,104 @@ class creature(verbose, dice):
         Sets the law_vs_chaos value keeping it within restricted values
         '''
         if absolute: 
-            self.law_vs_chaos= add
-            if self.law_vs_chaos < self._core().get_min_law_vs_chaos(): 
-                self.law_vs_chaos= self._core().get_min_law_vs_chaos()
-            elif self.law_vs_chaos > self._core().get_max_law_vs_chaos(): 
-                self.law_vs_chaos= self._core().get_max_law_vs_chaos()
+            self.alignment_law_vs_chaos= add
+            if self.alignment_law_vs_chaos < self._core().get_min_law_vs_chaos(): 
+                self.alignment_law_vs_chaos= self._core().get_min_law_vs_chaos()
+            elif self.alignment_law_vs_chaos > self._core().get_max_law_vs_chaos(): 
+                self.alignment_law_vs_chaos= self._core().get_max_law_vs_chaos()
         else: 
-            self.law_vs_chaos += add
+            self.alignment_law_vs_chaos += add
+            self.set_law_vs_chaos(self.alignment_law_vs_chaos + add, True)
 
-        return self.law_vs_chaos
+        return self.alignment_law_vs_chaos
 
     def set_good_vs_evil(self, add, absolute=False): 
         '''
         Sets the good_vs_evil value keeping it within restricted values
         '''
         if absolute: 
-            self.good_vs_evil= add
-            if self.good_vs_evil < self._core().get_min_good_vs_evil(): 
-                self.good_vs_evil= self._core().get_min_good_vs_evil()
-            elif self.good_vs_evil > self._core().get_max_good_vs_evil(): 
-                self.good_vs_evil= self._core().get_max_good_vs_evil()
+            self.alignment_good_vs_evil= add
+            if self.alignment_good_vs_evil < self._core().get_min_good_vs_evil(): 
+                self.alignment_good_vs_evil= self._core().get_min_good_vs_evil()
+            elif self.alignment_good_vs_evil > self._core().get_max_good_vs_evil(): 
+                self.alignment_good_vs_evil= self._core().get_max_good_vs_evil()
         else: 
-            self.good_vs_evil += add
+            self.set_good_vs_evil(self.alignment_good_vs_evil + add,True)
 
-        return self.good_vs_evil
+        return self.alignment_good_vs_evil
 
-    def get_law_vs_chaos(self, value_word_combo=0): 
+    def get_alignment_law_vs_chaos(self, value=False): 
         '''
-        Returns law vs chaos values and or "lawful", "chaotic", and "neutral"
-        0 returns value, 1 returns word, 2 returns both, -1 returns raw variable
-        '''
-        temp=[0, 0]
-
-        if self.law_vs_chaos < 33: 
-            temp= [0, "chaotic"]
-        elif self.law_vs_chaos > 67: 
-            temp= [2, "lawful"]
-        else: 
-            temp= [1, "neutral"]
+        By default, this returns the core constant pertaining to the creature's alignment
         
-        if 0 <= value_word_combo < 2: 
-            return temp[value_word_combo]
-        elif value_word_combo== -1: 
-            return self.law_vs_chaos
-        else: 
-            return temp
+        If value == True, the numerical value used for holding the alignment is returned
+        '''
+        if value:
+            return self.alignment_law_vs_chaos
+        return self._core().get_alignment_law_vs_chaos(self.alignment_law_vs_chaos)
+
+
 
     def isChaotic(self): 
-        if self.get_law_vs_chaos()== 0: 
+        if self.get_alignment_law_vs_chaos()== self.ccs.ALIGNMENT.CHAOTIC: 
             return True
         return False
 
-    # Returns true if creature is neutral in respect to "Law Vs Chaos" (as opposed to "Good Vs Evil")
     def isNeutralLvC(self): 
-        if self.get_law_vs_chaos()== 1: 
+        '''
+        Returns true if creature is neutral in respect to "Law Vs Chaos" (as opposed to "Good Vs Evil")
+        '''
+        if self.get_alignment_law_vs_chaos()== self.ccs.ALIGNMENT.NEUTRALLvC: 
             return True
         return False
 
     def isLawful(self): 
-        if self.get_law_vs_chaos()== 2: 
+        if self.get_alignment_law_vs_chaos()== self.ccs.ALIGNMENT.LAWFUL: 
             return True
         return False
 
-    # Returns "evil", "good", or "neutral" based on good_vs_evil value
-    def get_good_vs_evil(self, value_word_combo=0): # 0 returns value, 1 returns word, 2 returns both, -1 returns raw variable
-        temp=[0, 0]
+    def get_alignment_good_vs_evil(self, value=False): 
+        '''
+        Returns the core constant for good/evil alignment
+        
+        If value == True, the numeric value used for storing the good/evil alignment is returned
+        '''
+        if value:
+            return self.alignment_good_vs_evil
+        return self._core().get_alignment_good_vs_evil(self.alignment_good_vs_evil)
 
-        if self.good_vs_evil < 33: 
-            temp= [0, "evil"]
-        elif self._core().get_max_base_ability_score() >= self.good_vs_evil > 67: 
-            temp= [2, "good"]
-        else: 
-            temp= [1, "neutral"]
-
-        if 0 <= value_word_combo < 2: 
-            return temp[value_word_combo]
-        elif value_word_combo== -1: 
-            return self.good_vs_evil
-        else: 
-            return temp
 
     # Return quick checks for creature alignments
     def isGood(self): 
-        if self.get_good_vs_evil()== 2: 
+        if self.get_alignment_good_vs_evil()== self.ccs.ALIGNMENT.GOOD: 
             return True
         return False
 
     # Returns true if creature is neutral in respect to "Good Vs Evil" (as opposed to "Law Vs Chaos")
     def isNeutralGvE(self): 
-        if self.get_good_vs_evil()== 1: 
+        if self.get_alignment_good_vs_evil()== self.ccs.ALIGNMENT.NEUTRALGvE: 
             return True
         return False
 
     def isEvil(self): 
-        if self.get_good_vs_evil()== 0: 
+        if self.get_alignment_good_vs_evil()== self.ccs.ALIGNMENT.EVIL: 
             return True
         return False
 
     # Get the alignment in different forms
-    def get_alignment(self, value_word_combo=0): 
+    def get_alignment(self, value=0): 
         '''
-        0 returns list of values (Lawful Evil=[2, 0]), 
-        1 returns words (Lawful Evil=["Lawful", "Evil"], 
-        2 returns a list holding two lists of values and words, 
-        -1 returns the exact alignment variables
+        0 returns list of core constants (Lawful Evil=[self.ccs.ALIGNMENT.LAWFUL,self.ccs.ALIGNMENT.EVIL]), 
+        1 returns the values used for holding the alignment in a list (Lawful Evil might be [82,7])
+        2 returns words (Lawful Evil=["Lawful", "Evil"], 
         '''
-        temp=[self.get_law_vs_chaos(2), self.get_good_vs_evil(2)]
-        if value_word_combo== 0: 
-            return [temp[0][0], temp[1][0]]
-        elif value_word_combo== 1: 
-            if temp[0][0]== 1 and temp[1][0]== 1: #
-                return ["true", "neutral"]
-            return [temp[0][1], temp[1][1]]
-        elif value_word_combo== -1: 
-            return [self.get_law_vs_chaos(value_word_combo), self.get_good_vs_evil(value_word_combo)]
-        else: 
-            return temp
+        if value:
+            gve = self.get_alignment_good_vs_evil()
+            lvc = self.get_alignment_law_vs_chaos()
+            if value == 2:
+                return[self.ccs.ALIGNMENT.get_long_name(lvc),self.ccs.ALIGNMENT.get_long_name(gve)] 
+            return [lvc,gve]
+
 
     def isChaoticEvil(self): 
         if self.isChaotic() and self.isEvil(): 
@@ -768,7 +755,7 @@ class creature(verbose, dice):
 
     def stat_display(self):
         perc = percbar()
-        print("Name:",self.name,"| Level:",self.base_level, "| Armor Class:",self.get_armor_class(),"| Alignment:",' '.join(self.get_alignment(1)).title())
+        print("Name:",self.name,"| Level:",self.base_level, "| Armor Class:",self.get_armor_class(),"| Alignment:",' '.join(self.get_alignment(2)).title())
         print("Race:",self.race.title(),"| Class:",self.creature_class.upper())
         print("Experience:",perc.disp(self.get_experience_toward_next_level(),self.get_experience_total_for_current_level(),50),str(self.get_experience_toward_next_level())+"/"+str(self.get_experience_total_for_current_level()))
         print('STR:',self.get_ability_score(self.ccs.ABILITY.STR),"/",self.mod_str(),"| CON:",self.get_ability_score(self.ccs.ABILITY.CON),"/",self.mod_con(),"| DEX:",self.get_ability_score(self.ccs.ABILITY.DEX),"/",self.mod_dex())

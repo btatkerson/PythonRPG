@@ -103,14 +103,14 @@ class core_constants():
         def __init__(self):
             index_reader.__init__(self)
             self.LAW = self.LAWFUL = 'law'
-            self.NTL = self.NEUTRAL = 'ntl'
+            self.NTL = self.NEUTRALLvC = 'ntl'
             self.CHA = self.CHAOTIC = 'cha'
             self.GOD = self.GOOD = 'good'
-            self.TNL = self.TRUENEUTRAL = 'tnl'
+            self.NTG = self.NEUTRALGvE = 'ntg'
             self.EVL = self.EVIL = 'evl'
 
-            self.INDEX = [self.LAW, self.NTL, self.CHA, self.GOD, self.TNL, self.EVL]
-            self.INDEX_LONG = ['lawful', 'neutral', 'chaotic', "good", "true neutral", "evil"]
+            self.INDEX = [self.LAW, self.NTL, self.CHA, self.GOD, self.NTG, self.EVL]
+            self.INDEX_LONG = ['lawful', 'neutral', 'chaotic', 'good', 'neutral', 'evil']
 
 
     class _core_const_baseAttackBonus(index_reader):
@@ -162,9 +162,9 @@ class core_constants():
                           self.FTR,self.MNK,self.PLD,self.RGR,self.ROG,
                           self.SOR,self.WIZ]
 
-            self.INDEX_LONG = ["unique","barbarian","bard","cleric","druid",
-                               "fighter","monk","paladin","ranger","rogue",
-                               "sorcerer","wizard"]
+            self.INDEX_LONG = ['unique','barbarian','bard','cleric','druid',
+                               'fighter','monk','paladin','ranger','rogue',
+                               'sorcerer','wizard']
     
     class _core_const_creatureRace(index_reader):
         '''
@@ -337,6 +337,7 @@ class core_constants():
 
     def __init__(self):
         self.ABILITY = self._core_const_ability()
+        self.ALIGNMENT = self._core_const_alignment()
         self.BASEATTACKBONUS = self._core_const_baseAttackBonus()
         self.BASESAVEBONUS = self._core_const_baseSaveBonus()
         self.CREATURECLASS = self._core_const_creatureClass()

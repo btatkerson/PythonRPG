@@ -36,12 +36,19 @@ class core_creature_configuration(core_race_configuration):
         self.__MIN_EXPERIENCE = 0
         self.__MAX_EXPERIENCE = sum(range(self.__MIN_BASE_LEVEL,self.__MAX_BASE_LEVEL+1))
         self.__DEFAULT_BASE_LEVEL_RATE = 1000 # Each level costs 1000*base_level
-        self.__DEFAULT_GOOD_VS_EVIL = 50 # Neutral
-        self.__MIN_GOOD_VS_EVIL = 0
-        self.__MAX_GOOD_VS_EVIL = 100
-        self.__DEFAULT_LAW_VS_CHAOS = 50 # Neutral
-        self.__MIN_LAW_VS_CHAOS = 0
-        self.__MAX_LAW_VS_CHAOS = 100
+
+        self.__DEFAULT_ALIGNMENT_GOOD_VS_EVIL = 50 # Neutral
+        self.__MIN_ALIGNMENT_GOOD_VS_EVIL = 0
+        self.__MAX_ALIGNMENT_GOOD_VS_EVIL = 100
+        self.__MAX_ALIGNMENT_EVIL = 30
+        self.__MIN_ALIGNMENT_GOOD = 70
+
+        self.__DEFAULT_ALIGNMENT_LAW_VS_CHAOS = 50 # Neutral
+        self.__MIN_ALIGNMENT_LAW_VS_CHAOS = 0
+        self.__MAX_ALIGNMENT_CHAOS = 30 # Everything between MAX_ALI_CHAOS and MIN_ALI_LAW is considered neutral
+        self.__MIN_ALIGNMENT_LAW = 70
+        self.__MAX_ALIGNMENT_LAW_VS_CHAOS = 100
+
         self.__DEFAULT_NAME = 'MissingName'
         self.__DEFAULT_PLAYABLE_CHARACTER = False
         self.__DEFAULT_RACE = self.ccs.CREATURERACE.HUMAN
@@ -156,23 +163,23 @@ class core_creature_configuration(core_race_configuration):
     def get_max_experience(self):
         return self.__MAX_EXPERIENCE
 
-    def get_default_good_vs_evil(self):
-        return self.__DEFAULT_GOOD_VS_EVIL
+    def get_default_alignment_good_vs_evil(self):
+        return self.__DEFAULT_ALIGNMENT_GOOD_VS_EVIL
 
-    def get_min_good_vs_evil(self):
-        return self.__MIN_GOOD_VS_EVIL
+    def get_min_alignment_good_vs_evil(self):
+        return self.__MIN_ALIGNMENT_GOOD_VS_EVIL
 
-    def get_max_good_vs_evil(self):
-        return self.__MAX_GOOD_VS_EVIL
+    def get_max_alignment_good_vs_evil(self):
+        return self.__MAX_ALIGNMENT_GOOD_VS_EVIL
 
-    def get_default_law_vs_chaos(self):
-        return self.__DEFAULT_LAW_VS_CHAOS
+    def get_default_alignment_law_vs_chaos(self):
+        return self.__DEFAULT_ALIGNMENT_LAW_VS_CHAOS
 
-    def get_min_law_vs_chaos(self):
-        return self.__MIN_LAW_VS_CHAOS
+    def get_min_alignment_law_vs_chaos(self):
+        return self.__MIN_ALIGNMENT_LAW_VS_CHAOS
 
-    def get_max_law_vs_chaos(self):
-        return self.__MAX_LAW_VS_CHAOS
+    def get_max_alignment_law_vs_chaos(self):
+        return self.__MAX_ALIGNMENT_LAW_VS_CHAOS
 
     def get_default_playable_character(self):
         return self.__DEFAULT_PLAYABLE_CHARACTER
@@ -237,16 +244,18 @@ class core_creature_configuration(core_race_configuration):
 
         return self.get_base_save_bonus(self.get_default_base_save_bonus(),creature_level)
 
-    # Returns a list of attack bonuses for the 'poor', 'average', and 'good', if there are multiple attacks,
-    # the sequential bonuses are provbase_save_bonused. base_save_bonus can be given as a value or the name value
-    # 0 : 'poor',
-    # 1 : 'average',
-    # 2 : 'good'
 
     def get_default_base_attack_bonus(self):
         return self.__DEFAULT_BASE_ATTACK_BONUS
 
     def get_base_attack_bonus(self,base_attack_bonus=None,creature_level=1):
+        '''
+        Returns a list of attack bonuses for the 'poor', 'average', and 'good', if there are multiple attacks,
+        the sequential bonuses are provbase_save_bonused. base_save_bonus can be given as a value or the name value
+        0 : 'poor',
+        1 : 'average',
+        2 : 'good'
+        '''
         base_attack_bonus = self.ccs.BASEATTACKBONUS.verify(base_attack_bonus)
         
 
@@ -314,6 +323,31 @@ class core_creature_configuration(core_race_configuration):
 
     def get_default_skill_set(self):
         return self.__DEFAULT_SKILL_SET
+
+    def get_alignment_good_vs_evil(self,alignment=None):
+        try:
+            alignment = int(alignment)
+        except:
+            alignment = self.get_default_alignment_good_vs_evil()
+
+        if alignment <= self.__MAX_ALIGNMENT_EVIL:
+            return self.ccs.ALIGNMENT.EVIL
+        elif self.__MIN_ALIGNMENT_GOOD <= alignment:
+            return self.ccs.ALIGNMENT.GOOD
+        return self.ccs.ALIGNMENT.NEUTRALGvE
+
+    def get_alignment_law_vs_chaos(self,alignment=None):
+        try:
+            alignment = int(alignment)
+        except:
+            alignment = self.get_default_alignment_law_vs_chaos()
+
+        if alignment <= self.__MAX_ALIGNMENT_CHAOS:
+            return self.ccs.ALIGNMENT.CHAOTIC
+        elif self.__MIN_ALIGNMENT_LAW <= alignment:
+            return self.ccs.ALIGNMENT.LAW
+        return self.ccs.ALIGNMENT.NEUTRALLvC
+
 
 
 # a = core_creature_configuration()
