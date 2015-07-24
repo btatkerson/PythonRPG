@@ -55,27 +55,41 @@ class dice():
 
         def d(self,sides=None, occurances=None, return_average=False):
                 '''
-		The main dice-roller, by default, it acts as a single throw of a d20 (or your initializer defaults). If you wanted to throw two d6 dice,
-	  	you could type d(6,2) which returns a list consisting of 2 elements that are random values between 1 and 6.
+		        The main dice-roller, by default, it acts as a single throw of a d20 (or your initializer defaults). If you wanted to throw two d6 dice,
+	  	        you could type d(6,2) which returns a list consisting of 2 elements that are random values between 1 and 6.
 
-                return_average returns a list filled with only the average value of the die filling the list "occurances" number of times. Useful for leveling purposes if trying to offer balance versus rolling dice for point increases.
-		'''
-                if not sides or type(sides) != int or sides < 0:
+                return_average returns a list filled with only the average value of the die filling the list "occurances" number of times. 
+                Useful for leveling purposes if trying to offer balance versus rolling dice for point increases.
+		        '''
+                try:
+                    is_int_sides = bool(int(sides) or 1) and int(sides) > 0
+
+                except:
+                    is_int_sides = False
+
+                try:
+                    is_int_occurances = bool(int(occurances) or 1) and int(occurances) > 0
+                except:
+                    is_int_occurances = False
+
+                if not is_int_sides:
                         sides = self.def_sides
-                if not occurances or type(occurances) != int or occurances < 0:
+                if not is_int_occurances:
                         occurances = self.def_occur
+                
                 if return_average:
-                    return [(sides+1)/2 for i in range(occurances)]
-                return [random.randint(1,sides) for i in range(occurances)]
+                    return [(int(sides)+1)/2 for i in range(int(occurances))]
+
+                return [random.randint(1,int(sides)) for i in range(int(occurances))]
 	
 	
         def str_d(self,die_str=None,return_average=False):
                 '''
-			Takes input in the form of a string such as "2d6" (A six-sided die rolled twice) or "3 D 5"
-			and parses it to return a list of die rolls
+			    Takes input in the form of a string such as "2d6" (A six-sided die rolled twice) or "3 D 5"
+			    and parses it to return a list of die rolls
 
-			Returns a default roll instead
-		'''
+			    Returns a default roll instead
+		        '''
                 if die_str == None:
                         return self.d()
                 try:
@@ -89,17 +103,17 @@ class dice():
                         Is triggered when either when the list is being generated and int(i) does
                         not have a number for i
 
-			or
+			            or
 
-			If the length of the list is not 2 (which is the "3" and "5" in "3d5")
-			'''
+			            If the length of the list is not 2 (which is the "3" and "5" in "3d5")
+			            '''
                         print("Input was invalid, returned 0")
                         return 0
 
         def d100(self, occurances=None, return_average=False):
                 '''
                 Returns a roll of a d100, 1 occurance by default. This is the same as self.d(100,1)
-		'''
+		        '''
                 return self.d(100, occurances, return_average)
 
         def d20(self, occurances=None, return_average=False):
