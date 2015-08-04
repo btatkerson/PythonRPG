@@ -19,7 +19,7 @@
 
 '''
 
-from core.__core_constants import core_constants
+import core.__core_constants_mod as ccs
 
 
 class race_settings():
@@ -38,12 +38,12 @@ class race_settings():
         self.set_size_class(size_class)
         
         # self.base_land_speed=base_land_speed # Will not be used until future development, races all have a base land speed which determines how much far a creature can move in one round. This is not the only thing that will affect land speed.
-        self.ability_bonuses = {core_constants().ABILITY.STR:0, 
-                                core_constants().ABILITY.INT:0, 
-                                core_constants().ABILITY.CON:0, 
-                                core_constants().ABILITY.WIS:0, 
-                                core_constants().ABILITY.DEX:0, 
-                                core_constants().ABILITY.CHR:0}
+        self.ability_bonuses = {ccs.ABILITY.STR:0, 
+                                ccs.ABILITY.INT:0, 
+                                ccs.ABILITY.CON:0, 
+                                ccs.ABILITY.WIS:0, 
+                                ccs.ABILITY.DEX:0, 
+                                ccs.ABILITY.CHR:0}
 
         self.set_ability_bonus_by_dictionary(ability_bonuses)
 
@@ -62,7 +62,7 @@ class race_settings():
         if type(favored_classes) == list:
             hold = []
             for i in favored_classes:
-                temp = core_constants().CREATURECLASS.verify(i)
+                temp = ccs.CREATURECLASS.verify(i)
                 if temp:
                     hold.append(temp)
             self.favored_classes = hold
@@ -71,8 +71,8 @@ class race_settings():
            
             
         else:
-            if core_constants().CREATURECLASS.verify(favored_classes):
-                self.favored_classes = [core_constants().CREATURECLASS.verify(favored_classes)]
+            if ccs.CREATURECLASS.verify(favored_classes):
+                self.favored_classes = [ccs.CREATURECLASS.verify(favored_classes)]
                 return True
 
         self.favored_classes = []
@@ -86,8 +86,8 @@ class race_settings():
         return self.size_class
 
     def set_size_class(self,size_class=None):
-        if core_constants().SIZECLASS.verify(size_class):
-            self.size_class = core_constants().SIZECLASS.verify(size_class)
+        if ccs.SIZECLASS.verify(size_class):
+            self.size_class = ccs.SIZECLASS.verify(size_class)
         else:
             self.size_class = False
 
@@ -101,17 +101,17 @@ class race_settings():
         This can be set by calling the function as so set_ability_bonus(con=2,chr=-2)
         '''
         if str or absolute:
-            self.set_ability_bonus_single(core_constants().ABILITY.STR,str,absolute)
+            self.set_ability_bonus_single(ccs.ABILITY.STR,str,absolute)
         if inte or absolute:
-            self.set_ability_bonus_single(core_constants().ABILITY.INT,inte,absolute)
+            self.set_ability_bonus_single(ccs.ABILITY.INT,inte,absolute)
         if con or absolute:
-            self.set_ability_bonus_single(core_constants().ABILITY.CON,con,absolute)
+            self.set_ability_bonus_single(ccs.ABILITY.CON,con,absolute)
         if wis or absolute:
-            self.set_ability_bonus_single(core_constants().ABILITY.WIS,wis,absolute)
+            self.set_ability_bonus_single(ccs.ABILITY.WIS,wis,absolute)
         if dex or absolute:
-            self.set_ability_bonus_single(core_constants().ABILITY.DEX,dex,absolute)
+            self.set_ability_bonus_single(ccs.ABILITY.DEX,dex,absolute)
         if chr or absolute:
-            self.set_ability_bonus_single(core_constants().ABILITY.CHR,chr,absolute)
+            self.set_ability_bonus_single(ccs.ABILITY.CHR,chr,absolute)
 
     def set_ability_bonus_single(self,ability,add=0,absolute=False):
         '''
@@ -119,7 +119,7 @@ class race_settings():
         'absolute' == False adds variable 'add' to the ability given in the 'ability' parameter
         'absolute' == True sets the ability given in the 'ability' parameter to the value given in 'add', does not add to previous ability
         '''
-        ability = core_constants().ABILITY.verify(ability)
+        ability = ccs.ABILITY.verify(ability)
         if ability:
             if absolute:
                 self.ability_bonuses[ability] = add
@@ -133,7 +133,7 @@ class race_settings():
         if type(ability_bonuses) == dict:
             added = False # Tells if anything was affected by the input ability_bonuses
             for i in ability_bonuses:
-                temp = core_constants().ABILITY.verify(i)
+                temp = ccs.ABILITY.verify(i)
                 if temp:
                     added = True
                     self.set_ability_bonus_single(temp,ability_bonuses[temp],True)
@@ -148,8 +148,8 @@ class race_settings():
         '''
         Returns ability bonus (ex. +2) for whichever ability given
         '''
-        if core_constants().ABILITY.verify(ability):
-            return self.ability_bonuses[core_constants().ABILITY.verify(ability)]
+        if ccs.ABILITY.verify(ability):
+            return self.ability_bonuses[ccs.ABILITY.verify(ability)]
         return False
     
     def get_ability_bonus_dictionary(self):

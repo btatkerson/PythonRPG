@@ -1,4 +1,8 @@
-import sys
+import core.__core_constants_mod as ccm
+
+ccm.ABILITY.CHARISMA
+
+ccm.SKILL.
 
 # from core.__core_race_configuration import z
 #

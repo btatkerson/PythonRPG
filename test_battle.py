@@ -6,8 +6,8 @@ import os
 import creature as cre
 
 a = cc()
-pc = cre.creature(True,"Frodo",a.CREATURECLASS.MONK,a.CREATURERACE.HUMAN,None,3,None,23,98,20,3,'monk',None,15,None,14,10,7,13,11,3,True)
-npc = cre.creature(False,"Goblin",a.CREATURECLASS.FTR,a.CREATURERACE.GOBLINOID,None,.5,None,50,10,15,2,'avrg',None,10,None,11,10,6,13,12,9,True)
+pc = cre.creature(True,"Frodo",a.CREATURECLASS.FTR,a.CREATURERACE.HUMAN,None,3,None,23,98,20,3,'good',None,15,None,14,10,7,13,11,3,True)
+npc = cre.creature(False,"Goblin",a.CREATURECLASS.WIZ,a.CREATURERACE.GOBLINOID,None,.5,None,50,10,15,2,'avrg',None,10,None,11,10,6,13,12,9,True)
 
 print("\n\n---------------------------------------------------------------\n\n")
 
@@ -17,7 +17,6 @@ print("\n\n---------------------------------------------------------------\n\n")
 
 npc.stat_display()
 print("\n\n---------------------------------------------------------------\n\n")
-
 
 def attack(cre_a,cre_b):
     for i in cre_a.get_attack_roll():
@@ -41,7 +40,7 @@ def attack(cre_a,cre_b):
             print(cre_a.get_name(),"did",damage,"damage to",cre_b.get_name())
 
 def heal(cre_a):
-        heal = sum(cre_a.d4()) + cre_a.mod_con()
+        heal = sum(cre_a.d4()) + cre_a.get_mod_con()
         print(cre_a.get_name(),"healed",min(heal,cre_a.get_base_hit_points()-cre_a.get_current_hit_points()),"points!")
         cre_a.set_current_hit_points(heal)
 
@@ -59,7 +58,6 @@ while pc.is_alive() and npc.is_alive():
         heal(pc) 
     
     if not npc.is_alive():
-        input("\nPress Enter to continue")
         break
 
     print("\n")

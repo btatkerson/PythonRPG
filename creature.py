@@ -9,7 +9,7 @@
 
 from core.__core_creature_configuration import core_creature_configuration
 # from core.__core_creature_class_configuration import core_creature_class_configuration
-from core.__core_constants import core_constants
+import core.__core_constants_mod as ccs
 from core.verbose import verbose
 from skill_set import skill_set
 from dice import dice
@@ -27,11 +27,9 @@ class creature(verbose, dice):
         verbose.__init__(self,verbo)
         dice.__init__(self)
 
-        self.ccs = core_constants()
 
         self.playable_character=playable_character or self._core().get_default_playable_character()
         self.name=name or self._core().get_default_name()
-        self.creature_class = creature_class or self._core().get_default_creature_class()
 
         self.race=None
         self.__racial_ability_bonuses = None # this is set from the core after the race is determined
@@ -41,14 +39,15 @@ class creature(verbose, dice):
         self.set_size_class(size_class)
 
 
+
         self.deity=deity or self._core().get_default_deity()
 
 
         self.alignment_law_vs_chaos = None
         self.alignment_good_vs_evil = None
 
-        self.alignment_law_vs_chaos=law_vs_chaos or self._core().get_default_law_vs_chaos()# Scale 0 - 100. 0-32= Chaotic, 33-67= Neutral, 68-100= Law
-        self.alignment_good_vs_evil=good_vs_evil or self._core().get_default_good_vs_evil()# Scale 0 - 100. 0-32= Evil, 33-67= Neutral, 68-100= Good
+        self.alignment_law_vs_chaos=law_vs_chaos or self._core().get_default_alignment_law_vs_chaos()# Scale 0 - 100. 0-32= Chaotic, 33-67= Neutral, 68-100= Law
+        self.alignment_good_vs_evil=good_vs_evil or self._core().get_default_alignment_good_vs_evil()# Scale 0 - 100. 0-32= Evil, 33-67= Neutral, 68-100= Good
 
         self.base_hit_points=base_hit_points or self._core().get_default_base_hit_points()
         self.current_hit_points=self.base_hit_points
@@ -56,6 +55,7 @@ class creature(verbose, dice):
 
         self.base_level_rate=base_level_rate or self._core().get_default_base_level_rate() # 1000 is the standard growth, the lower the number, the faster a character can base_level
 
+        self.hit_die = None
         self.base_level=None
         self.experience=None
 
@@ -65,28 +65,32 @@ class creature(verbose, dice):
             self.set_base_level_by_experience(exp)
         else:
             self.set_experience_by_base_level(1)
-
-        self.base_attack_bonus = None
-        self.set_base_attack_bonus(base_attack_bonus)
         
 
         self.__last_experience_earned = 0 # Used for logging
-        self.skill_set= skill_set()
+        self.skill_set=skill_set()
 
-        self.base_saving_throw_bonus={i: 0 for i in self.ccs.SAVINGTHROW.get_index()}
+        self.base_attack_bonus = None
+        self.set_base_attack_bonus_type(base_attack_bonus)
+        self.base_saving_throw_bonus={i: 0 for i in ccs.SAVINGTHROW.get_index()}
+        
+
 
         # Dictionary of base_abilities
-        self.base_abilities={self.ccs.ABILITY.STR:str or self._core().get_default_base_ability_score(),
-                             self.ccs.ABILITY.INT:inte or self._core().get_default_base_ability_score(),
-                             self.ccs.ABILITY.CON:con or self._core().get_default_base_ability_score(),
-                             self.ccs.ABILITY.WIS:wis or self._core().get_default_base_ability_score(),
-                             self.ccs.ABILITY.DEX:dex or self._core().get_default_base_ability_score(),
-                             self.ccs.ABILITY.CHR:chr or self._core().get_default_base_ability_score()}
+        self.base_abilities={ccs.ABILITY.STR:str or self._core().get_default_base_ability_score(),
+                             ccs.ABILITY.INT:inte or self._core().get_default_base_ability_score(),
+                             ccs.ABILITY.CON:con or self._core().get_default_base_ability_score(),
+                             ccs.ABILITY.WIS:wis or self._core().get_default_base_ability_score(),
+                             ccs.ABILITY.DEX:dex or self._core().get_default_base_ability_score(),
+                             ccs.ABILITY.CHR:chr or self._core().get_default_base_ability_score()}
 
         self.base_armor_class = None
         self.set_base_armor_class(base_armor_class)
 
         self.inventory=[] # Holds list of items, an inventory system is in the future.
+
+        self.creature_class = None
+        self.set_creature_class(creature_class)
 
     def get_base_level(self): 
         '''
@@ -115,6 +119,67 @@ class creature(verbose, dice):
             return temp
         return 0
 
+
+    def set_creature_class(self, creature_class=None):
+        '''
+        Sets the creature class based on verified input for creature_class
+
+        Otherwise, a default class will be given
+        '''
+
+        creature_class = ccs.CREATURECLASS.verify(creature_class)
+
+        if creature_class:
+            self.creature_class = creature_class
+            self.set_base_attack_bonus_type(set_by_class=True)
+            self.set_base_saving_throw_bonus_types(set_by_class=True)
+            self.set_hit_die(set_by_class=True)
+            return 1
+
+        self.set_creature_class(self._core().get_default_creature_class())
+
+
+    
+    def get_hit_die(self):
+        '''
+        Returns the hit_die function
+
+        YOU ARE PROBABLY LOOKING FOR GET_HIT_DIE_ROLL()
+        '''
+        return self.hit_die
+
+    def get_hit_die_roll(self):
+        '''
+        Returns a list of die rolls using self.hit_die dice object
+        '''
+        return self.hit_die()
+
+    def set_hit_die(self, hit_die=None, set_by_class=False):
+        '''
+        Sets the self.hit_die to a dice() class
+
+        If set_by_class is True, the hit die will pull from the builtin hit die related to
+        the creature class set on self.creature_class
+
+        RECOMMENDED:
+        Just run self.set_creature_class() at initialization and don't worry about it (:
+        '''
+        if set_by_class:
+            self.hit_die = self._core().get_class_hit_die(self.creature_class)
+            return 1 
+
+        if type(hit_die) == str:
+            self.hit_die = lambda: self.str_d(hit_die)
+            if self.hit_die():
+                return 1
+
+        elif isinstance(hit_die, dice):
+            self.hit_die = hit_die
+            return 1
+
+        self.hit_die = self.set_hit_die(self._core().get_default_hit_die())
+        
+
     def get_experience_toward_next_level(self):
         '''
         Returns the current experience earned toward the next level
@@ -131,33 +196,156 @@ class creature(verbose, dice):
         '''
         return self.base_level_rate*self.base_level
 
-    def get_base_attack_bonus(self):
+    def get_base_attack_bonus_type(self):
         '''
         Returns the type of base_attack_bonus a creature has
         '''
         return self.base_attack_bonus
 
-    def get_base_attack_bonus_list(self): 
+    def get_base_attack_bonus(self): 
         '''
-        Returns the attack bonuses based on level and attack-ability
+        Returns a list of integers for the attack bonuses based on level and attack bonus type
         '''
         return self._core().get_base_attack_bonus(self.base_attack_bonus, self.base_level) 
 
-    def set_base_attack_bonus(self, base_attack_bonus=None):
+    def set_base_attack_bonus_type(self, base_attack_bonus=None, set_by_class=False, creature_class=None):
         '''
+        set_base_attack_bonus_type(ccs.BASEATTACKBONUS)
+        set_base_attack_bonus_type(set_by_class=bool)
+        set_base_attack_bonus_type(creature_class=ccs.CREATURECLASS)
+
         Sets the base attack bonus for creature combat.
 
-        GOOD, AVERAGE, and POOR are acceptable inputs
+        GOOD, AVERAGE, and POOR are acceptable inputs for 'base_attack_bonus'
+
+        if set_by_class is True, the base_attack_bonus_type is set to the builtin type for the class 
+        that NEEDS TO BE set on the creature prior to using this parameter
+
+        if creature_class is a valid ccs.CREATURECLASS, the base_attack_bonus_type will be set to
+        the builtin attack bonus for that given class
         '''
 
-        base_attack_bonus = self.ccs.BASEATTACKBONUS.verify(base_attack_bonus)
+        if set_by_class or creature_class:
+            if creature_class:
+                creature_class = ccs.CREATURECLASS.verify(creature_class)
+                if creature_class:
+                    self.base_attack_bonus = self._core().get_class_base_attack_bonus(creature_class)
+                    return 1
+            elif self.creature_class:
+                self.base_attack_bonus = self._core().get_class_base_attack_bonus(self.creature_class)
+                return 1
+ 
+        base_attack_bonus = ccs.BASEATTACKBONUS.verify(base_attack_bonus)
 
         if base_attack_bonus:
             self.base_attack_bonus = base_attack_bonus
             return 1
 
         self.base_attack_bonus = self._core().get_default_base_attack_bonus()
+
+    def get_base_saving_throw_bonus(self, saving_throw=None):
+        '''
+        Returns an integer for the base saving throw based on the type of saving throw and the creature level
+        '''
+        saving_throw = ccs.SAVINGTHROW.verify(saving_throw)
+
+        if saving_throw:
+            return self._core().get_base_save_bonus(self.base_saving_throw_bonus[saving_throw], self.base_level)
+        return self._core().get_base_save_bonus(self.base_saving_throw_bonus[self._core().get_default_saving_throw()], self.base_level) 
+
+    def get_saving_throw(self, saving_throw=None):
+        '''
+        Returns an integer for the complete saving throw bonus accounting for the 
+        base save bonus and the modifiers on the creature provided a correct saving throw
+        '''
+
+        saving_throw = ccs.SAVINGTHROW.verify(saving_throw)
+        if saving_throw:
+            base_save = self.get_base_saving_throw_bonus(saving_throw)
+            if saving_throw == ccs.SAVINGTHROW.REF:
+                return base_save + self.get_mod_dex()
+            elif saving_throw == ccs.SAVINGTHROW.WIL:
+                return base_save + self.get_mod_wis()
+            else:
+                return base_save + self.get_mod_con()
+        return self.get_base_saving_throw_bonus()
+
+
+    def get_saving_throw_reflex(self):
+        '''
+        Returns an integer of the reflex saving throw bonus with modifiers accounted for
+        '''
+        return self.get_saving_throw(ccs.SAVINGTHROW.REF)
+    
+    def get_saving_throw_will(self):
+        '''
+        Returns an integer of the will saving throw bonus with modifiers accounted for
+        '''
+        return self.get_saving_throw(ccs.SAVINGTHROW.WIL)
+
+    def get_saving_throw_fortitude(self):
+        '''
+        Returns an integer of the fortitude saving throw bonus with modifiers accounted for
+        '''
+        return self.get_saving_throw(ccs.SAVINGTHROW.FOR)
+     
+    get_saving_throw_ref = get_saving_throw_reflex
+    get_saving_throw_wil = get_saving_throw_will
+    get_saving_throw_for = get_saving_throw_fortitude
+
+    def get_base_saving_throw_bonus_types(self, saving_throw=None):
+        '''
+        Returns a dictionary of core constants for the saving throw bonus type used for each type of saving throw
+        base_saving_throw returns only the bonus type core constant for the saving throw given
+        '''
+        saving_throw = ccs.SAVINGTHROW.verify(saving_throw)
+        if saving_throw:
+            return self.base_saving_throw_bonus[saving_throw]
+        return self.base_saving_throw_bonus
+
+    def set_base_saving_throw_bonus_types(self, refl=None, will=None, fort=None, set_by_class=False, creature_class=None):
+        '''
+        set_base_saving_throw_bonus_types(int, int, int)
+        set_base_saving_throw_bonus_types(set_by_class=bool)
+        set_base_saving_throw_bonus_types(creature_class=ccs.CREATURECLASS)
+
+        Sets the saving throw bonuses to self.base_saving_throw_bonus dictionary.
+
+        'refl', 'will', and 'fort' can be used all together or called specifically if not setting all at once.
+
+        'refl', 'will', and 'fort' parameters are not used when valid parameters for 'set_by_class' or 'creature_class'
+        are given. 
+
+        If 'creature_class' is provided, the bonuses are taken from the builtin bonuses for that class
+        
+        If 'set_by_class' is set to True, the bonuses are set by the creature class that has been previously
+        set on that creature. self.creature_class must already be set for this to work.
+        '''
+
+        if set_by_class or creature_class:
+            if creature_class:
+                creature_class = ccs.CREATURECLASS.verify(creature_class)
+                if creature_class:
+                    self.base_saving_throw_bonus = self._core().get_class_base_save_bonuses(creature_class)
+                    return 1
+            elif self.creature_class:
+                self.base_saving_throw_bonus = self._core().get_class_base_save_bonuses(self.creature_class)
+                return 1
             
+        refl = ccs.BASESAVEBONUS.verify(refl)
+        will = ccs.BASESAVEBONUS.verify(will)
+        fort = ccs.BASESAVEBONUS.verify(fort)
+
+        if refl:
+            self.base_saving_throw_bonus[ccs.SAVINGTHROW.REF] = refl
+        if will:
+            self.base_saving_throw_bonus[ccs.SAVINGTHROW.WIL] = will
+        if fort:
+            self.base_saving_throw_bonus[ccs.SAVINGTHROW.FOR] = fort
+
+        for i in self.base_saving_throw_bonus:
+            if not self.base_saving_throw_bonus[i]:
+                self.base_saving_throw_bonus[i] = self._core().get_default_base_save_bonus()
 
     def get_base_hit_points(self):
         '''
@@ -167,12 +355,26 @@ class creature(verbose, dice):
         return self.base_hit_points
 
     def set_base_hit_points(self,add=None,absolute=None):
+        '''
+        set_base_hit_points(int)
+        set_base_hit_points(int,bool)
+
+        sets the base hit points for a creature by adding 'add' to the base hit points.
+        'add' should be a positive OR negative integer 
+
+        'absolute' == True will set the base hit points to the value given for 'add'
+
+        '''
+
+        
         if not add:
             return False
         elif not absolute:
             self.base_hit_points += add
         else:
-            self.base_hit_points = min(max(self.base_hit_points,self._core().get_min_base_hit_points()),self._core().get_max_base_hit_points())
+            self.base_hit_points = min(max(self.base_hit_points,
+                                           self._core().get_min_base_hit_points()),
+                                           self._core().get_max_base_hit_points())
         
     def get_current_hit_points(self):
         '''
@@ -190,6 +392,9 @@ class creature(verbose, dice):
             self.current_hit_points = min(max(self.current_hit_points,self._core().get_min_current_hit_points()),self.get_base_hit_points())
 
     def get_challenge_rating(self):
+        '''
+        Returns a float for the challenge rating of a creature
+        '''
         return self.challenge_rating
 
     def set_challenge_rating(self,val=None):
@@ -209,12 +414,18 @@ class creature(verbose, dice):
             self.challenge_rating = self._core().get_default_challenge_rating()
 
     def is_alive(self):
+        '''
+        Returns True if creature has current hit points greater than 0
+        '''
         if self.get_current_hit_points() > 0:
             return True
         else:
             return False
 
     def is_dead(self):
+        '''
+        Returns True is a character has 0 or less current hit points
+        '''
         return not self.is_alive()
 
     def get_base_armor_class(self):
@@ -236,7 +447,7 @@ class creature(verbose, dice):
         '''
         Returns the armor class with modifiers
         '''
-        return self.base_armor_class + self.get_ability_modifier(self.ccs.ABILITY.DEX) + self.get_size_class().get_size_modifier()
+        return self.base_armor_class + self.get_ability_modifier(ccs.ABILITY.DEX) + self.get_size_class().get_size_modifier()
 
     def get_AC(self):
         return self.get_armor_class()
@@ -246,24 +457,25 @@ class creature(verbose, dice):
         attack_roll() returns a lists of lists. The sum of the elements in each list will return
         the total for the attack roll
         
-        The lists currently contain two numbers [a, b, c, d] where
+        The lists currently contain two numbers [d20, AB, SCM, SMD,] where
 
-        a = the number on the dice roll (d20)
+        d20 = the number on the dice roll (d20)
             - This is used for determining criticals (hits/misses)
             
-        b = attack bonus
-            - Pulled from the base_attack_ bonus determined by the creature's class
+         AB = attack bonus
+            - Pulled from the base_attack_bonus determined by the creature's class
         
-        c = size class modifier
+        SCM = size class modifier
+            - Determined by creature race, or whatever size was assigned
 
-        d = strength modifier
+        SMD = strength modifier
+            - Modifier from creature strength score
         '''
         roll_list=[]
-        for i in self.get_base_attack_bonus_list():
+        for i in self.get_base_attack_bonus():
             temp = sum(self.d20())
-            print(temp,i)
             if 1 < temp <= 20:
-                roll_list.append([temp, i, self.get_size_class().get_size_modifier(), self.mod_str()])
+                roll_list.append([temp, i, self.get_size_class().get_size_modifier(), self.get_mod_str()])
             else:
                 roll_list.append([0,0])
         return roll_list
@@ -278,10 +490,10 @@ class creature(verbose, dice):
         damage = 0
         if critical: 
             roll=sum(self.d(6,3))
-            damage = max(roll + self.mod_str(),1)
+            damage = max(roll + self.get_mod_str(),1)
         else:
             roll = sum(self.d(4,2))
-            damage = max(roll + self.mod_str(),0)
+            damage = max(roll + self.get_mod_str(),0)
 
         return damage
 
@@ -294,8 +506,8 @@ class creature(verbose, dice):
     def set_all_base_ability_score(self, str=0, inte=0, con=0, wis=0, dex=0, chr=0, absolute=False): 
         '''
         Sets all the base abilities at once, or whichever are provided.
-        absolute== False : Base ability has parameter added to it (str=1==> self.base_abilities[self.ccs.ABILITY.STR] += 1)
-        absolute== True : Base ability is set to parameter (str=1==> self.base_abilities[self.ccs.ABILITY.STR]=1)
+        absolute== False : Base ability has parameter added to it (str=1==> self.base_abilities[ccs.ABILITY.STR] += 1)
+        absolute== True : Base ability is set to parameter (str=1==> self.base_abilities[ccs.ABILITY.STR]=1)
         '''
 
         if str: 
@@ -317,7 +529,7 @@ class creature(verbose, dice):
         '''
         Allows one base ability to be modified at a time
         '''
-        ability = self.ccs.ABILITY.verify(ability)
+        ability = ccs.ABILITY.verify(ability)
         if ability:
             if absolute: 
                 self.base_abilities[ability]=add
@@ -336,7 +548,7 @@ class creature(verbose, dice):
 
     def get_base_ability_score(self, ability=None): 
         ''' Returns base ability value for any valid ability provided '''
-        ability = self.ccs.ABILITY.verify(ability)
+        ability = ccs.ABILITY.verify(ability)
 
         if ability:
             return self.base_abilities[ability]
@@ -346,19 +558,19 @@ class creature(verbose, dice):
         '''
         Returns the ability scores that are modified for things such as race
         '''
-        ability = self.ccs.ABILITY.verify(ability)
+        ability = ccs.ABILITY.verify(ability)
 
         if ability:
             return self.get_base_ability_score(ability) + self.get_racial_ability_bonus(ability)
         return self._core().get_default_base_ability_score()
 
-        return self.get_base_ability_score(self.ccs.ABILITY.STR)
+        return self.get_base_ability_score(ccs.ABILITY.STR)
 
     def get_base_str(self): 
         '''
         Returns the base ability score for the Strength ability
         '''
-        return self.get_base_ability_score(self.ccs.ABILITY.STR)
+        return self.get_base_ability_score(ccs.ABILITY.STR)
 
 
     def set_base_str(self, add, absolute=False): 
@@ -367,13 +579,13 @@ class creature(verbose, dice):
         Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
         the base ability will be set to the value provided for variable 'add'
         '''
-        return self.set_base_ability_score(self.ccs.ABILITY.STR, add, absolute)
+        return self.set_base_ability_score(ccs.ABILITY.STR, add, absolute)
 
     def get_base_int(self): 
         '''
         Returns the base ability score for the Intelligence ability
         '''
-        return self.get_base_ability_score(self.ccs.ABILITY.INT)
+        return self.get_base_ability_score(ccs.ABILITY.INT)
 
     def set_base_int(self, add, absolute=False): 
         '''
@@ -381,13 +593,13 @@ class creature(verbose, dice):
         Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
         the base ability will be set to the value provided for variable 'add'
         '''
-        return self.set_base_ability_score(self.ccs.ABILITY.INT, add, absolute)
+        return self.set_base_ability_score(ccs.ABILITY.INT, add, absolute)
 
     def get_base_con(self): 
         '''
         Returns the base ability score for the Constitution ability
         '''
-        return self.get_base_ability_score(self.ccs.ABILITY.CON)
+        return self.get_base_ability_score(ccs.ABILITY.CON)
 
     def set_base_con(self, add, absolute=False): 
         '''
@@ -395,13 +607,13 @@ class creature(verbose, dice):
         Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
         the base ability will be set to the value provided for variable 'add'
         '''
-        return self.set_base_ability_score(self.ccs.ABILITY.CON, add, absolute)
+        return self.set_base_ability_score(ccs.ABILITY.CON, add, absolute)
 
     def get_base_wis(self): 
         '''
         Returns the base ability score for the Wisdom ability
         '''
-        return self.get_base_ability_score(self.ccs.ABILITY.WIS)
+        return self.get_base_ability_score(ccs.ABILITY.WIS)
 
     def set_base_wis(self, add, absolute=False): 
         '''
@@ -409,13 +621,13 @@ class creature(verbose, dice):
         Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
         the base ability will be set to the value provided for variable 'add'
         '''
-        return self.set_base_ability_score(self.ccs.ABILITY.WIS, add, absolute)
+        return self.set_base_ability_score(ccs.ABILITY.WIS, add, absolute)
 
     def get_base_dex(self): 
         '''
         Returns the base ability score for the Dexterity ability
         '''
-        return self.get_base_ability_score(self.ccs.ABILITY.DEX)
+        return self.get_base_ability_score(ccs.ABILITY.DEX)
 
     def set_base_dex(self, add, absolute=False): 
         '''
@@ -423,13 +635,13 @@ class creature(verbose, dice):
         Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
         the base ability will be set to the value provided for variable 'add'
         '''
-        return self.set_base_ability_score(self.ccs.ABILITY.DEX, add, absolute)
+        return self.set_base_ability_score(ccs.ABILITY.DEX, add, absolute)
 
     def get_base_chr(self): 
         '''
         Returns the base ability score for the Charisma ability
         '''
-        return self.get_base_ability_score(self.ccs.ABILITY.CHR)
+        return self.get_base_ability_score(ccs.ABILITY.CHR)
 
     def set_base_chr(self, add, absolute=False): 
         '''
@@ -437,7 +649,7 @@ class creature(verbose, dice):
         Variable 'add' will add any value placed in the parameter to the base ability. If variable 'absolute' is set to True, 
         the base ability will be set to the value provided for variable 'add'
         '''
-        return self.set_base_ability_score(self.ccs.ABILITY.CHR, add, absolute)
+        return self.set_base_ability_score(ccs.ABILITY.CHR, add, absolute)
 
     def set_experience(self, add=None):
         '''
@@ -502,14 +714,29 @@ class creature(verbose, dice):
         self.set_experience_by_base_level(self.base_level)
         return 1
     
-    def set_name(self, name): 
-        self.name= name
-        return self.name
+    def set_name(self, name=None): 
+        '''
+        set_name(str)
+
+        Set the name of the creature using a string
+        '''
+        if name:
+            self.name = str(name)
+            return 1
+        self.name = self._core().get_default_name()
+
         
     def get_name(self): 
+        '''
+        Returns a string for the name of the creature
+        '''
+
         return self.name
 
     def get_race(self):
+        '''
+        Returns the ccs.CREATURERACE for the creature  
+        '''
         return self.race
 
     def set_race(self,race=None):
@@ -517,7 +744,7 @@ class creature(verbose, dice):
         Sets the race of the class or returns a default if an improper race is provided.
         This also sets any racial ability bonuses for the playable races (Human, Halfling, etc.)
         '''
-        race = self.ccs.CREATURERACE.verify(race)
+        race = ccs.CREATURERACE.verify(race)
         if race:
             self.__racial_ability_bonuses = self._core().get_race_information(race).get_ability_bonus_dictionary()
             self.race = race
@@ -537,18 +764,18 @@ class creature(verbose, dice):
         if self._core().is_playable_race(self.race) and not override:
             self.size_class = self._core().get_size_class_information_by_race(self.race)
         else:
-            size_class = self.ccs.SIZECLASS.verify(size_class)
+            size_class = ccs.SIZECLASS.verify(size_class)
 
             if size_class:
                 self.size_class = self._core().get_size_class_information(size_class)
             else:
-                self.size_class = self._core().get_size_class_information(self._core().get_default_size_class)
+                self.size_class = self._core().get_size_class_information(self._core().get_default_size_class())
 
     def get_racial_ability_bonus_dict(self):
         return self.__racial_ability_bonuses
 
     def get_racial_ability_bonus(self,ability):
-        ability = self.ccs.ABILITY.verify(ability)
+        ability = ccs.ABILITY.verify(ability)
 
         if ability:
             return self.get_racial_ability_bonus_dict()[ability]
@@ -595,10 +822,8 @@ class creature(verbose, dice):
             return self.alignment_law_vs_chaos
         return self._core().get_alignment_law_vs_chaos(self.alignment_law_vs_chaos)
 
-
-
     def isChaotic(self): 
-        if self.get_alignment_law_vs_chaos()== self.ccs.ALIGNMENT.CHAOTIC: 
+        if self.get_alignment_law_vs_chaos()== ccs.ALIGNMENT.CHAOTIC: 
             return True
         return False
 
@@ -606,12 +831,12 @@ class creature(verbose, dice):
         '''
         Returns true if creature is neutral in respect to "Law Vs Chaos" (as opposed to "Good Vs Evil")
         '''
-        if self.get_alignment_law_vs_chaos()== self.ccs.ALIGNMENT.NEUTRALLvC: 
+        if self.get_alignment_law_vs_chaos()== ccs.ALIGNMENT.NEUTRALLvC: 
             return True
         return False
 
     def isLawful(self): 
-        if self.get_alignment_law_vs_chaos()== self.ccs.ALIGNMENT.LAWFUL: 
+        if self.get_alignment_law_vs_chaos()== ccs.ALIGNMENT.LAWFUL: 
             return True
         return False
 
@@ -628,25 +853,25 @@ class creature(verbose, dice):
 
     # Return quick checks for creature alignments
     def isGood(self): 
-        if self.get_alignment_good_vs_evil()== self.ccs.ALIGNMENT.GOOD: 
+        if self.get_alignment_good_vs_evil()== ccs.ALIGNMENT.GOOD: 
             return True
         return False
 
     # Returns true if creature is neutral in respect to "Good Vs Evil" (as opposed to "Law Vs Chaos")
     def isNeutralGvE(self): 
-        if self.get_alignment_good_vs_evil()== self.ccs.ALIGNMENT.NEUTRALGvE: 
+        if self.get_alignment_good_vs_evil()== ccs.ALIGNMENT.NEUTRALGvE: 
             return True
         return False
 
     def isEvil(self): 
-        if self.get_alignment_good_vs_evil()== self.ccs.ALIGNMENT.EVIL: 
+        if self.get_alignment_good_vs_evil()== ccs.ALIGNMENT.EVIL: 
             return True
         return False
 
     # Get the alignment in different forms
     def get_alignment(self, value=0): 
         '''
-        0 returns list of core constants (Lawful Evil=[self.ccs.ALIGNMENT.LAWFUL,self.ccs.ALIGNMENT.EVIL]), 
+        0 returns list of core constants (Lawful Evil=[ccs.ALIGNMENT.LAWFUL,ccs.ALIGNMENT.EVIL]), 
         1 returns the values used for holding the alignment in a list (Lawful Evil might be [82,7])
         2 returns words (Lawful Evil=["Lawful", "Evil"], 
         '''
@@ -654,7 +879,11 @@ class creature(verbose, dice):
             gve = self.get_alignment_good_vs_evil()
             lvc = self.get_alignment_law_vs_chaos()
             if value == 2:
-                return[self.ccs.ALIGNMENT.get_long_name(lvc),self.ccs.ALIGNMENT.get_long_name(gve)] 
+                if lvc == ccs.ALIGNMENT.NEUTRALLvC and gve == ccs.ALIGNMENT.NEUTRALGvE:
+                    return ["True","Neutral"]
+                return[ccs.ALIGNMENT.get_long_name(lvc),ccs.ALIGNMENT.get_long_name(gve)] 
+            elif value == 1:
+                return [self.get_alignment_law_vs_chaos(1),self.get_alignment_good_vs_evil(1)]
             return [lvc,gve]
 
 
@@ -723,48 +952,58 @@ class creature(verbose, dice):
     
     def get_ability_modifier(self, ability=None): 
         ''' Gets the ability modifier for whatever ability score is given to it '''
-        ability = self.ccs.ABILITY.verify(ability)
+        ability = ccs.ABILITY.verify(ability)
         if ability: 
             return self._core().ability_modifier_from_score(self.get_ability_score(ability)) 
         else: 
             return self._core().ability_modifier_from_score(self._core().get_default_base_ability_score())
 
-    def mod_str(self): 
+    def get_mod_str(self): 
         '''Returns the strength modifier'''
-        return self.get_ability_modifier(self.ccs.ABILITY.STR)
+        return self.get_ability_modifier(ccs.ABILITY.STR)
 
-    def mod_int(self): 
+    def get_mod_int(self): 
         '''Returns the intelligence modifier'''
-        return self.get_ability_modifier(self.ccs.ABILITY.INT)
+        return self.get_ability_modifier(ccs.ABILITY.INT)
 
-    def mod_con(self): 
+    def get_mod_con(self): 
         '''Returns the constitution modifier'''
-        return self.get_ability_modifier(self.ccs.ABILITY.CON)
+        return self.get_ability_modifier(ccs.ABILITY.CON)
 
-    def mod_wis(self): 
+    def get_mod_wis(self): 
         '''Returns the wisdom modifier'''
-        return self.get_ability_modifier(self.ccs.ABILITY.WIS)
+        return self.get_ability_modifier(ccs.ABILITY.WIS)
 
-    def mod_dex(self): 
+    def get_mod_dex(self): 
         '''Returns the dexterity modifier'''
-        return self.get_ability_modifier(self.ccs.ABILITY.DEX)
+        return self.get_ability_modifier(ccs.ABILITY.DEX)
 
-    def mod_chr(self): 
+    def get_mod_chr(self): 
         '''Returns the charisma modifier'''
-        return self.get_ability_modifier(self.ccs.ABILITY.CHR)
+        return self.get_ability_modifier(ccs.ABILITY.CHR)
+
+    '''
+    Gives the ability modifier functions a long-hand form
+    '''
+    get_mod_strength = get_mod_str
+    get_mod_intelligence = get_mod_int
+    get_mod_constitution = get_mod_con
+    get_mod_wisdom = get_mod_wis
+    get_mod_dexterity = get_mod_dex
+    get_mod_charisma = get_mod_chr
 
     def stat_display(self):
         perc = percbar()
         print("Name:",self.name,"| Level:",self.base_level, "| Armor Class:",self.get_armor_class(),"| Alignment:",' '.join(self.get_alignment(2)).title())
         print("Race:",self.race.title(),"| Class:",self.creature_class.upper())
         print("Experience:",perc.disp(self.get_experience_toward_next_level(),self.get_experience_total_for_current_level(),50),str(self.get_experience_toward_next_level())+"/"+str(self.get_experience_total_for_current_level()))
-        print('STR:',self.get_ability_score(self.ccs.ABILITY.STR),"/",self.mod_str(),"| CON:",self.get_ability_score(self.ccs.ABILITY.CON),"/",self.mod_con(),"| DEX:",self.get_ability_score(self.ccs.ABILITY.DEX),"/",self.mod_dex())
-        print('INT:',self.get_ability_score(self.ccs.ABILITY.INT),"/",self.mod_int(),"| WIS:",self.get_ability_score(self.ccs.ABILITY.WIS),"/",self.mod_wis(),"| CHR:",self.get_ability_score(self.ccs.ABILITY.CHR),"/",self.mod_chr())
+        print('STR:',self.get_ability_score(ccs.ABILITY.STR),"/",self.get_mod_str(),"| CON:",self.get_ability_score(ccs.ABILITY.CON),"/",self.get_mod_con(),"| DEX:",self.get_ability_score(ccs.ABILITY.DEX),"/",self.get_mod_dex())
+        print('INT:',self.get_ability_score(ccs.ABILITY.INT),"/",self.get_mod_int(),"| WIS:",self.get_ability_score(ccs.ABILITY.WIS),"/",self.get_mod_wis(),"| CHR:",self.get_ability_score(ccs.ABILITY.CHR),"/",self.get_mod_chr())
         print('        HP:',perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),50),str(self.get_current_hit_points())+'/'+str(self.get_base_hit_points()))
 
     def stat_display_short(self):
         perc = percbar(None,None,50)
-        print("Name:",self.name,"| Lvl:",self.base_level,"| Race:", self.ccs.CREATURERACE.get_long_name(self.race),"| Class:",self.creature_class.upper())
+        print("Name:",self.name,"| Lvl:",self.base_level,"| Race:", ccs.CREATURERACE.get_long_name(self.race),"| Class:",self.creature_class.upper())
         print("        HP:", perc.disp(self.get_current_hit_points(),self.get_base_hit_points(),None,True,2))
 
 
@@ -772,7 +1011,7 @@ class creature(verbose, dice):
 # a= creature(race='DOG', name="Carl", exp=19673, law_vs_chaos=30, good_vs_evil=90, base_level_rate=1000, verbose=True)
 # 
 # print(a.name, a.race, a.base_level, a.experience, a.get_experience_needed_to_level(),a.get_experience_toward_next_level(),a.get_alignment(1), \
-# a.set_base_str(24), a.get_ability_modifier(self.ccs.ABILITY.STR))
+# a.set_base_str(24), a.get_ability_modifier(ccs.ABILITY.STR))
 # print(a.base_saving_throw_bonus)
 # print('Attack!: ', a.attack_roll())
 # print(a.get_skill_set().get_skill(10).get_class_skills())
