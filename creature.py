@@ -52,8 +52,10 @@ class creature(verbose, dice):
         self.base_hit_points=base_hit_points or self._core().get_default_base_hit_points()
         self.current_hit_points=self.base_hit_points
         self.challenge_rating = challenge_rating or self._core().get_default_challenge_rating()
-
-        self.base_level_rate=base_level_rate or self._core().get_default_base_level_rate() # 1000 is the standard growth, the lower the number, the faster a character can base_level
+        
+        # 1000 is the standard growth, the lower the number, the faster a character will level up
+        # 1000*base_level is the default experience needed to advance to the next level
+        self.base_level_rate=base_level_rate or self._core().get_default_base_level_rate() 
 
         self.hit_die = None
         self.base_level=None

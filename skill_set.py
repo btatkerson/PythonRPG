@@ -5,17 +5,16 @@
 
 '''
 
+import core.__core_constants_mod as ccs
 from core.__core_skill_set_configuration import core_skill_set_configuration
-from core.__core_constants import core_constants
 '''from dice import dice'''
 
 class skill_set():
     class skill():
         def __init__(self,skill_id=None,base_skill_points=None,trained_skill=None,armor_penalty=None,key_ability=None,
                      cross_class=None, class_skills=None, synergy_skills=None):
-            self.ccs = core_constants()
 
-            self.skill_id = self.ccs.SKILL.verify(skill_id) or core_skill_set_configuration().get_default_skill_id()
+            self.skill_id = ccs.SKILL.verify(skill_id) or core_skill_set_configuration().get_default_skill_id()
 
 
             self.base_skill_points = core_skill_set_configuration().get_default_skill_points()
@@ -24,7 +23,7 @@ class skill_set():
             self.trained_skill = self.__false_default(trained_skill,core_skill_set_configuration().get_default_trained_skill())
             self.armor_penalty = self.__false_default(armor_penalty, core_skill_set_configuration().get_default_armor_penalty())
             self.cross_class = self.__false_default(cross_class,core_skill_set_configuration().get_default_cross_class())
-            self.key_ability = self.ccs.ABILITY.verify(key_ability)
+            self.key_ability = ccs.ABILITY.verify(key_ability)
             self.class_skills = core_skill_set_configuration().get_default_class_skills()
             self.set_class_skills(class_skills)
             self.synergy_skills = core_skill_set_configuration().get_default_synergy_skills()
@@ -82,7 +81,7 @@ class skill_set():
             return self.cross_class
 
         def set_key_ability(self,key_ability=None):
-            key_ability = self.ccs.ABILITY.verify(key_ability)
+            key_ability = ccs.ABILITY.verify(key_ability)
             if key_ability:
                 self.key_ability = key_ability
             self.key_ability = core_skill_set_configuration().get_default_key_ability()
@@ -101,14 +100,14 @@ class skill_set():
             temp = []
 
             for i in class_set:
-                if self.ccs.CREATURECLASS.verify(i):
-                    temp.append(self.ccs.CREATURECLASS.verify(i))
+                if ccs.CREATURECLASS.verify(i):
+                    temp.append(ccs.CREATURECLASS.verify(i))
 
             self.class_skills = sorted(list(set(temp)))
 
         # Checks if a certain class is in the class skill set
         def is_class_skill(self,id=None):
-            if self.ccs.SKILL.verify(id) in self.class_skills:
+            if ccs.SKILL.verify(id) in self.class_skills:
                 return True
             return False
 
@@ -122,14 +121,14 @@ class skill_set():
                 synergy_set = [synergy_set]
             temp = []
             for i in synergy_set:
-                if self.ccs.SKILL.verify(i):
-                    temp.append(self.ccs.SKILL.verify(i))
+                if ccs.SKILL.verify(i):
+                    temp.append(ccs.SKILL.verify(i))
 
             self.synergy_skills = sorted(list(set(temp)))
 
         # Checks if a certain class is in the synergy skill set
         def is_synergy_skill(self,id=None):
-            id = self.ccs.SKILL.verify(id)
+            id = ccs.SKILL.verify(id)
             if id in self.synergy_skills:
                 return True
             return False
@@ -138,7 +137,6 @@ class skill_set():
         return core_skill_set_configuration()
 
     def __init__(self):
-        self.ccs = core_constants()
 
         # This is really should not be altered with ANYTHING other than a proper custom script.
         # I will implement the custom script API later.
@@ -156,14 +154,14 @@ class skill_set():
                 armor_penalty=skill_defaults[i]['armor_penalty'],key_ability=skill_defaults[i]['key_ability'],
                 cross_class=skill_defaults[i]['cross_class'],class_skills=skill_defaults[i]['class_skills'],
                 synergy_skills=skill_defaults[i]['synergy_skills']) 
-                for i in self.ccs.SKILL.get_index()}
+                for i in ccs.SKILL.get_index()}
         return temp
 
     def get_skill_list(self):
         return self.skill_list
 
     def get_skill(self,skillID=None):
-        skill = self.ccs.SKILL.verify(skillID)
+        skill = ccs.SKILL.verify(skillID)
         if skill:
             return self.skill_list[skill]
         return self.skill_list[self._core().get_default_skill_id()] or self.skill()

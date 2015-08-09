@@ -9,11 +9,11 @@
 '''
 
 
-from core.__core_constants import core_constants
+import core.__core_constants_mod as ccs
 
 class core_creature_size_configuration():
     def __init__(self):
-        self.__DEFAULT_SIZE_CLASS = core_constants().SIZECLASS.MEDIUM
+        self.__DEFAULT_SIZE_CLASS = ccs.SIZECLASS.MEDIUM
 
         self.__MIN_SPACE_IN_FEET = .5 
         self.__MAX_SPACE_IN_FEET = 30
@@ -56,14 +56,3 @@ class core_creature_size_configuration():
 
     def get_default_size_modifier(self):
         return self.__DEFAULT_SIZE_MODIFIER
-
-
-
-
-
-
-
-
-
-
-

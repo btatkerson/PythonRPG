@@ -7,12 +7,7 @@
        
        
 '''
-
-
-    
-
-
-from core.__core_constants import core_constants
+import core.__core_constants_mod as ccs
 from core.__core_creature_size_class_configuration import core_creature_size_configuration as size_config
 
 class creature_size_settings():
@@ -28,8 +23,8 @@ class creature_size_settings():
         self.set_size_modifier(size_modifier)
 
     def set_size_class(self,size_class=None):
-        if core_constants().SIZECLASS.verify(size_class):
-            self.size_class = core_constants().SIZECLASS.verify(size_class)
+        if ccs.SIZECLASS.verify(size_class):
+            self.size_class = ccs.SIZECLASS.verify(size_class)
         else:
             self.size_class = size_config().get_default_size_class()
         
