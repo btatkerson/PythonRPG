@@ -57,6 +57,11 @@ class index_reader:
             return False
 
     def filter_list(self, unfiltered_list=None):
+        '''
+        Takes a list of values (int, str, core_constant) and returns a list 
+        with only verified values that are built-in to the game. This is useful 
+        for filtering data imported from spreadsheets
+        '''
         if type(unfiltered_list) == list:
             filtered_list = []
             for i,j in enumerate(unfiltered_list):
@@ -237,9 +242,38 @@ class _core_const_creatureRace(index_reader):
 
         self.INDEX_LONG = ['unique','aberration','animal','beast','construct',
                            'dragon','dwarf','elemental','elf','fey',
-                           'giant','gnome','goblin','half-elf','half-orc',
-                           'half-ling','human','magical beast','ooze','orc',
+                           'giant','gnome','goblin','halfelf','halforc',
+                           'halfling','human','magical beast','ooze','orc',
                            'outsider','reptilian','shapechanger','undead','vermin']
+
+class _core_const_damageTypes(index_reader):
+    '''
+    Used as a class to hold constants for damage types
+    '''
+    def __init__(self):
+        index_reader.__init__(self)
+
+        self.ACI = self.ACID = 'dtacd'
+        self.BLU = self.BLUDGEONING = 'dtblu'
+        self.COL = self.COLD = 'dtcol'
+        self.DIV = self.DIVINE = 'dtdiv'
+        self.ELE = self.ELECTRIC = 'dtele'
+        self.FIR = self.FIRE = 'dtfir'
+        self.MAG = self.MAGICAL = 'dtmag'
+        self.NEG = self.NEGATIVEENERGY = 'dtneg'
+        self.PIE = self.PIERCING = 'dtpie'
+        self.POS = self.POSITIVEENERGY = 'dtpos'
+        self.SLA = self.SLASHING = 'dtsla'
+        self.SON = self.SONIC = 'dtson'
+
+        self.INDEX = [self.ACI, self.BLU, self.COL, self.DIV, self.ELE,
+                      self.FIR, self.MAG, self.NEG, self.PIE, self.POS,
+                      self.SLA, self.SON]
+
+        self.INDEX_LONG = ['acid', 'bludgeoning', 'cold', 'divine', 'electric',
+                           'fire', 'magical', 'negative energy', 'piercing', 'positive energy',
+                           'slashing', 'sonic']
+
 
 class _core_const_equipmentSlots(index_reader):
     '''
@@ -382,6 +416,23 @@ class _core_const_spellcasting_school(index_reader):
         self.INDEX_LONG = ['nonmagical','arcane','divine']
 
 
+class _core_const_item_classes(index_reader):
+
+    def __init__(self):
+        index_reader.__init__(self)
+
+        self.ARM = self.ARMOR = 'icarm'
+        self.CRA = self.CREATUREARMOR = 'iccra'
+        self.CRW = self.CREATUREWEAPON = 'iccrw'
+        self.MIS = self.MISCELLANEOUS = 'icmis'
+        self.WEP = self.WEAPON = 'icwep'
+        self.WER = self.WEARABLE = 'icwer'
+        
+        self.INDEX = [self.ARM, self.CRA, self.CRW,
+                      self.MIS, self.WEP, self.WER]
+
+        self.INDEX_LONG = ['armor', 'creature armor', 'creature weapon',
+                           'miscellaneous', 'weapon', 'wearable']
 
 
 
@@ -391,7 +442,9 @@ BASEATTACKBONUS = _core_const_baseAttackBonus()
 BASESAVEBONUS = _core_const_baseSaveBonus()
 CREATURECLASS = _core_const_creatureClass()
 CREATURERACE = _core_const_creatureRace()
+DAMAGETYPE = _core_const_damageTypes()
 EQUIPMENTSLOT = _core_const_equipmentSlots()
+ITEMCLASS = _core_const_item_classes()
 SAVINGTHROW = _core_const_savingThrow()
 SIZECLASS = _core_const_sizeClass()
 SKILL = _core_const_skill()

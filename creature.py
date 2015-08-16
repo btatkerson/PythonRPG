@@ -914,6 +914,8 @@ class creature(verbose, dice):
             return True
         return False
 
+    isNeutralNeutral = isTrueNeutral # This is to create a consistant structure when using auto-complete
+
     def isNeutralGood(self): 
         if self.isNeutralLvC() and self.isGood(): 
             return True
