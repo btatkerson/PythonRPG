@@ -8,11 +8,15 @@
 import random
 
 class dice():
-        def __init__(self,default_sides=20,default_occurances=1):
+        def __init__(self,default_sides=20,default_occurances=1,die_str=None):
                 self.def_occur = None
                 self.def_sides = None
-                self.setDefaultSides(default_sides) # This affects only self.d()
-                self.setDefaultOccurances(default_occurances) # This affects all class roll methods
+
+                if type(die_str) == str:
+                    self.set_default_die_by_str(die_str)
+                else:
+                    self.setDefaultSides(default_sides) # This affects only self.d()
+                    self.setDefaultOccurances(default_occurances) # This affects all class roll methods
 
         def __call__(self,sides=None,occurances=None,return_average=False):
             '''
@@ -109,6 +113,26 @@ class dice():
 			            '''
                         print("Input was invalid, returned 0")
                         return 0
+
+        def set_default_die_by_str(self, die_str=None):
+            '''
+            This sets the default sides and occurances via a string
+
+            A standard d20 could be input as die_str = '1d20'
+            '''
+            try: 
+                temp = [int(i) for i in die_str.lower().replace(" ","").split("d")]
+                if len(temp) == 2:
+                    self.setDefaultSides(temp[1])
+                    self.setDefaultOccurances(temp[0])
+                    return 1
+                else:
+                    raise ValueError
+
+            except ValueError:
+                print("Invalid die_str!")
+                self.setDefaultSides(20)
+                self.setDefaultOccurances(1)
 
         def d100(self, occurances=None, return_average=False):
                 '''
