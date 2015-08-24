@@ -14,7 +14,7 @@ from core.verbose import verbose
 from skill_set import skill_set
 from dice import dice
 from percbar import percbar
-from item import item
+from item import item, weapon
 
 
 class creature(verbose, dice): 
