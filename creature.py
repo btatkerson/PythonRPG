@@ -14,6 +14,7 @@ from core.verbose import verbose
 from skill_set import skill_set
 from dice import dice
 from percbar import percbar
+from item import item
 
 
 class creature(verbose, dice): 
@@ -29,6 +30,8 @@ class creature(verbose, dice):
 
 
         self.playable_character=playable_character or self._core().get_default_playable_character()
+
+
         self.name=name or self._core().get_default_name()
 
         self.race=None
@@ -93,6 +96,11 @@ class creature(verbose, dice):
 
         self.creature_class = None
         self.set_creature_class(creature_class)
+
+        self.equipment_standard_slots = None
+        self.equipment_natural_slots = None
+        self.generate_initial_equipment_slots()
+        
 
     def get_base_level(self): 
         '''
@@ -752,6 +760,48 @@ class creature(verbose, dice):
             self.race = race
         else:
             self.set_race(self._core().get_default_race())
+
+    def get_equipment_standard_slots(self):
+        return self.equipment_standard_slots
+
+    def get_equipment_natural_slots(self):
+        return self.equipment_natural_slots
+
+    def set_equipment_slot(self, equipment_slot=None, equippable_item=None):
+        natural = False
+        if ccs.EQUIPMENTSLOT.verify(equipment_slot):
+            equipment_slot = ccs.EQUIPMENTSLOT.verify(equipment_slot)
+        elif ccs.EQUIPMENTSLOTNATURAL.verify(equipment_slot):
+            equipment_slot = ccs.EQUIPMENTSLOTNATURAL.verify(equipment_slot)
+            natural = True
+        else:
+            return 0
+
+        if isinstance(equippable_item,item):
+            for i in equippable_item.get_equippable_slots():
+                if equipment_slot == i:
+                    pass
+
+    def generate_initial_equipment_slots(self):
+        '''
+        Generates the initial empty equipment slots, both standard and natural.
+
+        Standard slots are the slots used for things such as weapons (main/off hand),
+        armor (torso), helmet (head), amulets, gloves, boots, etc. These are slots
+        that will be most commonly used for the playable races and others with 
+        anthropomorphic (human-shaped) qualities.
+
+        Natural slots are most commonly used for creatures that wouldn't use
+        equipment such as weapons and armor. Natural weapons and armor are built for
+        these purposes
+        '''
+        self.equipment_standard_slots = self._core().get_default_equipment_standard_slots()
+        self.equipment_natural_slots = self._core().get_default_equipment_natural_slots()
+
+        # This will eventually set the unarmed attacks as natural weapons for playable races
+        if self._core().get_race_information(self.race).is_playable_race():
+            pass
+
 
     def get_size_class(self):
         return self.size_class

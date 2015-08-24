@@ -64,7 +64,8 @@ class core_creature_configuration(core_race_configuration):
         self.__DEFAULT_BASE_SAVE_BONUS = ccs.BASESAVEBONUS.GOOD
         self.__DEFAULT_SAVING_THROW = ccs.SAVINGTHROW.FORTITUDE # fortitude
 
-        self.__EQUIPMENT_SLOTS = {i:None for i in ccs.EQUIPMENTSLOT.get_index()}
+        self.__EQUIPMENT_STANDARD_SLOTS = {i:None for i in ccs.EQUIPMENTSLOT.get_index()}
+        self.__EQUIPMENT_NATURAL_SLOTS = {i:None for i in ccs.EQUIPMENTSLOTNATURAL.get_index()}
 
         
         self.__CHALLENGE_RATING_LIST = []
@@ -392,6 +393,12 @@ class core_creature_configuration(core_race_configuration):
         return self.get_base_save_bonus(self.get_default_base_save_bonus(),creature_level)
 
 
+    def get_default_equipment_standard_slots(self):
+        return self.__EQUIPMENT_STANDARD_SLOTS
+
+    def get_default_equipment_natural_slots(self):
+        return self.__EQUIPMENT_NATURAL_SLOTS
+
     def get_default_base_attack_bonus(self):
         return self.__DEFAULT_BASE_ATTACK_BONUS
 
@@ -552,6 +559,3 @@ class core_creature_configuration(core_race_configuration):
 
 
 # a = core_creature_configuration()
-#
-# for i in range(1,61):
-#   print( i,a.get_base_save_bonus(1,i))#,a.get_base_attack_bonus(1,i),a.get_base_attack_bonus(0,i)

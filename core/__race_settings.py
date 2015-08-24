@@ -23,22 +23,22 @@ import core.__core_constants_mod as ccs
 
 
 class race_settings():
-    def __init__(self,playable_race=False,favored_classes=None,favored_deities=None,size_class=None,ability_bonuses=None,base_land_speed=None):
+    def __init__(self, playable_race=None,favored_classes=None,favored_deities=None,size_class=None,ability_bonuses=None,base_land_speed=None):
 
-        self.playable_race=None
+        self.__playable_race=None
         self.set_playable_race(playable_race)
         
-        self.favored_classes=None
+        self.__favored_classes=None
         self.set_favored_classes(favored_classes)
 
-        # self.favored_deities=favored_deities
+        # self.__favored_deities=favored_deities
 
 
-        self.size_class=None
+        self.__size_class=None
         self.set_size_class(size_class)
         
         # self.base_land_speed=base_land_speed # Will not be used until future development, races all have a base land speed which determines how much far a creature can move in one round. This is not the only thing that will affect land speed.
-        self.ability_bonuses = {ccs.ABILITY.STR:0, 
+        self.__ability_bonuses = {ccs.ABILITY.STR:0, 
                                 ccs.ABILITY.INT:0, 
                                 ccs.ABILITY.CON:0, 
                                 ccs.ABILITY.WIS:0, 
@@ -49,14 +49,16 @@ class race_settings():
 
 
 
-    def set_playable_race(self,playable_race):
+    def set_playable_race(self, playable_race):
         if playable_race:
-            self.playable_race = True
+            self.__playable_race = True
         else:
-            self.playable_race = False
+            self.__playable_race = False
 
     def get_playable_race(self):
-        return self.playable_race
+        return self.__playable_race
+
+    is_playable_race = get_playable_race
 
     def set_favored_classes(self,favored_classes):
         if type(favored_classes) == list:
@@ -65,31 +67,31 @@ class race_settings():
                 temp = ccs.CREATURECLASS.verify(i)
                 if temp:
                     hold.append(temp)
-            self.favored_classes = hold
+            self.__favored_classes = hold
             if hold != []:
                 return True
            
             
         else:
             if ccs.CREATURECLASS.verify(favored_classes):
-                self.favored_classes = [ccs.CREATURECLASS.verify(favored_classes)]
+                self.__favored_classes = [ccs.CREATURECLASS.verify(favored_classes)]
                 return True
 
-        self.favored_classes = []
+        self.__favored_classes = []
         return False
                 
     def get_favored_classes(self):
-        return self.favored_classes
+        return self.__favored_classes
 
 
     def get_size_class(self):
-        return self.size_class
+        return self.__size_class
 
-    def set_size_class(self,size_class=None):
+    def set_size_class(self, size_class=None):
         if ccs.SIZECLASS.verify(size_class):
-            self.size_class = ccs.SIZECLASS.verify(size_class)
+            self.__size_class = ccs.SIZECLASS.verify(size_class)
         else:
-            self.size_class = False
+            self.__size_class = False
 
                
         
@@ -122,23 +124,21 @@ class race_settings():
         ability = ccs.ABILITY.verify(ability)
         if ability:
             if absolute:
-                self.ability_bonuses[ability] = add
+                self.__ability_bonuses[ability] = add
             else:
-                self.ability_bonuses[ability] += add
-            return self.ability_bonuses[ability]
+                self.__ability_bonuses[ability] += add
+            return self.__ability_bonuses[ability]
         else:
             return -1
     
-    def set_ability_bonus_by_dictionary(self,ability_bonuses):
+    def set_ability_bonus_by_dictionary(self, ability_bonuses=None):
         if type(ability_bonuses) == dict:
             added = False # Tells if anything was affected by the input ability_bonuses
-            for i in ability_bonuses:
-                temp = ccs.ABILITY.verify(i)
-                if temp:
-                    added = True
-                    self.set_ability_bonus_single(temp,ability_bonuses[temp],True)
+            for i in ccs.ABILITY.filter_list(list(ability_bonuses.keys())):
+                added = True
+                self.set_ability_bonus_single(i,ability_bonuses[i],True)
             if added:
-                return True
+                return 1
 
         return False
 
@@ -149,11 +149,11 @@ class race_settings():
         Returns ability bonus (ex. +2) for whichever ability given
         '''
         if ccs.ABILITY.verify(ability):
-            return self.ability_bonuses[ccs.ABILITY.verify(ability)]
+            return self.__ability_bonuses[ccs.ABILITY.verify(ability)]
         return False
     
     def get_ability_bonus_dictionary(self):
         '''
         Returns the ability bonus dictionary
         '''
-        return self.ability_bonuses
+        return self.__ability_bonuses
