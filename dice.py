@@ -40,9 +40,10 @@ class dice():
                         if not self.def_sides:
                                 print('Setting default side count to 20')
                                 self.def_sides = 20
-                else:
-                        print('Default sides now set to',num)
-                        self.def_sides = num
+                                return 0
+                
+                print('Default sides now set to',num)
+                self.def_sides = num
 
         def setDefaultOccurances(self,num=None):
                 '''
@@ -53,9 +54,9 @@ class dice():
                         if not self.def_occur:
                                 print('Setting default amount of occurances to 1')
                                 self.def_occur = 1
-                else:
-                        print('Default occurances now set to',num)
-                        self.def_occur = num
+                                return 0
+                print('Default occurances now set to',num)
+                self.def_occur = num
 
         def d(self,sides=None, occurances=None, return_average=False):
                 '''
@@ -129,10 +130,14 @@ class dice():
                 else:
                     raise ValueError
 
-            except ValueError:
+            except AttributeError or ValueError:
                 print("Invalid die_str!")
                 self.setDefaultSides(20)
                 self.setDefaultOccurances(1)
+                return 0
+
+        def get_default_die_str(self):
+            return str(self.def_occur)+'d'+str(self.def_sides)
 
         def d100(self, occurances=None, return_average=False):
                 '''

@@ -74,7 +74,7 @@ class item():
         return self.item_weight
 
     def set_item_weight(self,weight=None):
-        if core_item.get_min_item_weight() <= weight <= core_item.get_max_item_weight():
+        if weight and core_item.get_min_item_weight() <= weight <= core_item.get_max_item_weight():
             self.item_weight = int(weight*10+.5)/10 # Rounds off to the nearest 0.1 lb
             return 1
 
@@ -103,7 +103,7 @@ class item():
 
         If stack_size is 1, item is not stackable.
         '''
-        if core_item.get_min_stack_size() <= stack_size <= core_item.get_max_stack_size():
+        if stack_size and core_item.get_min_stack_size() <= stack_size <= core_item.get_max_stack_size():
             self.stack_size = int(stack_size)
             return 1
         

@@ -6,7 +6,7 @@ import os
 import creature as cre
 
 pc = cre.creature(True,"Frodo",ccs.CREATURECLASS.FTR,ccs.CREATURERACE.HUMAN,None,3,None,23,98,20,3,'good',None,15,None,14,10,7,13,11,3,True)
-npc = cre.creature(False,"Goblin",ccs.CREATURECLASS.WIZ,ccs.CREATURERACE.GOBLINOID,None,.5,None,50,10,15,2,'avrg',None,10,None,11,10,6,13,12,9,True)
+npc = cre.creature(False,"Goblin",ccs.CREATURECLASS.WIZ,ccs.CREATURERACE.GOBLINOID,None,1/3,None,50,10,15,2,'avrg',None,10,None,11,10,6,13,12,9,True)
 
 print("\n\n---------------------------------------------------------------\n\n")
 

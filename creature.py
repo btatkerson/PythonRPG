@@ -171,7 +171,7 @@ class creature(verbose, dice):
             return 1 
 
         if type(hit_die) == str:
-            self.hit_die = lambda: self.str_d(hit_die)
+            self.hit_die = dice(die_str=hit_die)
             if self.hit_die():
                 return 1
 

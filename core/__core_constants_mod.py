@@ -1,4 +1,3 @@
-
 '''
 Name: _core_constants.py
 
@@ -74,7 +73,7 @@ class index_reader:
     
     def get_index(self):
         '''
-        Returns the index of the particular subclass which includes all of the constants that can normally be called upon
+        Returns the index of the inheriting class which includes all of the constants that can normally be called upon
         '''
         return self.INDEX
 
@@ -98,6 +97,10 @@ class index_reader:
         '''
         constant = self.verify(val)
         return dict(zip(self.INDEX,self.INDEX_LONG))[constant]
+
+    def get_index_id(self, val=None):
+        constant = self.verify(val)
+        return dict(zip(self.INDEX, range(len(self.INDEX))))[constant]
 
 
 
@@ -306,6 +309,22 @@ class _core_const_equipmentSlots(index_reader):
                            'amulet','first ring','second ring','arrows',
                            'bolts','bullets']
 
+class _core_const_naturalEquipmentSlots(index_reader):
+    '''
+    Used as a class to hold constants for the natural equipment slots
+    that are used by non-playable races
+    '''
+    def __init__(self):
+        index_reader.__init__(self) 
+        
+        self.CLM = self.CLAWMAINHAND = 'neclm'
+        self.CLO = self.CLAWOFFHAND = 'neclo'
+        self.SPE = self.SPECIAL = 'nespe'
+        self.SKI = self.SKIN = 'neski'
+
+        self.INDEX = [self.CLM, self.CLO, self.SPE, self.SKI]
+
+        self.INDEX_LONG = ['claw 1', 'claw 2', 'special', 'skin']
        
 class _core_const_savingThrow(index_reader):
     '''
@@ -346,8 +365,8 @@ class _core_const_sizeClass(index_reader):
                       self.GRT,self.GRL,self.COT,self.COL]
 
         self.INDEX_LONG = ['unique','fine','diminutive','tiny','small',
-                           'medium','large, tall','large, long','huge, tall','huge, long',
-                           'gargantuan, tall', 'gargantuan, long', 'colossal, tall', 'colossal, long']
+                           'medium','large tall','large long','huge tall','huge long',
+                           'gargantuan tall', 'gargantuan long', 'colossal tall', 'colossal long']
 
 class _core_const_skill(index_reader):
     '''
@@ -434,6 +453,26 @@ class _core_const_item_classes(index_reader):
         self.INDEX_LONG = ['armor', 'creature armor', 'creature weapon',
                            'miscellaneous', 'weapon', 'wearable']
 
+class _core_const_weaponProficiencies(index_reader):
+
+    def __init__(self):
+        index_reader.__init__(self)
+
+        self.SIM = self.SIMPLE = 'wpsim'
+        self.MAR = self.MARTIAL = 'wpmar'
+        self.EXO = self.EXOTIC = 'wpexo'
+        self.CRE = self.CREATURE = 'wpcre'
+        self.ELF = self.ELVEN = 'wpelf'
+        self.ROG = self.ROGUE = 'wprog'
+        self.DRU = self.DRUID = 'wpdru'
+        self.MON = self.MONK = 'wpmon'
+        self.WIZ = self.WIZARD = 'wpwiz'
+
+        self.INDEX = [self.SIM, self.MAR, self.EXO, self.CRE, self.ELF,
+                      self.ROG, self.DRU, self.MON, self.WIZ]
+
+        self.INDEX_LONG = ['simple', 'martial', 'exotic', 'creature', 'elven',
+                           'rogue', 'druid', 'monk', 'wizard']
 
 
 ABILITY = _core_const_ability()
@@ -444,8 +483,10 @@ CREATURECLASS = _core_const_creatureClass()
 CREATURERACE = _core_const_creatureRace()
 DAMAGETYPE = _core_const_damageTypes()
 EQUIPMENTSLOT = _core_const_equipmentSlots()
+EQUIPMENTSLOTNATURAL = _core_const_naturalEquipmentSlots()
 ITEMCLASS = _core_const_item_classes()
 SAVINGTHROW = _core_const_savingThrow()
 SIZECLASS = _core_const_sizeClass()
 SKILL = _core_const_skill()
 SPELLCASTING_SCHOOL = _core_const_spellcasting_school()
+WEAPONPROFICIENCY = _core_const_weaponProficiencies()
