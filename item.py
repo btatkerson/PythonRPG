@@ -6,10 +6,10 @@
             needed in game.
 '''
 
-
 import core.__core_constants_mod as ccs
 import core.__core_item_configuration as core_item
 import core.__core_weapon_configuration as core_weapon
+
 from dice import dice
 
 class item():

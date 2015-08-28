@@ -97,6 +97,7 @@ class creature(verbose, dice):
         self.creature_class = None
         self.set_creature_class(creature_class)
 
+        self.primary_equipment_slot_type = None
         self.equipment_standard_slots = None
         self.equipment_natural_slots = None
         self.generate_initial_equipment_slots()
@@ -491,19 +492,52 @@ class creature(verbose, dice):
         return roll_list
 
             
-    def get_damage_roll(self,critical=False,verbo=False): 
+    def get_damage_roll(self,*args, verbo= False): 
         '''
         damage_roll() returns a dice roll that will soon be based on the weapon the creature is carrying
-
-        argument "critical" returns a critical hit roll that will be based on the weapon the creature is carrying
         '''
-        damage = 0
-        if critical: 
-            roll=sum(self.d(6,3))
-            damage = max(roll + self.get_mod_str(),1)
+        types = [type(i) for i in args]
+
+        if self.get_primary_equipment_slot_type() == ccs.EQUIPMENTSLOTTYPE.STANDARD:
+            if self.get_equipment_slot_item(ccs.EQUIPMENTSLOT.MHD):
+                weapon_info = self.get_equipment_slot_item(ccs.EQUIPMENTSLOT.MHD)
+            elif self.get_equipment_slot_item(ccs.EQUIPMENTSLOTNATURAL.CLAWMAINHAND):
+                weapon_info = self.get_equipment_slot_item(ccs.EQUIPMENTSLOTNATURAL.CLM)
+            else:
+                weapon_info = weapon("Unarmed Bludgeon Generic", 0, 0, 0, 0, 0 ,0 , [ccs.EQUIPMENTSLOTNATURAL.CLM, ccs.EQUIPMENTSLOTNATURAL.CLO], "Generic, unarmed bludgeon attack", '1d3', ccs.DAMAGETYPE.BLU, 20, 2, ccs.WEAPONPROFICIENCY.CRE,0,0,0,0,1)
+
         else:
-            roll = sum(self.d(4,2))
-            damage = max(roll + self.get_mod_str(),0)
+            if self.get_equipment_slot_item(ccs.EQUIPMENTSLOTNATURAL.CLM):
+                weapon_info = self.get_equipment_slot_item(ccs.EQUIPMENTSLOTNATURAL.CLM)
+            else:
+                weapon_info = weapon("Unarmed Bludgeon Generic", 0, 0, 0, 0, 0 ,0 , [ccs.EQUIPMENTSLOTNATURAL.CLM, ccs.EQUIPMENTSLOTNATURAL.CLO], "Generic, unarmed bludgeon attack", '1d3', ccs.DAMAGETYPE.BLU, 20, 2, ccs.WEAPONPROFICIENCY.CRE,0,0,0,0,1)
+
+
+        if types == [bool]:
+            critical = args[0][0]
+
+        elif types == [list]:
+            if args[0][0] in weapon_info.get_threat_range():
+                critical = True
+            elif args[0][0] == 0:
+                return [0]
+            else:
+                critical = False
+
+        else:
+            critical = False
+
+
+
+        if critical: 
+            print("Critical!")
+            roll=sum(self.str_d(weapon_info.get_base_damage()))*weapon_info.get_critical_multiplier()
+            # damage = max(roll + self.get_mod_str(),1)
+            damage = [roll, self.get_mod_str()]
+        else:
+            roll = sum(self.str_d(weapon_info.get_base_damage()))
+            # damage = max(roll + self.get_mod_str(),0)
+            damage = [roll, self.get_mod_str()]
 
         return damage
 
@@ -758,8 +792,22 @@ class creature(verbose, dice):
         if race:
             self.__racial_ability_bonuses = self._core().get_race_information(race).get_ability_bonus_dictionary()
             self.race = race
+            return 1
         else:
             self.set_race(self._core().get_default_race())
+            return 0
+
+    def get_primary_equipment_slot_type(self):
+        return self.primary_equipment_slot_type
+
+    def set_primary_equipment_slot_type(self, slot_type=None):
+        slot_type = ccs.EQUIPMENTSLOTTYPE.verify(slot_type)
+
+        if slot_type:
+            self.primary_equipment_slot_type = slot_type
+            return 1
+
+        self.primary_equipment_slot_type = self._core().get_default_primary_equipment_slot_type()
 
     def get_equipment_standard_slots(self):
         return self.equipment_standard_slots
@@ -767,8 +815,23 @@ class creature(verbose, dice):
     def get_equipment_natural_slots(self):
         return self.equipment_natural_slots
 
-    def set_equipment_slot(self, equipment_slot=None, equippable_item=None):
+    def get_equipment_slot_item(self, slot=None):
+        '''
+        Returns the item in from the given equipment slot, both standard and natural
+        '''
+        if ccs.EQUIPMENTSLOT.verify(slot):
+            return self.equipment_standard_slots[ccs.EQUIPMENTSLOT.verify(slot)]
+        elif ccs.EQUIPMENTSLOTNATURAL.verify(slot):
+            return self.equipment_natural_slots[ccs.EQUIPMENTSLOTNATURAL.verify(slot)]
+        else:
+            print("Invalid slot!")
+
+        return None
+
+
+    def set_equipment_slot_item(self, equipment_slot=None, equippable_item=None):
         natural = False
+
         if ccs.EQUIPMENTSLOT.verify(equipment_slot):
             equipment_slot = ccs.EQUIPMENTSLOT.verify(equipment_slot)
         elif ccs.EQUIPMENTSLOTNATURAL.verify(equipment_slot):
@@ -777,10 +840,31 @@ class creature(verbose, dice):
         else:
             return 0
 
-        if isinstance(equippable_item,item):
-            for i in equippable_item.get_equippable_slots():
-                if equipment_slot == i:
-                    pass
+        if not equippable_item:
+            if natural:
+                print(ccs.EQUIPMENTSLOTNATURAL.get_long_name(equipment_slot),"is now empty.")
+                self.equipment_natural_slots[equipment_slot]=None
+            else:
+                print(ccs.EQUIPMENTSLOT.get_long_name(equipment_slot),"is now empty.")
+                self.equipment_standard_slots[equipment_slot]=None
+
+        if isinstance(equippable_item,weapon):
+            if equippable_item.is_natural_weapon() and natural:
+                for i in equippable_item.get_equippable_slots():
+                    if i == equipment_slot:
+                        self.equipment_natural_slots[equipment_slot]=equippable_item
+                        return 1
+
+            else:
+                if equipment_slot == ccs.EQUIPMENTSLOT.OFFHAND and ccs.EQUIPMENTSLOT.MAINHAND in equippable_item.get_equippable_slots() and self.equipment_standard_slots[ccs.EQUIPMENTSLOT.MAINHAND] == None:
+                    self.equipment_standard_slots[ccs.EQUIPMENTSLOT.MAINHAND] = equippable_item
+                    return 1
+                
+                for i in equippable_item.get_equippable_slots():
+                    if i == equipment_slot:
+                        self.equipment_standard_slots[equipment_slot]=equippable_item
+                        return 1
+        return 0
 
     def generate_initial_equipment_slots(self):
         '''
@@ -800,7 +884,10 @@ class creature(verbose, dice):
 
         # This will eventually set the unarmed attacks as natural weapons for playable races
         if self._core().get_race_information(self.race).is_playable_race():
-            pass
+            self.primary_equipment_slot_type = ccs.EQUIPMENTSLOTTYPE.STANDARD
+        else:
+            self.primary_equipment_slot_type = ccs.EQUIPMENTSLOTTYPE.NATURAL
+
 
 
     def get_size_class(self):

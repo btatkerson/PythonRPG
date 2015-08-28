@@ -277,6 +277,19 @@ class _core_const_damageTypes(index_reader):
                            'fire', 'magical', 'negative energy', 'piercing', 'positive energy',
                            'slashing', 'sonic']
 
+class _core_const_equipmentSlotTypes(index_reader):
+    '''
+    Used as a class to hold constants for the equipment slot types
+    '''
+    def __init__(self):
+        index_reader.__init__(self)
+        self.NAT = self.NATURAL = 'stnat'
+        self.STA = self.STANDARD = 'ststa'
+
+        self.INDEX = [self.NAT, self.STA]
+
+        self.INDEX_LONG = ['natural','standard']
+
 
 class _core_const_equipmentSlots(index_reader):
     '''
@@ -483,6 +496,7 @@ CREATURECLASS = _core_const_creatureClass()
 CREATURERACE = _core_const_creatureRace()
 DAMAGETYPE = _core_const_damageTypes()
 EQUIPMENTSLOT = _core_const_equipmentSlots()
+EQUIPMENTSLOTTYPE = _core_const_equipmentSlotTypes()
 EQUIPMENTSLOTNATURAL = _core_const_naturalEquipmentSlots()
 ITEMCLASS = _core_const_item_classes()
 SAVINGTHROW = _core_const_savingThrow()

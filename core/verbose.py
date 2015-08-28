@@ -5,8 +5,9 @@
 '''
 
 class verbose():
-    def __init__(self,active=False):
+    def __init__(self,active=False, separator=''):
         self.activated = active
+        self.separator = separator
 
     # Toggles the global verbosity for the class by default OR sets global verbosity to input 'active'
     def verbo_toggle(self,active=None):
@@ -32,7 +33,26 @@ class verbose():
     def verbo_Deactivate(self):
         self.activated = False
 
+    def verbo_set_separator(self, sep=None):
+        if sep or sep == '':
+            if type(sep) == str:
+                self.separator = sep
+                return 1
+        self.separator = ' '
+        return 0
+
+
     # Prints input 'statement' if input 'override' is True OR attribute 'self.activated' is True.
     def verbo(self,statement=None,override=False):
         if override or self.verbo_isActivated():
-            print(statement)
+            if type(statement) == tuple:
+                for i in statement:
+                    print(i, end=self.separator)
+                print('')
+                return 1
+
+            elif type(statement) == str:
+                print(statement)
+                return 1
+
+            return 0
