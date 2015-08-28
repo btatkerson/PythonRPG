@@ -10,17 +10,20 @@ from item import item, weapon
 
 pc = cre.creature(True,"Frodo",ccs.CREATURECLASS.FTR,ccs.CREATURERACE.HUMAN,None,3,None,23,98,20,3,'good',None,15,None,14,10,7,13,11,3,True)
 npc = cre.creature(False,"Goblin",ccs.CREATURECLASS.WIZ,ccs.CREATURERACE.GOBLINOID,None,1/3,None,50,10,15,2,'avrg',None,10,None,11,10,6,13,12,9,True)
-bp.cat.add_resource(pc.get_name(),pc)
-bp.cat.add_resource(npc.get_name(),npc)
-
+pc.add_self_to_catalog()
+npc.add_self_to_catalog()
 
 ga = weapon("Greataxe", 20, 40, 1, 1, 0,0,[ccs.EQUIPMENTSLOT.MHD],"This axe will fudge you up greatly", '1d12',ccs.DAMAGETYPE.SLA, 20, 3, ccs.WEAPONPROFICIENCY.MAR,ccs.SIZECLASS.LARGE,1, 0, 0, 0)
 
 gs=weapon("Greatsword", 15, 100, 1, 1, 0, 0, [ccs.EQUIPMENTSLOT.MHD],"The greatest of swords", '2d6', ccs.DAMAGETYPE.SLA, 19, 2, ccs.WEAPONPROFICIENCY.SIMPLE, ccs.SIZECLASS.LARGE,1,0,0,0)
 
-bp.cat.add_resource(ga.get_item_name(),ga)
-bp.cat.add_resource(gs.get_item_name(),gs)
-print(bp.cat.get_catalog())
+print(bp.CAT.get_catalog())
+ga.copy_self_to_catalog()
+ga.copy_self_to_catalog()
+ga.add_self_to_catalog()
+
+gs.add_self_to_catalog()
+print(bp.CAT.get_catalog())
 
 pc.set_equipment_slot_item(ccs.EQUIPMENTSLOT.MAINHAND,gs)
 

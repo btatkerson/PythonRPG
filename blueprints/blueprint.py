@@ -127,29 +127,31 @@ class blueprint():
     def is_custom(self):
         return self.custom
 
-    def set_ref_name(self, ref_name=None, ignore_catalog=False):
+    def set_ref_name(self, ref_name=None, ignore_catalog=False, is_copy=False):
         temp_old_name = ''
         reset_catalog_res_ref = False
         if self.ref_name and not ignore_catalog:
             temp_old_name = self.get_res_ref()
-            if cat.find_resource(temp_old_name) == self:
+            if CAT.find_resource(temp_old_name) == self:
                 reset_catalog_res_ref = True
                 self.__suffix = ''
                 self.__reset_num_suffix_str_generator()
                 
         if type(ref_name) == str:
             self.ref_name = clean_res_ref(ref_name)
-            while cat.is_resource(self.get_res_ref()) and not ignore_catalog:
+            CAT.verbo_Deactivate()
+            while CAT.is_resource(self.get_res_ref()) and not ignore_catalog:
                 self.__get_num_suffix_str()
             self.__reset_num_suffix_str_generator()
         else:
             self.ref_name = 'generic'
-            while cat.is_resource(self.get_res_ref()):
+            CAT.verbo_Deactivate()
+            while CAT.is_resource(self.get_res_ref()):
                 self.__get_num_suffix_str()
             self.__reset_num_suffix_str_generator()
 
-        if temp_old_name != self.get_res_ref() and reset_catalog_res_ref:
-            cat.remove_resource(temp_old_name)
+        if temp_old_name != self.get_res_ref() and reset_catalog_res_ref and not is_copy:
+            CAT.remove_resource(temp_old_name)
             self.add_self_to_catalog()
 
 
@@ -165,11 +167,12 @@ class blueprint():
         return self.prefix + cust + self.ref_name + self.__suffix
 
     def add_self_to_catalog(self, override=False):
+        CAT.verbo_Deactivate()
         self.set_ref_name(self.ref_name, override)
-        if cat.is_resource(self.get_res_ref()):
+        if CAT.is_resource(self.get_res_ref()) and self not in CAT.get_catalog().values():
             if override:
-                cat.verbo_Activate()
-                cat.add_resource(self.get_res_ref(), self, True)
+                CAT.verbo_Activate()
+                CAT.add_resource(self.get_res_ref(), self, True)
                 return 1
             else:
                 '''
@@ -180,35 +183,35 @@ class blueprint():
 
                 This will prevent heartache
                 '''
-                if self not in cat.get_catalog().items():
-                    self.set_ref_name(self.ref_name, False)
-                    cat.verbo_Activate()
-                    cat.add_resource(self.get_res_ref(), self)
-                    return 1
-                cat.verbo_Activate()
-                return 0
+                self.set_ref_name(self.ref_name, False)
+                CAT.verbo_Activate()
+                CAT.add_resource(self.get_res_ref(), self)
+                return 1
         else:
-            cat.verbo_Activate()
-            cat.add_resource(self.get_res_ref(), self)
-            return 1
-        cat.verbo_Activate()
+            if self not in CAT.get_catalog().values():
+                CAT.verbo_Activate()
+                CAT.add_resource(self.get_res_ref(), self)
+                return 1
+        CAT.verbo_Activate()
+        return 0
 
     def copy_self_to_catalog(self, override=False):
-        cat.verbo_Deactivate()
-        if cat.is_resource(self.get_res_ref()):
+        CAT.verbo_Deactivate()
+        self.set_ref_name(self.ref_name, override, 1)
+        if not CAT.is_resource(self.get_res_ref()):
             if override:
-                cat.verbo_Activate()
-                cat.add_resource(self.get_res_ref(), copy.copy(self), True)
+                CAT.verbo_Activate()
+                CAT.add_resource(self.get_res_ref(), copy.copy(self), True)
                 return 1
             else:
-                self.set_ref_name(self.ref_name, override)
-                cat.verbo_Activate()
-                cat.add_resource(self.get_res_ref(), copy.copy(self))
+                CAT.verbo_Activate()
+                CAT.add_resource(self.get_res_ref(), copy.copy(self))
                 return 0
         else:
-            cat.verbo_Activate()
-            cat.add_resource(self.get_res_ref(), copy.copy(self))
-        cat.verbo_Activate()
+            CAT.verbo_Activate()
+            CAT.add_resource(self.get_res_ref(), copy.copy(self))
+
+        CAT.verbo_Activate()
 
 
-cat = catalog()
+CAT = catalog()

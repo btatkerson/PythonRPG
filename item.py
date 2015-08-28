@@ -5,17 +5,19 @@
             shared by all "items" in the game. It can be extended to create custom/specific items
             needed in game.
 '''
-
+import blueprints.blueprint as bp
 import core.__core_constants_mod as ccs
 import core.__core_item_configuration as core_item
 import core.__core_weapon_configuration as core_weapon
 
 from dice import dice
 
-class item():
+class item(bp.blueprint):
     def __init__(self, name=None, item_class=None, item_weight=None, base_cost=None, stack_size=None, droppable=None, stolen=None, plot=None, equippable_slots=None, description=None):
+        bp.blueprint.__init__(self, 'it_gen', 0)
         self.item_name = None
         self.set_item_name(name)
+        self.set_ref_name(self.get_item_name())
 
         self.item_class = None
         self.set_item_class(item_class)
@@ -176,7 +178,8 @@ class weapon(item):
         self.set_natural_weapon(natural)
 
         item.__init__(self, name, ccs.ITEMCLASS.WEAPON, item_weight, base_cost, stack_size, droppable, stolen, plot, None, description)
-
+        bp.blueprint.__init__(self, 'it_wep', 0)
+        self.set_ref_name(self.get_item_name())
         
         self.base_damage = None
         self.set_base_damage(base_damage)

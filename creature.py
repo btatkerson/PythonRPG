@@ -9,6 +9,7 @@
 
 from core.__core_creature_configuration import core_creature_configuration
 # from core.__core_creature_class_configuration import core_creature_class_configuration
+import blueprints.blueprint as bp
 import core.__core_constants_mod as ccs
 from core.verbose import verbose
 from skill_set import skill_set
@@ -17,7 +18,7 @@ from percbar import percbar
 from item import item, weapon
 
 
-class creature(verbose, dice): 
+class creature(bp.blueprint, verbose, dice): 
     # A short method in most classes that calls the core settings for that particular class.
     def _core(self): 
         return core_creature_configuration()
@@ -37,6 +38,12 @@ class creature(verbose, dice):
         self.race=None
         self.__racial_ability_bonuses = None # this is set from the core after the race is determined
         self.set_race(race)
+
+
+        bp.blueprint.__init__(self, 'cr_'+self.get_race(), 0)
+        self.set_ref_name(self.get_name())
+        
+
 
         self.size_class = None
         self.set_size_class(size_class)
@@ -492,8 +499,8 @@ class creature(verbose, dice):
         return roll_list
 
             
-    def get_damage_roll(self,*args, verbo= False): 
-        '''
+    def get_damage_roll(self,*args, verbo = False): 
+        ''' 
         damage_roll() returns a dice roll that will soon be based on the weapon the creature is carrying
         '''
         types = [type(i) for i in args]
